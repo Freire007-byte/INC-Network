@@ -437,14 +437,185 @@
       .hero-title { font-size: 36px; }
       .hero-stats { gap: 20px; }
       .form-2col { grid-template-columns: 1fr; }
+      .oracle-strip { gap: 8px; }
+      .oracle-card { min-width: 120px; padding: 14px 10px; }
+      .oracle-px { font-size: 16px; }
+    }
+
+    /* ── NEURAL CANVAS ── */
+    #neural-canvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── PRICE TICKER ── */
+    #price-ticker {
+      width: 100%; height: 38px;
+      background: rgba(0,229,255,.02);
+      border-bottom: 1px solid rgba(0,229,255,.08);
+      overflow: hidden; display: flex; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .ticker-label {
+      flex-shrink: 0; padding: 0 16px;
+      border-right: 1px solid rgba(0,229,255,.15);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; font-weight: 700; letter-spacing: 2.5px;
+      color: var(--cyan); text-transform: uppercase; white-space: nowrap;
+      text-shadow: 0 0 12px var(--cyan);
+    }
+    .ticker-overflow { flex: 1; overflow: hidden; }
+    .ticker-track {
+      display: flex; gap: 0;
+      animation: ticker-move 55s linear infinite;
+      will-change: transform;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes ticker-move {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 0 28px; border-right: 1px solid rgba(255,255,255,.04);
+      white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    }
+    .ticker-sym  { color: var(--muted); font-size: 10px; letter-spacing: 1px; }
+    .ticker-px   { color: var(--text); font-weight: 700; }
+    .ticker-chg  { font-size: 11px; font-weight: 700; }
+    .ticker-chg.up   { color: var(--green); }
+    .ticker-chg.down { color: var(--red); }
+    .ticker-dot  {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+      flex-shrink: 0; animation: pulse 2s infinite;
+    }
+
+    /* ── ORACLE STRIP ── */
+    .oracle-strip {
+      display: flex; gap: 12px; margin: 36px auto 0;
+      max-width: 720px; flex-wrap: wrap; justify-content: center;
+    }
+    .oracle-card {
+      flex: 1; min-width: 145px; max-width: 170px;
+      background: rgba(10,11,18,.94);
+      border: 1px solid #1d2030; border-radius: 14px;
+      padding: 18px 14px; text-align: center;
+      position: relative; overflow: hidden;
+      transition: all .3s ease; cursor: default;
+    }
+    .oracle-card::before {
+      content: '';
+      position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,.05), transparent);
+      animation: card-shimmer 5s ease-in-out infinite;
+    }
+    @keyframes card-shimmer {
+      0%   { left: -120%; }
+      100% { left: 220%; }
+    }
+    .oracle-card:hover {
+      border-color: rgba(124,109,255,.5);
+      box-shadow: 0 0 30px rgba(124,109,255,.15), 0 0 60px rgba(0,229,255,.05);
+      transform: translateY(-4px);
+    }
+    .oracle-live-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 8px; font-weight: 700; letter-spacing: 2px;
+      color: var(--cyan); text-transform: uppercase; margin-bottom: 8px;
+    }
+    .oracle-live-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 6px var(--cyan);
+      animation: pulse 1.5s infinite;
+    }
+    .oracle-sym {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 10px;
+    }
+    .oracle-px {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 19px; font-weight: 800;
+      color: var(--text); line-height: 1; margin-bottom: 8px;
+      transition: color .4s, text-shadow .4s;
+    }
+    .oracle-px.flash-up   { color: var(--green); text-shadow: 0 0 18px var(--green); }
+    .oracle-px.flash-down { color: var(--red);   text-shadow: 0 0 18px var(--red); }
+    .oracle-chg {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700; margin-bottom: 10px;
+    }
+    .oracle-chg.up   { color: var(--green); }
+    .oracle-chg.down { color: var(--red); }
+    .oracle-chg.flat { color: var(--muted); }
+    .oracle-footer {
+      font-size: 8px; color: rgba(255,255,255,.18);
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+
+    /* ── GLITCH LOGO ── */
+    .logo-inc { position: relative; display: inline-block; }
+    @keyframes glitch-a {
+      0%,100% { clip-path: inset(40% 0 50% 0); transform: translate(-3px); }
+      25%      { clip-path: inset(10% 0 80% 0); transform: translate(3px); }
+      50%      { clip-path: inset(70% 0 10% 0); transform: translate(-2px); }
+      75%      { clip-path: inset(20% 0 70% 0); transform: translate(2px); }
+    }
+    @keyframes glitch-b {
+      0%,100% { clip-path: inset(60% 0 30% 0); transform: translate(3px); }
+      33%      { clip-path: inset(30% 0 60% 0); transform: translate(-3px); }
+      66%      { clip-path: inset(80% 0 10% 0); transform: translate(1px); }
+    }
+    .logo-inc.glitching::before,
+    .logo-inc.glitching::after {
+      content: attr(data-text);
+      position: absolute; left: 0; top: 0; width: 100%;
+    }
+    .logo-inc.glitching::before {
+      color: var(--red); animation: glitch-a .3s steps(2) forwards;
+    }
+    .logo-inc.glitching::after {
+      color: var(--cyan); animation: glitch-b .3s steps(2) forwards;
+    }
+
+    /* ── HERO SCAN LINE ── */
+    #hero { overflow: hidden; }
+    .hero-scan {
+      position: absolute; left: 0; right: 0; height: 1px; top: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(0,229,255,.5) 30%,
+        rgba(124,109,255,.8) 50%, rgba(0,229,255,.5) 70%, transparent 100%);
+      pointer-events: none; z-index: 0;
+      animation: scan-down 12s ease-in-out infinite;
+    }
+    @keyframes scan-down {
+      0%   { top: 0%;   opacity: 0; }
+      4%   { opacity: 1; }
+      96%  { opacity: .4; }
+      100% { top: 100%; opacity: 0; }
     }
   </style>
 </head>
 <body>
 
+<canvas id="neural-canvas"></canvas>
+
+<!-- ── PRICE TICKER ── -->
+<div id="price-ticker">
+  <div class="ticker-label">◈ ORACLE LIVE</div>
+  <div class="ticker-overflow">
+    <div class="ticker-track" id="ticker-track">
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BTC/USDT</span><span class="ticker-px" id="t-BTC">—</span><span class="ticker-chg flat">—</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">ETH/USDT</span><span class="ticker-px" id="t-ETH">—</span><span class="ticker-chg flat">—</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">SOL/USDT</span><span class="ticker-px" id="t-SOL">—</span><span class="ticker-chg flat">—</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BNB/USDT</span><span class="ticker-px" id="t-BNB">—</span><span class="ticker-chg flat">—</span></div>
+    </div>
+  </div>
+</div>
+
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo"><span class="inc">INC</span> <span class="net">NETWORK</span></div>
+  <div class="logo"><span class="inc logo-inc" id="logo-inc" data-text="INC">INC</span><span class="net"> NETWORK</span></div>
   <div class="header-center">
     <div class="stat-item">
       <div class="stat-label">Sinais</div>
@@ -486,6 +657,40 @@
     Publique sinais de trading com stake real. Followers apostam junto.
     A Chainlink resolve automaticamente. Sem intermediários.
   </p>
+
+  <!-- LIVE ORACLE CARDS -->
+  <div class="oracle-strip">
+    <div class="oracle-card">
+      <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
+      <div class="oracle-sym">BTC/USDT</div>
+      <div class="oracle-px" id="oprice-BTC">—</div>
+      <div class="oracle-chg flat" id="ochg-BTC">—</div>
+      <div class="oracle-footer">CHAINLINK</div>
+    </div>
+    <div class="oracle-card">
+      <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
+      <div class="oracle-sym">ETH/USDT</div>
+      <div class="oracle-px" id="oprice-ETH">—</div>
+      <div class="oracle-chg flat" id="ochg-ETH">—</div>
+      <div class="oracle-footer">CHAINLINK</div>
+    </div>
+    <div class="oracle-card">
+      <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
+      <div class="oracle-sym">SOL/USDT</div>
+      <div class="oracle-px" id="oprice-SOL">—</div>
+      <div class="oracle-chg flat" id="ochg-SOL">—</div>
+      <div class="oracle-footer">CHAINLINK</div>
+    </div>
+    <div class="oracle-card">
+      <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
+      <div class="oracle-sym">BNB/USDT</div>
+      <div class="oracle-px" id="oprice-BNB">—</div>
+      <div class="oracle-chg flat" id="ochg-BNB">—</div>
+      <div class="oracle-footer">CHAINLINK</div>
+    </div>
+  </div>
+
+  <div class="hero-scan"></div>
 
   <div class="hero-actions">
     <button class="btn-hero" onclick="connectWallet()">Conectar Carteira</button>
@@ -777,8 +982,7 @@ async function connectWallet() {
 // ══════════════════════════════════════════════
 async function loadStats() {
   try {
-    const [total,,, , ] = await contract.networkStats();
-    const [,vol,fees]   = await contract.networkStats();
+    const [total, vol, fees] = await contract.networkStats();
     const c = currentNetwork?.currency ?? "ETH";
     document.getElementById("stat-signals").textContent = total.toString();
     document.getElementById("stat-volume").textContent  = parseFloat(ethers.utils.formatEther(vol)).toFixed(3) + " " + c;
@@ -1059,6 +1263,173 @@ async function withdraw() {
     await loadWithdrawal();
   } catch(e) { showAlert(e.reason||e.message||"Erro ao sacar", "error"); }
 }
+
+// ══════════════════════════════════════════════
+// NEURAL NETWORK CANVAS
+// ══════════════════════════════════════════════
+(function initNeural() {
+  const canvas = document.getElementById("neural-canvas");
+  const ctx    = canvas.getContext("2d");
+  const N = 75, MAX_DIST = 140;
+  let W, H, pts;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function mkPts() {
+    pts = Array.from({length: N}, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
+      r: Math.random() * 1.4 + .4,
+      hue: Math.random() < .5 ? 250 : 185,
+    }));
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of pts) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; else if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; else if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.hue === 250 ? "rgba(124,109,255,.55)" : "rgba(0,229,255,.45)";
+      ctx.fill();
+    }
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < MAX_DIST) {
+          const a = (1 - d / MAX_DIST) * .12;
+          const g = ctx.createLinearGradient(pts[i].x, pts[i].y, pts[j].x, pts[j].y);
+          g.addColorStop(0, `rgba(124,109,255,${a})`);
+          g.addColorStop(1, `rgba(0,229,255,${a})`);
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.strokeStyle = g; ctx.lineWidth = .5; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize(); mkPts(); draw();
+  window.addEventListener("resize", () => { resize(); mkPts(); });
+})();
+
+// ══════════════════════════════════════════════
+// LIVE ORACLE (Chainlink mainnet via public RPC)
+// ══════════════════════════════════════════════
+const ORACLE_RPC = "https://ethereum.publicnode.com";
+const ORACLE_FEEDS = {
+  BTC: "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88b",
+  ETH: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+  SOL: "0x4ffC43a60e009B551865A93d232E33Fce9f01507",
+  BNB: "0x14e613AC84a31f709eadbEF2dD6360A0f0FC3Af6",
+};
+const FEED_ABI_MIN = [
+  "function latestRoundData() view returns (uint80,int256,uint256,uint256,uint80)",
+  "function decimals() view returns (uint8)"
+];
+
+let oraclePrices = {};
+let oracleRpcProvider;
+
+async function fetchAndUpdateOracle() {
+  const syms = Object.keys(ORACLE_FEEDS);
+  const results = await Promise.allSettled(syms.map(async sym => {
+    const feed  = new ethers.Contract(ORACLE_FEEDS[sym], FEED_ABI_MIN, oracleRpcProvider);
+    const [, answer] = await feed.latestRoundData();
+    const dec   = await feed.decimals();
+    const price = answer.toNumber() / Math.pow(10, dec);
+    return { sym, price };
+  }));
+  let updated = false;
+  for (const r of results) {
+    if (r.status === "fulfilled") {
+      const { sym, price } = r.value;
+      const prev = oraclePrices[sym]?.price ?? price;
+      oraclePrices[sym] = { price, prev };
+      updated = true;
+    }
+  }
+  if (updated) renderOracleUI();
+}
+
+function fmtOraclePrice(price, sym) {
+  if (sym === "BTC") return "$" + price.toLocaleString("en-US", {maximumFractionDigits: 0});
+  if (sym === "ETH") return "$" + price.toLocaleString("en-US", {maximumFractionDigits: 1});
+  return "$" + price.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+function renderOracleUI() {
+  const syms = Object.keys(ORACLE_FEEDS);
+
+  // ── oracle cards ──
+  for (const sym of syms) {
+    const d = oraclePrices[sym]; if (!d) continue;
+    const pEl = document.getElementById(`oprice-${sym}`);
+    const cEl = document.getElementById(`ochg-${sym}`);
+    if (!pEl) continue;
+    const dir = d.price > d.prev ? "up" : d.price < d.prev ? "down" : "flat";
+    const pct = d.prev ? ((d.price - d.prev) / d.prev * 100) : 0;
+    pEl.textContent = fmtOraclePrice(d.price, sym);
+    if (dir !== "flat") {
+      pEl.className = `oracle-px flash-${dir}`;
+      setTimeout(() => { pEl.className = "oracle-px"; }, 1000);
+    }
+    cEl.textContent = dir === "flat" ? "—" : `${dir === "up" ? "▲" : "▼"} ${Math.abs(pct).toFixed(3)}%`;
+    cEl.className   = `oracle-chg ${dir}`;
+  }
+
+  // ── ticker ──
+  const track = document.getElementById("ticker-track");
+  if (!track) return;
+  const html = syms.map(sym => {
+    const d = oraclePrices[sym]; if (!d) return "";
+    const dir = d.price >= d.prev ? "up" : "down";
+    const pct = d.prev ? Math.abs((d.price - d.prev) / d.prev * 100).toFixed(3) : "0.000";
+    return `<div class="ticker-item">
+      <span class="ticker-dot"></span>
+      <span class="ticker-sym">${sym}/USDT</span>
+      <span class="ticker-px">${fmtOraclePrice(d.price, sym)}</span>
+      <span class="ticker-chg ${dir}">${dir === "up" ? "▲" : "▼"} ${pct}%</span>
+    </div>`;
+  }).join("");
+  track.innerHTML = html + html; // duplicate for infinite scroll
+}
+
+async function initLiveOracle() {
+  try {
+    oracleRpcProvider = new ethers.providers.JsonRpcProvider(ORACLE_RPC);
+    await fetchAndUpdateOracle();
+    setInterval(fetchAndUpdateOracle, 30000);
+  } catch(e) {
+    // fallback with approximate prices
+    const sim = { BTC: 67450, ETH: 3520, SOL: 186, BNB: 615 };
+    for (const [s, p] of Object.entries(sim)) oraclePrices[s] = { price: p, prev: p };
+    renderOracleUI();
+  }
+}
+
+// ── GLITCH LOGO ──
+(function initGlitch() {
+  const el = document.getElementById("logo-inc");
+  if (!el) return;
+  function doGlitch() {
+    el.classList.add("glitching");
+    setTimeout(() => el.classList.remove("glitching"), 350);
+    setTimeout(doGlitch, 7000 + Math.random() * 6000);
+  }
+  setTimeout(doGlitch, 3000 + Math.random() * 4000);
+})();
+
+// ── BOOT ──
+initLiveOracle();
 </script>
 </body>
 </html>
