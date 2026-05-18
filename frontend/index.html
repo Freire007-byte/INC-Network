@@ -527,6 +527,44 @@
       font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600;
     }
 
+    /* ── SIGNALS HEADER ── */
+    .signals-header { padding: 20px 28px 0; }
+    .market-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .market-chip {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 9px 16px;
+      cursor: pointer; transition: all .2s;
+    }
+    .market-chip:hover { border-color: #00e5ff40; transform: translateY(-2px); box-shadow: 0 0 16px #00e5ff10; }
+    .market-chip-sym {
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      letter-spacing: 1.5px; font-family: 'JetBrains Mono', monospace;
+    }
+    .market-chip-px {
+      font-size: 15px; font-weight: 800; color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .market-chip-chg { font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .market-chip-chg.up   { color: var(--green); }
+    .market-chip-chg.down { color: var(--red); }
+    .market-chip-chg.flat { color: var(--muted); }
+    .market-chip-icon { font-size: 12px; color: var(--muted); }
+
+    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .filter-group { display: flex; gap: 4px; }
+    .filter-pill {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      cursor: pointer; transition: all .2s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .filter-pill:hover { border-color: #7c6dff40; color: var(--text); }
+    .filter-pill.active       { background: #7c6dff15; border-color: #7c6dff50; color: var(--primary); }
+    .filter-pill.long-active  { background: #00ffaa15; border-color: #00ffaa40; color: var(--green); }
+    .filter-pill.short-active { background: #ff3d5715; border-color: #ff3d5740; color: var(--red); }
+    .filter-sep { width: 1px; background: var(--border); align-self: stretch; margin: 0 6px; }
+    .signals-count { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
+
     /* ── CHART MODAL ── */
     #chart-modal-overlay {
       display: none; position: fixed; inset: 0;
@@ -896,6 +934,52 @@
 
   <!-- SINAIS -->
   <div id="tab-sinais" class="section active">
+    <div class="signals-header">
+      <!-- Barra de preços ao vivo -->
+      <div class="market-bar">
+        <div class="market-chip" onclick="openChart('BTC')">
+          <span class="market-chip-sym">BTC</span>
+          <span class="market-chip-px" id="mc-BTC">—</span>
+          <span class="market-chip-chg flat" id="mcc-BTC">—</span>
+          <span class="market-chip-icon">📈</span>
+        </div>
+        <div class="market-chip" onclick="openChart('ETH')">
+          <span class="market-chip-sym">ETH</span>
+          <span class="market-chip-px" id="mc-ETH">—</span>
+          <span class="market-chip-chg flat" id="mcc-ETH">—</span>
+          <span class="market-chip-icon">📈</span>
+        </div>
+        <div class="market-chip" onclick="openChart('SOL')">
+          <span class="market-chip-sym">SOL</span>
+          <span class="market-chip-px" id="mc-SOL">—</span>
+          <span class="market-chip-chg flat" id="mcc-SOL">—</span>
+          <span class="market-chip-icon">📈</span>
+        </div>
+        <div class="market-chip" onclick="openChart('BNB')">
+          <span class="market-chip-sym">BNB</span>
+          <span class="market-chip-px" id="mc-BNB">—</span>
+          <span class="market-chip-chg flat" id="mcc-BNB">—</span>
+          <span class="market-chip-icon">📈</span>
+        </div>
+      </div>
+      <!-- Filtros -->
+      <div class="filter-row">
+        <div class="filter-group" id="filter-pair">
+          <button class="filter-pill active" onclick="filterPair('ALL',this)">Todos</button>
+          <button class="filter-pill" onclick="filterPair('BTC/USDT',this)">BTC</button>
+          <button class="filter-pill" onclick="filterPair('ETH/USDT',this)">ETH</button>
+          <button class="filter-pill" onclick="filterPair('SOL/USDT',this)">SOL</button>
+          <button class="filter-pill" onclick="filterPair('BNB/USDT',this)">BNB</button>
+        </div>
+        <div class="filter-sep"></div>
+        <div class="filter-group" id="filter-dir">
+          <button class="filter-pill active" onclick="filterDir('ALL',this)">↕ Ambos</button>
+          <button class="filter-pill" onclick="filterDir('LONG',this)">↑ LONG</button>
+          <button class="filter-pill" onclick="filterDir('SHORT',this)">↓ SHORT</button>
+        </div>
+        <span class="signals-count" id="signals-count"></span>
+      </div>
+    </div>
     <div id="signals-list" class="grid">
       <div class="loading"><div class="spinner"></div></div>
     </div>
@@ -1134,6 +1218,9 @@ const ABI = [
 let provider, signer, contract, userAddress;
 let currentNetwork = null;
 let pendingFollowId = null;
+let allSignalsCache = [];
+let sigFilterPair   = 'ALL';
+let sigFilterDir    = 'ALL';
 
 const STATUS_LABEL = ["Aberto", "WIN", "LOSS", "Expirado"];
 const STATUS_CLASS  = ["open",  "win",  "loss",  "expired"];
@@ -1315,18 +1402,52 @@ async function loadSignals() {
   try {
     const total = (await contract.totalSignals()).toNumber();
     if (total === 0) {
+      allSignalsCache = [];
       list.innerHTML = '<div class="empty"><div class="empty-icon">📡</div><p>Nenhum sinal criado ainda.<br>Seja o primeiro provider!</p></div>';
+      const c = document.getElementById("signals-count"); if (c) c.textContent = "0 sinais";
       return;
     }
-    const signals = [];
+    allSignalsCache = [];
     for (let i = total; i >= Math.max(1, total-19); i--) {
-      try { signals.push(await contract.getSignal(i)); } catch {}
+      try { allSignalsCache.push(await contract.getSignal(i)); } catch {}
     }
-    list.innerHTML = "";
-    for (const sig of signals) list.appendChild(buildSignalCard(sig));
+    applySignalFilters();
   } catch(e) {
     list.innerHTML = `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
   }
+}
+
+function filterPair(pair, btn) {
+  sigFilterPair = pair;
+  document.querySelectorAll("#filter-pair .filter-pill").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  applySignalFilters();
+}
+
+function filterDir(dir, btn) {
+  sigFilterDir = dir;
+  document.querySelectorAll("#filter-dir .filter-pill").forEach(b => b.classList.remove("active","long-active","short-active"));
+  if      (dir === "LONG")  btn.classList.add("long-active");
+  else if (dir === "SHORT") btn.classList.add("short-active");
+  else                      btn.classList.add("active");
+  applySignalFilters();
+}
+
+function applySignalFilters() {
+  const list = document.getElementById("signals-list");
+  let filtered = allSignalsCache;
+  if (sigFilterPair !== "ALL") filtered = filtered.filter(s => s.pair === sigFilterPair);
+  if (sigFilterDir  !== "ALL") filtered = filtered.filter(s => sigFilterDir === "LONG" ? s.direction === 0 : s.direction === 1);
+
+  const countEl = document.getElementById("signals-count");
+  if (countEl) countEl.textContent = `${filtered.length} sinal${filtered.length !== 1 ? "is" : ""}`;
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><p>Nenhum sinal encontrado com esses filtros.</p></div>';
+    return;
+  }
+  list.innerHTML = "";
+  for (const sig of filtered) list.appendChild(buildSignalCard(sig));
 }
 
 function buildSignalCard(sig) {
@@ -1802,6 +1923,19 @@ function renderOracleUI() {
     const sign = chg > 0 ? "▲" : chg < 0 ? "▼" : "";
     cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
     cEl.className   = `oracle-chg ${dir}`;
+  }
+
+  // ── market chips (sinais tab) ──
+  for (const sym of ORACLE_SYMS) {
+    const d = oraclePrices[sym]; if (!d) continue;
+    const pEl = document.getElementById(`mc-${sym}`);
+    const cEl = document.getElementById(`mcc-${sym}`);
+    if (!pEl) continue;
+    const chg = d.change24h ?? 0;
+    const sign = chg > 0 ? "▲" : chg < 0 ? "▼" : "";
+    pEl.textContent = fmtOraclePrice(d.price, sym);
+    cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
+    cEl.className   = `market-chip-chg ${chg > 0 ? "up" : chg < 0 ? "down" : "flat"}`;
   }
 
   // ── ticker ──
