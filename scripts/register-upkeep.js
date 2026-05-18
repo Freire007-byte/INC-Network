@@ -1,10 +1,20 @@
 // scripts/register-upkeep.js
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
 
-const LINK_TOKEN    = "0x779877A7B0D9E8603169DdbD7836e478b4624789";
-const REGISTRAR     = "0xb0E49c5D0d05cbc241d68c05BC5BA1d1B7B72976";
-const INC_CONTRACT  = "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC";
-const LINK_AMOUNT   = ethers.parseEther("5"); // 5 LINK
+const NETWORK_CONFIG = {
+  sepolia: {
+    linkToken:  "0x779877A7B0D9E8603169DdbD7836e478b4624789",
+    registrar:  "0xb0E49c5D0d05cbc241d68c05BC5BA1d1B7B72976",
+    dashboard:  "https://automation.chain.link/sepolia",
+    incContract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+  },
+  polygon: {
+    linkToken:  "0xb0897686c545045aFc77CF20eC7A532E3120E0F1",
+    registrar:  "0x9a811502d843E5a03913d5A2cfb646c11463467A",
+    dashboard:  "https://automation.chain.link/polygon",
+    incContract: process.env.INC_CONTRACT_POLYGON || "",
+  },
+};
 
 const LINK_ABI = [
   "function approve(address spender, uint256 amount) returns (bool)",
@@ -36,22 +46,32 @@ const REGISTRAR_ABI = [
 ];
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  console.log("Registrando Upkeep com:", deployer.address);
+  const net = network.name;
+  const config = NETWORK_CONFIG[net];
 
-  const link      = new ethers.Contract(LINK_TOKEN, LINK_ABI, deployer);
-  const registrar = new ethers.Contract(REGISTRAR, REGISTRAR_ABI, deployer);
+  if (!config) throw new Error(`Rede "${net}" não configurada em NETWORK_CONFIG.`);
+  if (!config.incContract) throw new Error(`INC_CONTRACT_POLYGON não definido no .env`);
+
+  const LINK_AMOUNT = ethers.parseEther("5");
+  const [deployer] = await ethers.getSigners();
+
+  console.log(`Registrando Upkeep em ${net} com: ${deployer.address}`);
+  console.log(`Contrato INC: ${config.incContract}`);
+
+  const link      = new ethers.Contract(config.linkToken, LINK_ABI, deployer);
+  const registrar = new ethers.Contract(config.registrar, REGISTRAR_ABI, deployer);
 
   const balance = await link.balanceOf(deployer.address);
   console.log("Saldo LINK:", ethers.formatEther(balance));
 
-  // checkData: startIdx=0, batchSize=20
+  if (balance < LINK_AMOUNT) throw new Error(`LINK insuficiente — precisa de 5, tem ${ethers.formatEther(balance)}`);
+
   const checkData = ethers.AbiCoder.defaultAbiCoder().encode(
     ["uint256", "uint256"], [0, 20]
   );
 
   console.log("\n1. Aprovando LINK para o Registrar...");
-  const approveTx = await link.approve(REGISTRAR, LINK_AMOUNT);
+  const approveTx = await link.approve(config.registrar, LINK_AMOUNT);
   await approveTx.wait();
   console.log("   ✔ Aprovado");
 
@@ -59,7 +79,7 @@ async function main() {
   const tx = await registrar.registerUpkeep({
     name:           "INC Network",
     encryptedEmail: "0x",
-    upkeepContract: INC_CONTRACT,
+    upkeepContract: config.incContract,
     gasLimit:       500000,
     adminAddress:   deployer.address,
     triggerType:    0,
@@ -72,7 +92,6 @@ async function main() {
   const receipt = await tx.wait();
   console.log("   ✔ Tx:", receipt.hash);
 
-  // Extrai o upkeepId do evento
   const iface = new ethers.Interface([
     "event RegistrationRequested(bytes32 indexed hash, string name, bytes encryptedEmail, address indexed upkeepContract, uint32 gasLimit, address adminAddress, uint8 triggerType, bytes triggerConfig, address indexed sender, bytes checkData, uint96 amount)",
     "event RegistrationApproved(bytes32 indexed hash, string displayName, uint256 indexed upkeepId)",
@@ -92,7 +111,7 @@ async function main() {
   console.log("║   Upkeep registrado com sucesso!             ║");
   console.log("╚══════════════════════════════════════════════╝");
   if (upkeepId) console.log("Upkeep ID:", upkeepId);
-  console.log("Dashboard: https://automation.chain.link/sepolia");
+  console.log("Dashboard:", config.dashboard);
 }
 
 main()

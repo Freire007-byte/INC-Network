@@ -34,11 +34,92 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 npm install
 ```
 
-## Testes (33/33 passando)
+## Testes (51/51 passando)
 
 ```bash
 npx hardhat test
 ```
+
+### Cobertura completa dos testes
+
+**Deploy**
+- Treasury e owner são distintos
+- Rejeita deploy com treasury igual ao owner
+
+**setPriceFeed()**
+- Owner registra feed corretamente
+- Não-owner não pode registrar feed
+- createSignal falha se par não tem feed
+- getCurrentPrice retorna preço normalizado do feed
+
+**createSignal()**
+- Cria sinal LONG e adiciona à lista de abertos
+- Cobra taxa de 1.5% para a treasury
+
+**resolveByOracle()**
+- WIN: qualquer pessoa resolve quando preço atinge TP
+- WIN: provider recebe o pool completo via pendingWithdrawal
+- LOSS: resolve quando preço atinge SL
+- LOSS: follower resgata recompensa após resolução
+- Reverte se TP/SL ainda não foi atingido
+- Reverte se preço estiver stale (>1 hora sem atualização)
+- Remove sinal da lista de abertos após resolução
+- Normaliza decimais: feed com 6 decimais → 8 decimais internamente
+
+**resolveByOracle() — SHORT**
+- SHORT WIN: resolve quando preço cai até TP
+- SHORT LOSS: resolve quando preço sobe até SL
+
+**emergencyResolve()**
+- Bloqueia proposta de emergência antes de 3 dias
+- Permite resolução de emergência após 3 dias + 1 dia de timelock
+- Não-owner não pode propor resolução de emergência
+
+**checkUpkeep() + performUpkeep()**
+- checkUpkeep retorna false quando preço está entre TP e SL
+- checkUpkeep retorna true quando TP é atingido
+- checkUpkeep detecta sinal expirado
+- performUpkeep resolve sinal quando TP atingido
+- performUpkeep expira sinal após timeout
+- checkUpkeep respeita batchSize via checkData
+
+**claimReward() + withdraw()**
+- Follower resgata recompensa após LOSS e saca
+- Dois followers com stake igual recebem recompensas iguais
+- Não pode reivindicar duas vezes
+
+**Ownable2Step**
+- Transferência exige aceitação do novo owner
+- Terceiro não pode aceitar ownership
+
+**Sem receive()**
+- Rejeita ETH enviado diretamente ao contrato
+
+**claimExpired()**
+- Follower recupera stake após sinal expirado
+- Provider recupera stake após sinal expirado
+- Não pode chamar claimExpired duas vezes
+- Não pode chamar claimExpired em sinal não expirado
+- Follower saca ETH após claimExpired
+
+**pause() / unpause()**
+- Owner pausa e despausa o contrato
+- Não-owner não pode pausar
+- createSignal falha quando pausado
+- followSignal falha quando pausado
+- Após unpause, contrato volta a funcionar normalmente
+
+**cancelEmergencyResolve()**
+- Owner cancela proposta pendente
+- Após cancelamento, nova proposta pode ser feita
+- Não pode cancelar proposta inexistente
+- Não pode executar após cancelamento
+
+**Treasury withdraw()**
+- Treasury acumula taxas de createSignal e followSignal
+- Treasury saca ETH acumulado
+- Treasury não pode sacar duas vezes sem novas taxas
+- Treasury acumula taxas de múltiplos sinais
 
 ## Deploy Sepolia
 
@@ -76,6 +157,28 @@ npx hardhat run scripts/deploy-all.js --network polygon
 npx hardhat run scripts/deploy-all.js --network bnb
 npx hardhat run scripts/deploy-all.js --network optimism
 npx hardhat run scripts/deploy-all.js --network avalanche
+```
+
+> Feeds BTC/USDT e ETH/USDT são configurados automaticamente em cada rede.
+> Para SOL/USDT e BNB/USDT em BSC, Optimism e Avalanche, adicione manualmente
+> via `setPriceFeed()` após consultar os endereços em docs.chain.link.
+
+## Verificação multi-chain
+
+```bash
+# Polygon
+npx hardhat verify --network polygon ENDERECO "TREASURY" "OWNER"
+
+# Arbitrum
+npx hardhat verify --network arbitrum ENDERECO "TREASURY" "OWNER"
+```
+
+## Registro do Chainlink Automation (Polygon)
+
+Adicione `INC_CONTRACT_POLYGON` no `.env` após o deploy, depois:
+
+```bash
+npx hardhat run scripts/register-upkeep.js --network polygon
 ```
 
 ## Segurança

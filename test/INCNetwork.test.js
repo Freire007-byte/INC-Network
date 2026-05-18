@@ -366,4 +366,168 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
       ).to.be.reverted;
     });
   });
+
+  // ── CLAIM EXPIRED ─────────────────────────────────────────────────────────
+  describe("claimExpired()", () => {
+    beforeEach(async () => {
+      await deployAll();
+      await createBtcSignal(0);
+      await contract.connect(follower1).followSignal(1, { value: FOLLOWER_STAKE });
+      await contract.connect(follower2).followSignal(1, { value: FOLLOWER_STAKE });
+      // Avança 7 dias para expirar o sinal
+      await ethers.provider.send("evm_increaseTime", [7 * 24 * 60 * 60 + 1]);
+      await ethers.provider.send("evm_mine");
+      await contract.expireSignal(1);
+    });
+
+    it("Follower recupera stake após sinal expirado", async () => {
+      await contract.connect(follower1).claimExpired(1);
+      const pending = await contract.pendingWithdrawal(follower1.address);
+      const expectedStake = FOLLOWER_STAKE * 9850n / 10000n; // descontando 1.5% de taxa
+      expect(pending).to.equal(expectedStake);
+    });
+
+    it("Provider recupera stake após sinal expirado", async () => {
+      const pending = await contract.pendingWithdrawal(provider.address);
+      const expectedStake = PROVIDER_STAKE * 9850n / 10000n;
+      expect(pending).to.equal(expectedStake);
+    });
+
+    it("Não pode chamar claimExpired duas vezes", async () => {
+      await contract.connect(follower1).claimExpired(1);
+      await expect(contract.connect(follower1).claimExpired(1))
+        .to.be.revertedWith("INC: stake ja recuperado");
+    });
+
+    it("Não pode chamar claimExpired em sinal não expirado", async () => {
+      await deployAll();
+      await createBtcSignal(0);
+      await contract.connect(follower1).followSignal(1, { value: FOLLOWER_STAKE });
+      await expect(contract.connect(follower1).claimExpired(1))
+        .to.be.revertedWith("INC: sinal nao expirou");
+    });
+
+    it("Follower saca ETH após claimExpired", async () => {
+      await contract.connect(follower1).claimExpired(1);
+      const before = await ethers.provider.getBalance(follower1.address);
+      await contract.connect(follower1).withdraw();
+      const after = await ethers.provider.getBalance(follower1.address);
+      expect(after).to.be.gt(before);
+    });
+  });
+
+  // ── PAUSE / UNPAUSE ───────────────────────────────────────────────────────
+  describe("pause() / unpause()", () => {
+    beforeEach(() => deployAll());
+
+    it("Owner pausa e despausa o contrato", async () => {
+      await contract.connect(owner).pause();
+      expect(await contract.paused()).to.equal(true);
+      await contract.connect(owner).unpause();
+      expect(await contract.paused()).to.equal(false);
+    });
+
+    it("Não-owner não pode pausar", async () => {
+      await expect(contract.connect(provider).pause())
+        .to.be.revertedWith("INC: not owner");
+    });
+
+    it("createSignal falha quando pausado", async () => {
+      await contract.connect(owner).pause();
+      await expect(
+        contract.connect(provider).createSignal(
+          "BTC/USDT", 0, ENTRY_BTC, TP_BTC, SL_BTC, 28, { value: PROVIDER_STAKE }
+        )
+      ).to.be.revertedWith("INC: contrato pausado");
+    });
+
+    it("followSignal falha quando pausado", async () => {
+      await createBtcSignal(0);
+      await contract.connect(owner).pause();
+      await expect(
+        contract.connect(follower1).followSignal(1, { value: FOLLOWER_STAKE })
+      ).to.be.revertedWith("INC: contrato pausado");
+    });
+
+    it("Após unpause, contrato volta a funcionar normalmente", async () => {
+      await contract.connect(owner).pause();
+      await contract.connect(owner).unpause();
+      await expect(createBtcSignal(0)).to.not.be.reverted;
+    });
+  });
+
+  // ── CANCEL EMERGENCY RESOLVE ──────────────────────────────────────────────
+  describe("cancelEmergencyResolve()", () => {
+    beforeEach(async () => {
+      await deployAll();
+      await createBtcSignal(0);
+      await ethers.provider.send("evm_increaseTime", [3 * 24 * 60 * 60 + 1]);
+      await ethers.provider.send("evm_mine");
+      await contract.connect(owner).proposeEmergencyResolve(1, true);
+    });
+
+    it("Owner cancela proposta pendente", async () => {
+      await contract.connect(owner).cancelEmergencyResolve(1);
+      const proposal = await contract.emergencyProposals(1);
+      expect(proposal.proposed).to.equal(false);
+    });
+
+    it("Após cancelamento, nova proposta pode ser feita", async () => {
+      await contract.connect(owner).cancelEmergencyResolve(1);
+      await expect(contract.connect(owner).proposeEmergencyResolve(1, false))
+        .to.not.be.reverted;
+    });
+
+    it("Não pode cancelar proposta inexistente", async () => {
+      await contract.connect(owner).cancelEmergencyResolve(1);
+      await expect(contract.connect(owner).cancelEmergencyResolve(1))
+        .to.be.revertedWith("INC: sem proposta pendente");
+    });
+
+    it("Não pode executar após cancelamento", async () => {
+      await contract.connect(owner).cancelEmergencyResolve(1);
+      await ethers.provider.send("evm_increaseTime", [1 * 24 * 60 * 60 + 1]);
+      await ethers.provider.send("evm_mine");
+      await expect(contract.connect(owner).executeEmergencyResolve(1))
+        .to.be.revertedWith("INC: sem proposta pendente");
+    });
+  });
+
+  // ── TREASURY WITHDRAW ─────────────────────────────────────────────────────
+  describe("Treasury withdraw()", () => {
+    beforeEach(async () => {
+      await deployAll();
+      await createBtcSignal(0);
+      await contract.connect(follower1).followSignal(1, { value: FOLLOWER_STAKE });
+    });
+
+    it("Treasury acumula taxas de createSignal e followSignal", async () => {
+      const feeProvider  = PROVIDER_STAKE * 150n / 10000n;
+      const feeFollower  = FOLLOWER_STAKE * 150n / 10000n;
+      const totalFees    = feeProvider + feeFollower;
+      expect(await contract.pendingWithdrawal(treasury.address)).to.equal(totalFees);
+    });
+
+    it("Treasury saca ETH acumulado", async () => {
+      const before = await ethers.provider.getBalance(treasury.address);
+      await contract.connect(treasury).withdraw();
+      const after = await ethers.provider.getBalance(treasury.address);
+      expect(after).to.be.gt(before);
+    });
+
+    it("Treasury não pode sacar duas vezes sem novas taxas", async () => {
+      await contract.connect(treasury).withdraw();
+      await expect(contract.connect(treasury).withdraw())
+        .to.be.revertedWith("INC: sem saldo para sacar");
+    });
+
+    it("Treasury acumula taxas de múltiplos sinais", async () => {
+      await createBtcSignal(0); // segundo sinal
+      const feeUnitProvider = PROVIDER_STAKE * 150n / 10000n;
+      const feeUnitFollower = FOLLOWER_STAKE * 150n / 10000n;
+      // 2 createSignal + 1 followSignal
+      const expected = feeUnitProvider * 2n + feeUnitFollower;
+      expect(await contract.pendingWithdrawal(treasury.address)).to.equal(expected);
+    });
+  });
 });
