@@ -900,6 +900,7 @@ const DIR_LABEL     = ["LONG", "SHORT"];
 const fmt       = n => `$${(Number(n)/1e8).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 const fmtNative = n => `${parseFloat(ethers.utils.formatEther(n)).toFixed(4)} ${currentNetwork?.currency ?? ""}`;
 const toPrice   = v => ethers.BigNumber.from(Math.round(parseFloat(v)*1e8).toString());
+const escHtml   = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
 function showAlert(msg, type = "info") {
   const el = document.getElementById("alert");
@@ -1029,8 +1030,8 @@ function buildSignalCard(sig) {
   div.innerHTML = `
     <div class="card-header">
       <div>
-        <div class="pair">${sig.pair}</div>
-        <div class="provider-addr">${sig.provider.slice(0,6)}...${sig.provider.slice(-4)}</div>
+        <div class="pair">${escHtml(sig.pair)}</div>
+        <div class="provider-addr">${escHtml(sig.provider.slice(0,6))}...${escHtml(sig.provider.slice(-4))}</div>
       </div>
       <div class="badges">
         <span class="badge ${isLong?"long":"short"}">${DIR_LABEL[sig.direction]}</span>

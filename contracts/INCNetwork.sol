@@ -291,11 +291,15 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         );
 
         if (direction == SignalDirection.LONG) {
-            require(targetPrice > entryPrice, "INC: TP deve ser maior que entry em LONG");
-            require(stopPrice   < entryPrice, "INC: SL deve ser menor que entry em LONG");
+            require(targetPrice > entryPrice,  "INC: TP deve ser maior que entry em LONG");
+            require(stopPrice   < entryPrice,  "INC: SL deve ser menor que entry em LONG");
+            // TP deve estar acima do preço ATUAL — impede WIN instantâneo
+            require(targetPrice > oraclePrice, "INC: TP LONG deve superar preco atual do oracle");
         } else {
-            require(targetPrice < entryPrice, "INC: TP deve ser menor que entry em SHORT");
-            require(stopPrice   > entryPrice, "INC: SL deve ser maior que entry em SHORT");
+            require(targetPrice < entryPrice,  "INC: TP deve ser menor que entry em SHORT");
+            require(stopPrice   > entryPrice,  "INC: SL deve ser maior que entry em SHORT");
+            // TP deve estar abaixo do preço ATUAL — impede WIN instantâneo
+            require(targetPrice < oraclePrice, "INC: TP SHORT deve ser abaixo do preco atual do oracle");
         }
 
         uint256 fee      = (msg.value * NETWORK_FEE_BPS) / BPS_BASE;
@@ -678,6 +682,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         (, int256 answer, , uint256 updatedAt, ) = AggregatorV3Interface(feed).latestRoundData();
         require(answer > 0, "INC: preco invalido do oracle");
         require(
+            updatedAt <= block.timestamp &&
             block.timestamp - updatedAt <= PRICE_STALENESS_THRESHOLD,
             "INC: preco desatualizado"
         );

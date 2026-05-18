@@ -105,6 +105,27 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
       // Taxa acumulada via pull-payment em pendingWithdrawal[treasury]
       expect(await contract.pendingWithdrawal(treasury.address)).to.equal(fee);
     });
+
+    it("Rejeita LONG com TP abaixo do preço atual do oracle (exploit WIN instantâneo)", async () => {
+      // Oracle = $65.000. TP = $64.500 está ABAIXO do oracle mas ACIMA da entry $64.000
+      // Sem a correção isso seria WIN imediato — agora deve reverter
+      const entry = 6400000000000n; // $64.000 (dentro dos 2% de $65.000)
+      const tp    = 6450000000000n; // $64.500 > entry ✅ mas < oracle $65.000 ✗
+      const sl    = 6200000000000n;
+      await expect(
+        contract.connect(provider).createSignal("BTC/USDT", 0, entry, tp, sl, 28, { value: PROVIDER_STAKE })
+      ).to.be.revertedWith("INC: TP LONG deve superar preco atual do oracle");
+    });
+
+    it("Rejeita SHORT com TP acima do preço atual do oracle (exploit WIN instantâneo)", async () => {
+      // Oracle = $65.000. TP = $65.500 está ACIMA do oracle mas ABAIXO da entry $66.000
+      const entry = 6600000000000n; // $66.000 (dentro dos 2%)
+      const tp    = 6550000000000n; // $65.500 < entry ✅ mas > oracle $65.000 ✗
+      const sl    = 6800000000000n;
+      await expect(
+        contract.connect(provider).createSignal("BTC/USDT", 1, entry, tp, sl, 72, { value: PROVIDER_STAKE })
+      ).to.be.revertedWith("INC: TP SHORT deve ser abaixo do preco atual do oracle");
+    });
   });
 
   // ── RESOLUÇÃO POR ORACLE ──────────────────────────────────────────────────
