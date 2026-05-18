@@ -4,181 +4,462 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>INC Network — Proof of Signal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
   <style>
     :root {
-      --bg:        #0a0b0f;
-      --card:      #12141a;
-      --border:    #1e2028;
-      --primary:   #6c63ff;
-      --green:     #00d48a;
-      --red:       #ff4757;
-      --yellow:    #ffd32a;
-      --text:      #e8eaf0;
-      --muted:     #6b7280;
-      --radius:    12px;
+      --bg:       #050608;
+      --card:     #0d0e14;
+      --card2:    #111320;
+      --border:   #1a1d2e;
+      --primary:  #7c6dff;
+      --cyan:     #00e5ff;
+      --green:    #00ffaa;
+      --red:      #ff3d57;
+      --yellow:   #ffcc00;
+      --text:     #e8eaf6;
+      --muted:    #565870;
+      --radius:   14px;
+      --glow-p:   0 0 20px #7c6dff55;
+      --glow-c:   0 0 20px #00e5ff44;
+      --glow-g:   0 0 20px #00ffaa44;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* ── GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(124,109,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,109,255,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* ── GLOW ORBS ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 20% 20%, #7c6dff0d 0%, transparent 70%),
+        radial-gradient(ellipse 500px 300px at 80% 80%, #00e5ff09 0%, transparent 70%);
+      pointer-events: none;
+    }
 
     /* ── HEADER ── */
     header {
+      position: sticky; top: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px; border-bottom: 1px solid var(--border);
-      background: var(--card); position: sticky; top: 0; z-index: 100;
+      padding: 14px 28px;
+      background: rgba(5,6,8,.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid #ffffff08;
     }
-    .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-    .logo span { color: var(--primary); }
-    .header-stats { display: flex; gap: 24px; font-size: 13px; color: var(--muted); }
-    .header-stats b { color: var(--text); }
+
+    .logo {
+      font-size: 18px; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .logo .inc { color: var(--cyan); text-shadow: 0 0 20px var(--cyan); }
+    .logo .net { color: var(--text); }
+
+    .header-center {
+      display: flex; gap: 32px; font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-item { text-align: center; }
+    .stat-item .stat-label { color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+    .stat-item .stat-value { color: var(--text); font-weight: 600; margin-top: 2px; }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .network-badge {
+      font-size: 11px; font-weight: 600; letter-spacing: .5px;
+      padding: 4px 10px; border-radius: 20px;
+      background: #ffcc0015; border: 1px solid #ffcc0040; color: var(--yellow);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .network-badge.mainnet {
+      background: #00ffaa15; border-color: #00ffaa40; color: var(--green);
+    }
+
     #btn-connect {
-      background: var(--primary); color: #fff; border: none; border-radius: 8px;
-      padding: 9px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
-      transition: opacity .2s;
+      background: linear-gradient(135deg, #7c6dff, #5b4fff);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 9px 20px; font-size: 13px; font-weight: 700;
+      cursor: pointer; letter-spacing: .3px;
+      box-shadow: 0 0 20px #7c6dff40;
+      transition: all .2s; font-family: 'Space Grotesk', sans-serif;
     }
-    #btn-connect:hover { opacity: .85; }
-    #btn-connect.connected { background: var(--border); color: var(--muted); }
+    #btn-connect:hover { box-shadow: 0 0 30px #7c6dff70; transform: translateY(-1px); }
+    #btn-connect.connected {
+      background: var(--card2); color: var(--muted);
+      box-shadow: none; border: 1px solid var(--border);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center;
+      padding: 80px 24px 60px; min-height: 60vh;
+    }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--cyan);
+      background: #00e5ff10; border: 1px solid #00e5ff25;
+      border-radius: 20px; padding: 6px 16px; margin-bottom: 28px;
+    }
+    .hero-tag .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.8); }
+    }
+
+    .hero-title {
+      font-size: clamp(42px, 7vw, 80px);
+      font-weight: 800; line-height: 1.05;
+      letter-spacing: -2px; margin-bottom: 20px;
+    }
+    .hero-title .grad {
+      background: linear-gradient(135deg, #fff 0%, #7c6dff 50%, #00e5ff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 17px; color: var(--muted); max-width: 520px;
+      line-height: 1.6; margin-bottom: 40px;
+    }
+
+    .hero-actions { display: flex; gap: 14px; align-items: center; }
+
+    .btn-hero {
+      background: linear-gradient(135deg, #7c6dff, #00e5ff);
+      color: #fff; border: none; border-radius: 12px;
+      padding: 14px 32px; font-size: 15px; font-weight: 700;
+      cursor: pointer; letter-spacing: .3px;
+      box-shadow: 0 0 30px #7c6dff50;
+      transition: all .25s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-hero:hover { box-shadow: 0 0 50px #7c6dff80; transform: translateY(-2px); }
+
+    .btn-hero-outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 28px; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: all .25s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-hero-outline:hover { border-color: #7c6dff80; color: var(--primary); }
+
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 56px;
+      padding-top: 40px; border-top: 1px solid #ffffff08;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .value {
+      font-size: 28px; font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, var(--text), var(--primary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-stat .label { font-size: 12px; color: var(--muted); margin-top: 4px; letter-spacing: .5px; }
 
     /* ── ALERT ── */
     #alert {
-      display: none; margin: 16px 24px; padding: 12px 16px;
-      border-radius: var(--radius); font-size: 14px; font-weight: 500;
+      display: none; position: relative; z-index: 1;
+      margin: 0 28px 0; padding: 12px 18px;
+      border-radius: var(--radius); font-size: 13px; font-weight: 600;
     }
-    #alert.success { background: #00d48a22; border: 1px solid var(--green); color: var(--green); }
-    #alert.error   { background: #ff475722; border: 1px solid var(--red);   color: var(--red);   }
-    #alert.info    { background: #6c63ff22; border: 1px solid var(--primary); color: var(--primary); }
+    #alert.success { background: #00ffaa10; border: 1px solid #00ffaa30; color: var(--green); }
+    #alert.error   { background: #ff3d5710; border: 1px solid #ff3d5730; color: var(--red); }
+    #alert.info    { background: #7c6dff10; border: 1px solid #7c6dff30; color: var(--primary); }
+
+    /* ── APP (depois de conectar) ── */
+    #app { display: none; position: relative; z-index: 1; }
 
     /* ── TABS ── */
-    .tabs { display: flex; gap: 4px; padding: 20px 24px 0; }
-    .tab {
-      padding: 10px 20px; border-radius: 8px 8px 0 0; font-size: 14px; font-weight: 600;
-      cursor: pointer; color: var(--muted); background: transparent; border: none;
-      border-bottom: 2px solid transparent; transition: all .2s;
+    .tabs {
+      display: flex; gap: 2px; padding: 20px 28px 0;
+      border-bottom: 1px solid var(--border);
     }
-    .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #6c63ff11; }
+    .tab {
+      padding: 10px 22px; font-size: 13px; font-weight: 600;
+      cursor: pointer; color: var(--muted); background: transparent;
+      border: none; border-bottom: 2px solid transparent;
+      transition: all .2s; letter-spacing: .3px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
     .tab:hover:not(.active) { color: var(--text); }
 
     /* ── SECTIONS ── */
-    .section { display: none; padding: 24px; }
+    .section { display: none; padding: 28px; }
     .section.active { display: block; }
 
     /* ── CARDS ── */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px; transition: border-color .2s;
-    }
-    .card:hover { border-color: #2e3040; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
 
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .pair { font-size: 18px; font-weight: 700; }
-    .badge {
-      padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px;
+      transition: all .25s; position: relative; overflow: hidden;
     }
-    .badge.long    { background: #00d48a22; color: var(--green); }
-    .badge.short   { background: #ff475722; color: var(--red); }
-    .badge.win     { background: #00d48a22; color: var(--green); }
-    .badge.loss    { background: #ff475722; color: var(--red); }
-    .badge.open    { background: #6c63ff22; color: var(--primary); }
-    .badge.expired { background: #ffd32a22; color: var(--yellow); }
+    .card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, #7c6dff08, transparent 60%);
+      opacity: 0; transition: opacity .25s;
+    }
+    .card:hover { border-color: #7c6dff40; box-shadow: var(--glow-p); }
+    .card:hover::before { opacity: 1; }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+
+    .pair {
+      font-size: 20px; font-weight: 800; letter-spacing: -.5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .provider-addr { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
+
+    .badges { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .badge {
+      padding: 3px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: .5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .badge.long    { background: #00ffaa15; border: 1px solid #00ffaa30; color: var(--green); }
+    .badge.short   { background: #ff3d5715; border: 1px solid #ff3d5730; color: var(--red); }
+    .badge.win     { background: #00ffaa15; border: 1px solid #00ffaa30; color: var(--green); }
+    .badge.loss    { background: #ff3d5715; border: 1px solid #ff3d5730; color: var(--red); }
+    .badge.open    { background: #7c6dff15; border: 1px solid #7c6dff30; color: var(--primary); }
+    .badge.expired { background: #ffcc0015; border: 1px solid #ffcc0030; color: var(--yellow); }
 
     .price-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-    .price-item { background: #0a0b0f; border-radius: 8px; padding: 10px; text-align: center; }
-    .price-item label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
-    .price-item span { font-size: 14px; font-weight: 600; }
+    .price-item {
+      background: #ffffff04; border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px; text-align: center;
+    }
+    .price-item label { font-size: 10px; color: var(--muted); display: block; margin-bottom: 5px; letter-spacing: .5px; text-transform: uppercase; }
+    .price-item span  { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
     .price-item .tp    { color: var(--green); }
     .price-item .sl    { color: var(--red); }
     .price-item .entry { color: var(--text); }
 
-    .card-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-    .card-meta b { color: var(--text); }
+    .rsi-row { margin-bottom: 14px; }
+    .rsi-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
+    .rsi-header span { color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .rsi-bar  { height: 3px; background: var(--border); border-radius: 2px; }
+    .rsi-fill { height: 100%; border-radius: 2px; transition: width .5s; }
 
-    .rsi-bar  { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 16px; }
-    .rsi-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+    .card-meta {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--muted); margin-bottom: 16px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .card-meta b { color: var(--text); }
 
     .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
     /* ── BUTTONS ── */
     .btn {
-      padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
-      border: none; cursor: pointer; transition: opacity .2s; flex: 1;
+      padding: 9px 16px; border-radius: 10px; font-size: 12px; font-weight: 700;
+      border: none; cursor: pointer; transition: all .2s; flex: 1;
+      letter-spacing: .3px; font-family: 'Space Grotesk', sans-serif;
     }
-    .btn:hover    { opacity: .85; }
-    .btn:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-green   { background: var(--green);   color: #000; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-red     { background: var(--red); color: #fff; }
+    .btn:hover    { transform: translateY(-1px); }
+    .btn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7c6dff, #5b4fff);
+      color: #fff; box-shadow: 0 0 15px #7c6dff30;
+    }
+    .btn-primary:hover { box-shadow: 0 0 25px #7c6dff60; }
+
+    .btn-green {
+      background: linear-gradient(135deg, #00ffaa, #00cc88);
+      color: #000; box-shadow: 0 0 15px #00ffaa20;
+    }
+    .btn-green:hover { box-shadow: 0 0 25px #00ffaa40; }
+
+    .btn-outline {
+      background: transparent; border: 1px solid var(--border); color: var(--text);
+    }
+    .btn-outline:hover { border-color: #7c6dff60; }
 
     /* ── FORM ── */
-    .form-card { max-width: 520px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
-    .form-title { font-size: 18px; font-weight: 700; margin-bottom: 24px; }
+    .form-wrap { max-width: 560px; }
+
+    .form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 30px; position: relative; overflow: hidden;
+    }
+    .form-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #7c6dff, #00e5ff);
+    }
+    .form-title {
+      font-size: 18px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.3px;
+    }
+    .form-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+
     .form-row { margin-bottom: 18px; }
-    .form-row label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+    .form-row label {
+      display: block; font-size: 11px; color: var(--muted);
+      margin-bottom: 7px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    }
     .form-row input, .form-row select {
-      width: 100%; background: #0a0b0f; border: 1px solid var(--border); border-radius: 8px;
-      padding: 10px 14px; color: var(--text); font-size: 14px; outline: none;
-      transition: border-color .2s;
+      width: 100%; background: #ffffff05; border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; color: var(--text);
+      font-size: 14px; outline: none; transition: all .2s;
+      font-family: 'Space Grotesk', sans-serif;
     }
-    .form-row input:focus, .form-row select:focus { border-color: var(--primary); }
+    .form-row input:focus, .form-row select:focus {
+      border-color: #7c6dff60; box-shadow: 0 0 0 3px #7c6dff15;
+    }
+    .form-row select option { background: #12141a; }
     .form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
-    .form-fee-info {
-      background: #6c63ff11; border: 1px solid #6c63ff33; border-radius: 8px;
-      padding: 12px 16px; font-size: 13px; color: var(--muted); margin-bottom: 20px;
+    .form-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+    .fee-banner {
+      background: #7c6dff0a; border: 1px solid #7c6dff20;
+      border-radius: 10px; padding: 12px 16px;
+      font-size: 12px; color: var(--muted); margin-bottom: 22px;
+      display: flex; align-items: center; gap: 8px;
     }
-    .form-fee-info b { color: var(--primary); }
+    .fee-banner b { color: var(--primary); }
+
+    .btn-submit {
+      width: 100%; background: linear-gradient(135deg, #7c6dff, #00e5ff);
+      color: #fff; border: none; border-radius: 12px;
+      padding: 14px; font-size: 14px; font-weight: 700;
+      cursor: pointer; letter-spacing: .3px;
+      box-shadow: 0 0 25px #7c6dff40;
+      transition: all .25s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-submit:hover { box-shadow: 0 0 40px #7c6dff70; transform: translateY(-1px); }
 
     /* ── POSIÇÕES ── */
     .position-row {
       display: flex; align-items: center; justify-content: space-between;
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 16px 20px; margin-bottom: 10px;
+      border-radius: var(--radius); padding: 16px 22px; margin-bottom: 10px;
+      transition: border-color .2s;
     }
+    .position-row:hover { border-color: #7c6dff30; }
     .position-info { flex: 1; }
-    .position-info .pair-label { font-weight: 700; margin-bottom: 4px; }
-    .position-info .pos-detail  { font-size: 13px; color: var(--muted); }
+    .pair-label { font-weight: 700; margin-bottom: 5px; font-family: 'JetBrains Mono', monospace; }
+    .pos-detail { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 
     /* ── SACAR ── */
+    .withdraw-wrap { max-width: 460px; }
     .withdraw-card {
-      max-width: 420px; background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 32px; text-align: center;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 40px; text-align: center;
+      position: relative; overflow: hidden;
     }
-    .withdraw-amount { font-size: 36px; font-weight: 800; color: var(--green); margin: 16px 0; }
-    .withdraw-label  { font-size: 14px; color: var(--muted); }
+    .withdraw-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #00ffaa, #00e5ff);
+    }
+    .withdraw-label { font-size: 13px; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
+    .withdraw-amount {
+      font-size: 48px; font-weight: 800; margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .withdraw-desc { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
 
     /* ── EMPTY ── */
     .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
-    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-icon { font-size: 44px; margin-bottom: 12px; }
+    .empty p { font-size: 14px; line-height: 1.6; }
 
     /* ── LOADING ── */
-    .loading { text-align: center; padding: 40px; color: var(--muted); }
+    .loading { text-align: center; padding: 50px; color: var(--muted); }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { display: inline-block; width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
-
-    /* ── NETWORK BADGE ── */
-    .network-badge { font-size: 12px; padding: 3px 8px; border-radius: 4px; background: #ffd32a22; color: var(--yellow); font-weight: 600; }
-    .network-badge.mainnet { background: #00d48a22; color: var(--green); }
+    .spinner {
+      display: inline-block; width: 28px; height: 28px;
+      border: 2px solid var(--border); border-top-color: var(--cyan);
+      border-radius: 50%; animation: spin .7s linear infinite;
+      box-shadow: 0 0 10px #00e5ff30;
+    }
 
     /* ── MODAL ── */
     #modal-overlay {
-      display: none; position: fixed; inset: 0; background: #000a;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
       z-index: 200; align-items: center; justify-content: center;
     }
     #modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 30px; width: 380px;
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 60px #7c6dff20;
+    }
+    .modal-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #7c6dff, #00e5ff);
+    }
+    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 18px; }
+    .modal-info  { font-size: 13px; color: var(--muted); margin-bottom: 18px; font-family: 'JetBrains Mono', monospace; }
+    .modal-info b { color: var(--text); }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2a2d40; }
+
+    @media (max-width: 600px) {
+      .header-center { display: none; }
+      .hero-title { font-size: 36px; }
+      .hero-stats { gap: 20px; }
+      .form-2col { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo">INC <span>NETWORK</span></div>
-  <div class="header-stats">
-    <div>Sinais: <b id="stat-signals">—</b></div>
-    <div>Volume: <b id="stat-volume">—</b></div>
-    <div>Taxas: <b id="stat-fees">—</b></div>
+  <div class="logo"><span class="inc">INC</span> <span class="net">NETWORK</span></div>
+  <div class="header-center">
+    <div class="stat-item">
+      <div class="stat-label">Sinais</div>
+      <div class="stat-value" id="stat-signals">—</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Volume</div>
+      <div class="stat-value" id="stat-volume">—</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Taxas</div>
+      <div class="stat-value" id="stat-fees">—</div>
+    </div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px">
+  <div class="header-right">
     <span class="network-badge" id="network-name">—</span>
     <button id="btn-connect" onclick="connectWallet()">Conectar Carteira</button>
   </div>
@@ -187,128 +468,173 @@
 <!-- ── ALERT ── -->
 <div id="alert"></div>
 
-<!-- ── TABS ── -->
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('sinais')">Sinais Abertos</button>
-  <button class="tab" onclick="switchTab('criar')">Criar Sinal</button>
-  <button class="tab" onclick="switchTab('posicoes')">Minhas Posições</button>
-  <button class="tab" onclick="switchTab('sacar')">Sacar</button>
-</div>
+<!-- ══════════════════════════════════════════ -->
+<!-- HERO                                       -->
+<!-- ══════════════════════════════════════════ -->
+<div id="hero">
+  <div class="hero-tag">
+    <span class="dot"></span>
+    Proof-of-Signal · On-Chain · Chainlink Oracle
+  </div>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- TAB: SINAIS ABERTOS                       -->
-<!-- ══════════════════════════════════════════ -->
-<div id="tab-sinais" class="section active">
-  <div id="signals-list" class="grid">
-    <div class="loading"><div class="spinner"></div><p style="margin-top:12px">Conecte a carteira para ver os sinais</p></div>
+  <h1 class="hero-title">
+    <span class="grad">Stake Your Signal.</span><br>
+    Prove Your Edge.
+  </h1>
+
+  <p class="hero-sub">
+    Publique sinais de trading com stake real. Followers apostam junto.
+    A Chainlink resolve automaticamente. Sem intermediários.
+  </p>
+
+  <div class="hero-actions">
+    <button class="btn-hero" onclick="connectWallet()">Conectar Carteira</button>
+    <a href="https://github.com/Freire007-byte/INC-Network" target="_blank">
+      <button class="btn-hero-outline">Ver Código</button>
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="value">1.5%</div>
+      <div class="label">Taxa da Rede</div>
+    </div>
+    <div class="hero-stat">
+      <div class="value">7d</div>
+      <div class="label">Janela de Sinal</div>
+    </div>
+    <div class="hero-stat">
+      <div class="value">500</div>
+      <div class="label">Max Followers</div>
+    </div>
+    <div class="hero-stat">
+      <div class="value">200x</div>
+      <div class="label">Alavancagem Ref.</div>
+    </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════ -->
-<!-- TAB: CRIAR SINAL                          -->
+<!-- APP                                        -->
 <!-- ══════════════════════════════════════════ -->
-<div id="tab-criar" class="section">
-  <div class="form-card">
-    <div class="form-title">Publicar Novo Sinal</div>
+<div id="app">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('sinais')">Sinais Abertos</button>
+    <button class="tab" onclick="switchTab('criar')">Criar Sinal</button>
+    <button class="tab" onclick="switchTab('posicoes')">Minhas Posições</button>
+    <button class="tab" onclick="switchTab('sacar')">Sacar</button>
+  </div>
 
-    <div class="form-fee-info">
-      Taxa da rede: <b>1.5%</b> do seu stake vai para a treasury INC. O restante é apostado.
+  <!-- SINAIS -->
+  <div id="tab-sinais" class="section active">
+    <div id="signals-list" class="grid">
+      <div class="loading"><div class="spinner"></div></div>
     </div>
+  </div>
 
-    <div class="form-row">
-      <label>Par de Moedas</label>
-      <select id="f-pair">
-        <option value="BTC/USDT">BTC/USDT</option>
-        <option value="ETH/USDT">ETH/USDT</option>
-        <option value="SOL/USDT">SOL/USDT</option>
-        <option value="BNB/USDT">BNB/USDT</option>
-      </select>
-    </div>
+  <!-- CRIAR SINAL -->
+  <div id="tab-criar" class="section">
+    <div class="form-wrap">
+      <div class="form-card">
+        <div class="form-title">Publicar Novo Sinal</div>
+        <div class="form-subtitle">Stake real. Resolução automática via Chainlink.</div>
 
-    <div class="form-row">
-      <label>Direção</label>
-      <select id="f-direction">
-        <option value="0">LONG (preço vai subir)</option>
-        <option value="1">SHORT (preço vai cair)</option>
-      </select>
-    </div>
+        <div class="fee-banner">
+          <span>⚡</span>
+          Taxa da rede: <b>1.5%</b> do stake vai para a treasury INC.
+        </div>
 
-    <div class="form-2col">
-      <div class="form-row">
-        <label>Preço de Entrada (USD)</label>
-        <input type="number" id="f-entry" placeholder="65000" step="0.01" />
+        <div class="form-row">
+          <label>Par de Moedas</label>
+          <select id="f-pair">
+            <option value="BTC/USDT">BTC/USDT</option>
+            <option value="ETH/USDT">ETH/USDT</option>
+            <option value="SOL/USDT">SOL/USDT</option>
+            <option value="BNB/USDT">BNB/USDT</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Direção</label>
+          <select id="f-direction">
+            <option value="0">LONG — preço vai subir</option>
+            <option value="1">SHORT — preço vai cair</option>
+          </select>
+        </div>
+
+        <div class="form-2col">
+          <div class="form-row">
+            <label>Preço de Entrada (USD)</label>
+            <input type="number" id="f-entry" placeholder="65000" step="0.01" />
+          </div>
+          <div class="form-row">
+            <label>RSI (0 – 100)</label>
+            <input type="number" id="f-rsi" placeholder="28" min="0" max="100" />
+          </div>
+        </div>
+
+        <div class="form-2col">
+          <div class="form-row">
+            <label>Take Profit (USD)</label>
+            <input type="number" id="f-tp" placeholder="68000" step="0.01" />
+            <div class="form-hint">LONG: maior · SHORT: menor</div>
+          </div>
+          <div class="form-row">
+            <label>Stop Loss (USD)</label>
+            <input type="number" id="f-sl" placeholder="62000" step="0.01" />
+            <div class="form-hint">LONG: menor · SHORT: maior</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label id="label-provider-stake">Stake — mínimo 0.005</label>
+          <input type="number" id="f-stake" placeholder="0.01" step="0.001" min="0.005" />
+        </div>
+
+        <button class="btn-submit" onclick="createSignal()">Publicar Sinal</button>
       </div>
-      <div class="form-row">
-        <label>RSI (0–100)</label>
-        <input type="number" id="f-rsi" placeholder="28" min="0" max="100" />
+    </div>
+  </div>
+
+  <!-- POSIÇÕES -->
+  <div id="tab-posicoes" class="section">
+    <div id="positions-list">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- SACAR -->
+  <div id="tab-sacar" class="section">
+    <div class="withdraw-wrap">
+      <div class="withdraw-card">
+        <div class="withdraw-label">Saldo disponível para saque</div>
+        <div class="withdraw-amount" id="pending-amount">0.0000</div>
+        <div class="withdraw-desc">
+          Recompensas de sinais LOSS e<br>stakes devolvidos de sinais EXPIRED
+        </div>
+        <button class="btn-submit" onclick="withdraw()" id="btn-withdraw" disabled>
+          Sacar <span id="btn-withdraw-currency"></span>
+        </button>
       </div>
     </div>
-
-    <div class="form-2col">
-      <div class="form-row">
-        <label>Take Profit (USD)</label>
-        <input type="number" id="f-tp" placeholder="68000" step="0.01" />
-        <div class="form-hint">LONG: maior que entrada · SHORT: menor</div>
-      </div>
-      <div class="form-row">
-        <label>Stop Loss (USD)</label>
-        <input type="number" id="f-sl" placeholder="62000" step="0.01" />
-        <div class="form-hint">LONG: menor que entrada · SHORT: maior</div>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <label id="label-provider-stake">Stake — mínimo 0.005</label>
-      <input type="number" id="f-stake" placeholder="0.01" step="0.001" min="0.005" />
-    </div>
-
-    <button class="btn btn-primary" style="width:100%" onclick="createSignal()">Publicar Sinal</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- TAB: MINHAS POSIÇÕES                      -->
-<!-- ══════════════════════════════════════════ -->
-<div id="tab-posicoes" class="section">
-  <div id="positions-list">
-    <div class="loading"><p style="color:var(--muted)">Conecte a carteira para ver suas posições</p></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<!-- TAB: SACAR                                -->
-<!-- ══════════════════════════════════════════ -->
-<div id="tab-sacar" class="section">
-  <div class="withdraw-card">
-    <div class="withdraw-label">Saldo disponível para saque</div>
-    <div class="withdraw-amount" id="pending-amount">0.0000</div>
-    <div style="color:var(--muted);font-size:13px;margin-bottom:24px">
-      Recompensas de sinais LOSS e stakes devolvidos de sinais EXPIRED
-    </div>
-    <button class="btn btn-green" style="width:100%" onclick="withdraw()" id="btn-withdraw" disabled>
-      Sacar <span id="btn-withdraw-currency"></span>
-    </button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<!-- MODAL: FOLLOW SIGNAL                      -->
-<!-- ══════════════════════════════════════════ -->
+<!-- ── MODAL FOLLOW ── -->
 <div id="modal-overlay">
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:360px">
-    <div style="font-size:17px;font-weight:700;margin-bottom:20px">Seguir Sinal <span id="modal-signal-id"></span></div>
-    <div style="font-size:14px;color:var(--muted);margin-bottom:16px">
-      Par: <b id="modal-pair" style="color:var(--text)"></b> &nbsp;|&nbsp;
-      Direção: <b id="modal-direction" style="color:var(--text)"></b>
+  <div class="modal-box">
+    <div class="modal-title">Seguir Sinal <span id="modal-signal-id"></span></div>
+    <div class="modal-info">
+      Par: <b id="modal-pair"></b> &nbsp;·&nbsp; Direção: <b id="modal-direction"></b>
     </div>
     <div class="form-row">
       <label id="label-follower-stake">Stake — mínimo 0.001</label>
       <input type="number" id="modal-stake" placeholder="0.01" step="0.001" min="0.001" />
     </div>
-    <div class="form-fee-info" style="margin-bottom:20px">
-      Taxa de <b>1.5%</b> deduzida automaticamente do seu stake.
+    <div class="fee-banner" style="margin-bottom:0">
+      <span>⚡</span> Taxa de <b>1.5%</b> deduzida automaticamente.
     </div>
-    <div style="display:flex;gap:10px">
+    <div class="modal-actions">
       <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-primary" style="flex:1" onclick="confirmFollow()">Confirmar</button>
     </div>
@@ -329,7 +655,7 @@ const NETWORKS = {
   137: {
     name:     "Polygon",
     currency: "MATIC",
-    contract: "", // preencher após deploy na Polygon
+    contract: "",
     testnet:  false,
   },
 };
@@ -360,15 +686,15 @@ let currentNetwork = null;
 let pendingFollowId = null;
 
 const STATUS_LABEL = ["Aberto", "WIN", "LOSS", "Expirado"];
-const STATUS_CLASS  = ["open",   "win", "loss", "expired"];
+const STATUS_CLASS  = ["open",  "win",  "loss",  "expired"];
 const DIR_LABEL     = ["LONG", "SHORT"];
 
 // ══════════════════════════════════════════════
 // UTILITÁRIOS
 // ══════════════════════════════════════════════
-const fmt     = n => `$${(Number(n) / 1e8).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const fmt       = n => `$${(Number(n)/1e8).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 const fmtNative = n => `${parseFloat(ethers.utils.formatEther(n)).toFixed(4)} ${currentNetwork?.currency ?? ""}`;
-const toPrice   = v => ethers.BigNumber.from(Math.round(parseFloat(v) * 1e8).toString());
+const toPrice   = v => ethers.BigNumber.from(Math.round(parseFloat(v)*1e8).toString());
 
 function showAlert(msg, type = "info") {
   const el = document.getElementById("alert");
@@ -393,7 +719,7 @@ function updateNetworkBadge() {
 }
 
 function switchTab(name) {
-  document.querySelectorAll(".tab").forEach((t, i) => {
+  document.querySelectorAll(".tab").forEach((t,i) => {
     const names = ["sinais","criar","posicoes","sacar"];
     t.classList.toggle("active", names[i] === name);
   });
@@ -416,21 +742,21 @@ async function connectWallet() {
     const network = await provider.getNetwork();
     currentNetwork = NETWORKS[network.chainId];
 
-    if (!currentNetwork) {
+    if (!currentNetwork)
       return showAlert(`Rede não suportada (Chain ID: ${network.chainId}). Use Sepolia ou Polygon.`, "error");
-    }
-
-    if (!currentNetwork.contract) {
+    if (!currentNetwork.contract)
       return showAlert(`Contrato ainda não deployado na ${currentNetwork.name}.`, "error");
-    }
 
     signer      = provider.getSigner();
     userAddress = await signer.getAddress();
     contract    = new ethers.Contract(currentNetwork.contract, ABI, signer);
 
     const btn = document.getElementById("btn-connect");
-    btn.textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+    btn.textContent = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
     btn.classList.add("connected");
+
+    document.getElementById("hero").style.display = "none";
+    document.getElementById("app").style.display  = "block";
 
     updateNetworkBadge();
     updateCurrencyLabels();
@@ -441,7 +767,7 @@ async function connectWallet() {
 
     window.ethereum.on("accountsChanged", () => location.reload());
     window.ethereum.on("chainChanged",    () => location.reload());
-  } catch (e) {
+  } catch(e) {
     showAlert(e.message || "Erro ao conectar", "error");
   }
 }
@@ -451,7 +777,8 @@ async function connectWallet() {
 // ══════════════════════════════════════════════
 async function loadStats() {
   try {
-    const [total, vol, fees] = await contract.networkStats();
+    const [total,,, , ] = await contract.networkStats();
+    const [,vol,fees]   = await contract.networkStats();
     const c = currentNetwork?.currency ?? "ETH";
     document.getElementById("stat-signals").textContent = total.toString();
     document.getElementById("stat-volume").textContent  = parseFloat(ethers.utils.formatEther(vol)).toFixed(3) + " " + c;
@@ -466,35 +793,30 @@ async function loadSignals() {
   if (!contract) return;
   const list = document.getElementById("signals-list");
   list.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
   try {
     const total = (await contract.totalSignals()).toNumber();
     if (total === 0) {
       list.innerHTML = '<div class="empty"><div class="empty-icon">📡</div><p>Nenhum sinal criado ainda.<br>Seja o primeiro provider!</p></div>';
       return;
     }
-
     const signals = [];
-    for (let i = total; i >= Math.max(1, total - 19); i--) {
+    for (let i = total; i >= Math.max(1, total-19); i--) {
       try { signals.push(await contract.getSignal(i)); } catch {}
     }
-
     list.innerHTML = "";
-    for (const sig of signals) {
-      list.appendChild(buildSignalCard(sig));
-    }
-  } catch (e) {
-    list.innerHTML = `<div class="empty"><p style="color:var(--red)">Erro ao carregar sinais: ${e.message}</p></div>`;
+    for (const sig of signals) list.appendChild(buildSignalCard(sig));
+  } catch(e) {
+    list.innerHTML = `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
   }
 }
 
 function buildSignalCard(sig) {
-  const isOpen    = sig.status === 0;
-  const isLoss    = sig.status === 2;
-  const isExpired = sig.status === 3;
-  const isLong    = sig.direction === 0;
-  const pool      = sig.providerStake.add(sig.followersStake);
-  const expires   = new Date(sig.createdAt.toNumber() * 1000 + 7 * 86400000);
+  const isOpen     = sig.status === 0;
+  const isLoss     = sig.status === 2;
+  const isExpired  = sig.status === 3;
+  const isLong     = sig.direction === 0;
+  const pool       = sig.providerStake.add(sig.followersStake);
+  const expires    = new Date(sig.createdAt.toNumber()*1000 + 7*86400000);
   const isProvider = userAddress && sig.provider.toLowerCase() === userAddress.toLowerCase();
   const rsiColor   = sig.rsi < 30 ? "var(--green)" : sig.rsi > 70 ? "var(--red)" : "var(--yellow)";
 
@@ -504,12 +826,10 @@ function buildSignalCard(sig) {
     <div class="card-header">
       <div>
         <div class="pair">${sig.pair}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px">
-          Provider: ${sig.provider.slice(0,6)}...${sig.provider.slice(-4)}
-        </div>
+        <div class="provider-addr">${sig.provider.slice(0,6)}...${sig.provider.slice(-4)}</div>
       </div>
-      <div style="display:flex;gap:6px;flex-direction:column;align-items:flex-end">
-        <span class="badge ${isLong ? "long" : "short"}">${DIR_LABEL[sig.direction]}</span>
+      <div class="badges">
+        <span class="badge ${isLong?"long":"short"}">${DIR_LABEL[sig.direction]}</span>
         <span class="badge ${STATUS_CLASS[sig.status]}">${STATUS_LABEL[sig.status]}</span>
       </div>
     </div>
@@ -529,43 +849,26 @@ function buildSignalCard(sig) {
       </div>
     </div>
 
-    <div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-        <span style="color:var(--muted)">RSI: <b style="color:${rsiColor}">${sig.rsi}</b></span>
-        <span style="color:var(--muted)">Pool: <b style="color:var(--text)">${fmtNative(pool)}</b></span>
+    <div class="rsi-row">
+      <div class="rsi-header">
+        <span>RSI <b style="color:${rsiColor}">${sig.rsi}</b></span>
+        <span>Pool <b style="color:var(--text)">${fmtNative(pool)}</b></span>
       </div>
       <div class="rsi-bar"><div class="rsi-fill" style="width:${sig.rsi}%;background:${rsiColor}"></div></div>
     </div>
 
     <div class="card-meta">
-      <span>Stake provider: <b>${fmtNative(sig.providerStake)}</b></span>
+      <span>Stake: <b>${fmtNative(sig.providerStake)}</b></span>
       ${isOpen
         ? `<span>Expira: <b>${expires.toLocaleDateString("pt-BR")}</b></span>`
-        : `<span>Resolvido: <b>${new Date(sig.resolvedAt.toNumber()*1000).toLocaleDateString("pt-BR")}</b></span>`
-      }
+        : `<span>Resolvido: <b>${new Date(sig.resolvedAt.toNumber()*1000).toLocaleDateString("pt-BR")}</b></span>`}
     </div>
 
     <div class="card-actions">
-      ${isOpen && !isProvider ? `
-        <button class="btn btn-primary" onclick="openFollowModal(${sig.id}, '${sig.pair}', ${sig.direction})">
-          Seguir Sinal
-        </button>
-      ` : ""}
-      ${isOpen ? `
-        <button class="btn btn-outline" onclick="resolveOracle(${sig.id})">
-          Verificar Oracle
-        </button>
-      ` : ""}
-      ${isLoss ? `
-        <button class="btn btn-green" onclick="claimReward(${sig.id})">
-          Resgatar Recompensa
-        </button>
-      ` : ""}
-      ${isExpired ? `
-        <button class="btn btn-outline" onclick="claimExpired(${sig.id})">
-          Recuperar Stake
-        </button>
-      ` : ""}
+      ${isOpen && !isProvider ? `<button class="btn btn-primary" onclick="openFollowModal(${sig.id},'${sig.pair}',${sig.direction})">Seguir Sinal</button>` : ""}
+      ${isOpen ? `<button class="btn btn-outline" onclick="resolveOracle(${sig.id})">Verificar Oracle</button>` : ""}
+      ${isLoss    ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar Recompensa</button>` : ""}
+      ${isExpired ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar Stake</button>` : ""}
     </div>
   `;
   return div;
@@ -601,7 +904,6 @@ async function confirmFollow() {
 // ══════════════════════════════════════════════
 async function createSignal() {
   if (!userAddress) return showAlert("Conecte a carteira primeiro", "error");
-
   const pair      = document.getElementById("f-pair").value;
   const direction = parseInt(document.getElementById("f-direction").value);
   const entry     = parseFloat(document.getElementById("f-entry").value);
@@ -610,33 +912,27 @@ async function createSignal() {
   const rsi       = parseInt(document.getElementById("f-rsi").value);
   const stake     = document.getElementById("f-stake").value;
 
-  if (!entry || !tp || !sl || isNaN(rsi) || !stake) return showAlert("Preencha todos os campos", "error");
-  if (parseFloat(stake) < 0.005) return showAlert(`Stake mínimo: 0.005 ${currentNetwork?.currency}`, "error");
-  if (rsi < 0 || rsi > 100) return showAlert("RSI deve ser entre 0 e 100", "error");
+  if (!entry||!tp||!sl||isNaN(rsi)||!stake) return showAlert("Preencha todos os campos", "error");
+  if (parseFloat(stake)<0.005) return showAlert(`Stake mínimo: 0.005 ${currentNetwork?.currency}`, "error");
+  if (rsi<0||rsi>100) return showAlert("RSI deve ser entre 0 e 100", "error");
 
-  if (direction === 0) {
-    if (tp <= entry) return showAlert("LONG: Take Profit deve ser maior que a entrada", "error");
-    if (sl >= entry) return showAlert("LONG: Stop Loss deve ser menor que a entrada", "error");
+  if (direction===0) {
+    if (tp<=entry) return showAlert("LONG: Take Profit deve ser maior que a entrada", "error");
+    if (sl>=entry) return showAlert("LONG: Stop Loss deve ser menor que a entrada", "error");
   } else {
-    if (tp >= entry) return showAlert("SHORT: Take Profit deve ser menor que a entrada", "error");
-    if (sl <= entry) return showAlert("SHORT: Stop Loss deve ser maior que a entrada", "error");
+    if (tp>=entry) return showAlert("SHORT: Take Profit deve ser menor que a entrada", "error");
+    if (sl<=entry) return showAlert("SHORT: Stop Loss deve ser maior que a entrada", "error");
   }
 
   try {
     showAlert("Aguardando confirmação na carteira...", "info");
-    const tx = await contract.createSignal(
-      pair, direction,
-      toPrice(entry), toPrice(tp), toPrice(sl), rsi,
-      { value: ethers.utils.parseEther(stake) }
-    );
+    const tx = await contract.createSignal(pair, direction, toPrice(entry), toPrice(tp), toPrice(sl), rsi, { value: ethers.utils.parseEther(stake) });
     showAlert("Transação enviada. Aguardando confirmação...", "info");
     await tx.wait();
     showAlert("Sinal criado com sucesso!", "success");
     await loadStats();
     switchTab("sinais");
-  } catch (e) {
-    showAlert(e.reason || e.message || "Erro ao criar sinal", "error");
-  }
+  } catch(e) { showAlert(e.reason||e.message||"Erro ao criar sinal", "error"); }
 }
 
 // ══════════════════════════════════════════════
@@ -651,112 +947,93 @@ async function followSignal(signalId, stake) {
     showAlert(`Seguindo sinal #${signalId}!`, "success");
     await loadStats();
     await loadSignals();
-  } catch (e) {
-    showAlert(e.reason || e.message || "Erro ao seguir sinal", "error");
-  }
+  } catch(e) { showAlert(e.reason||e.message||"Erro ao seguir sinal", "error"); }
 }
 
 // ══════════════════════════════════════════════
-// RESOLVER POR ORACLE
+// RESOLVER
 // ══════════════════════════════════════════════
 async function resolveOracle(signalId) {
   try {
-    showAlert(`Verificando preço Chainlink para o sinal #${signalId}...`, "info");
+    showAlert(`Verificando Chainlink para o sinal #${signalId}...`, "info");
     const tx = await contract.resolveByOracle(signalId);
     await tx.wait();
     showAlert(`Sinal #${signalId} resolvido!`, "success");
     await loadSignals();
-  } catch (e) {
-    const msg = e.reason || e.message || "";
-    if (msg.includes("nao atingido")) showAlert("TP/SL ainda não foi atingido — o sinal continua aberto.", "info");
-    else showAlert(msg || "Erro ao verificar oracle", "error");
+  } catch(e) {
+    const msg = e.reason||e.message||"";
+    if (msg.includes("nao atingido")) showAlert("TP/SL ainda não atingido — sinal continua aberto.", "info");
+    else showAlert(msg||"Erro ao verificar oracle", "error");
   }
 }
 
 // ══════════════════════════════════════════════
-// CLAIM REWARD / EXPIRED
+// CLAIM
 // ══════════════════════════════════════════════
 async function claimReward(signalId) {
   try {
     showAlert("Resgatando recompensa...", "info");
-    const tx = await contract.claimReward(signalId);
-    await tx.wait();
-    showAlert("Recompensa creditada! Vá em Sacar para retirar.", "success");
+    await (await contract.claimReward(signalId)).wait();
+    showAlert("Recompensa creditada! Vá em Sacar.", "success");
     await loadWithdrawal();
-  } catch (e) {
-    showAlert(e.reason || e.message || "Erro ao resgatar", "error");
-  }
+  } catch(e) { showAlert(e.reason||e.message||"Erro ao resgatar", "error"); }
 }
 
 async function claimExpired(signalId) {
   try {
     showAlert("Recuperando stake...", "info");
-    const tx = await contract.claimExpired(signalId);
-    await tx.wait();
-    showAlert("Stake recuperado! Vá em Sacar para retirar.", "success");
+    await (await contract.claimExpired(signalId)).wait();
+    showAlert("Stake recuperado! Vá em Sacar.", "success");
     await loadWithdrawal();
-  } catch (e) {
-    showAlert(e.reason || e.message || "Erro ao recuperar stake", "error");
-  }
+  } catch(e) { showAlert(e.reason||e.message||"Erro ao recuperar stake", "error"); }
 }
 
 // ══════════════════════════════════════════════
-// POSIÇÕES DO USUÁRIO (limite 50 sinais)
+// POSIÇÕES (últimos 50 sinais)
 // ══════════════════════════════════════════════
 async function loadPositions() {
-  if (!contract || !userAddress) return;
+  if (!contract||!userAddress) return;
   const list = document.getElementById("positions-list");
   list.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
   try {
-    const total = (await contract.totalSignals()).toNumber();
-    const limit = Math.min(total, 50);
+    const total   = (await contract.totalSignals()).toNumber();
+    const limit   = Math.min(total, 50);
     const positions = [];
-
-    for (let i = total; i > total - limit; i--) {
+    for (let i = total; i > total-limit; i--) {
       try {
         const pos = await contract.getPosition(i, userAddress);
-        if (pos.amount.gt(0)) {
-          const sig = await contract.getSignal(i);
-          positions.push({ sig, pos });
-        }
+        if (pos.amount.gt(0)) { const sig = await contract.getSignal(i); positions.push({sig,pos}); }
       } catch {}
     }
-
     if (positions.length === 0) {
       list.innerHTML = '<div class="empty"><div class="empty-icon">📂</div><p>Você não está seguindo nenhum sinal nos últimos 50.</p></div>';
       return;
     }
-
     list.innerHTML = "";
-    for (const { sig, pos } of positions) {
+    for (const {sig, pos} of positions) {
       const div = document.createElement("div");
       div.className = "position-row";
-      const canClaim = (sig.status === 2 || sig.status === 3) && !pos.claimed;
-      const statusColor = sig.status === 1 ? "var(--green)" : sig.status === 2 ? "var(--red)" : sig.status === 3 ? "var(--yellow)" : "var(--primary)";
+      const canClaim   = (sig.status===2||sig.status===3) && !pos.claimed;
+      const statusColor = sig.status===1?"var(--green)":sig.status===2?"var(--red)":sig.status===3?"var(--yellow)":"var(--primary)";
       div.innerHTML = `
         <div class="position-info">
-          <div class="pair-label">
-            ${sig.pair}
-            <span class="badge ${sig.direction === 0 ? "long" : "short"}" style="font-size:11px">${DIR_LABEL[sig.direction]}</span>
-          </div>
+          <div class="pair-label">${sig.pair} <span class="badge ${sig.direction===0?"long":"short"}" style="font-size:10px">${DIR_LABEL[sig.direction]}</span></div>
           <div class="pos-detail">
             Stake: <b>${fmtNative(pos.amount)}</b> &nbsp;·&nbsp;
-            Status: <b style="color:${statusColor}">${STATUS_LABEL[sig.status]}</b>
-            ${pos.claimed ? ' &nbsp;·&nbsp; <span style="color:var(--green)">✓ Resgatado</span>' : ""}
+            <b style="color:${statusColor}">${STATUS_LABEL[sig.status]}</b>
+            ${pos.claimed?' &nbsp;·&nbsp; <span style="color:var(--green)">✓ Resgatado</span>':""}
           </div>
         </div>
         <div>
-          ${canClaim && sig.status === 2 ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar</button>` : ""}
-          ${canClaim && sig.status === 3 ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar</button>` : ""}
-          ${!canClaim && sig.status === 0 ? `<span style="color:var(--muted);font-size:13px">Em aberto</span>` : ""}
-          ${sig.status === 1 ? `<span style="color:var(--red);font-size:13px">Provider ganhou</span>` : ""}
-          ${pos.claimed ? `<span style="color:var(--green);font-size:13px">✓</span>` : ""}
-        </div>
-      `;
+          ${canClaim&&sig.status===2?`<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar</button>`:""}
+          ${canClaim&&sig.status===3?`<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar</button>`:""}
+          ${!canClaim&&sig.status===0?`<span style="color:var(--muted);font-size:12px">Em aberto</span>`:""}
+          ${sig.status===1?`<span style="color:var(--red);font-size:12px">Provider ganhou</span>`:""}
+          ${pos.claimed?`<span style="color:var(--green);font-size:13px">✓</span>`:""}
+        </div>`;
       list.appendChild(div);
     }
-  } catch (e) {
+  } catch(e) {
     list.innerHTML = `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
   }
 }
@@ -765,12 +1042,11 @@ async function loadPositions() {
 // SACAR
 // ══════════════════════════════════════════════
 async function loadWithdrawal() {
-  if (!contract || !userAddress) return;
+  if (!contract||!userAddress) return;
   try {
     const pending   = await contract.pendingWithdrawal(userAddress);
-    const formatted = parseFloat(ethers.utils.formatEther(pending)).toFixed(4);
     const c         = currentNetwork?.currency ?? "";
-    document.getElementById("pending-amount").textContent = `${formatted} ${c}`;
+    document.getElementById("pending-amount").textContent = `${parseFloat(ethers.utils.formatEther(pending)).toFixed(4)} ${c}`;
     document.getElementById("btn-withdraw").disabled = pending.isZero();
   } catch {}
 }
@@ -778,13 +1054,10 @@ async function loadWithdrawal() {
 async function withdraw() {
   try {
     showAlert("Iniciando saque...", "info");
-    const tx = await contract.withdraw();
-    await tx.wait();
+    await (await contract.withdraw()).wait();
     showAlert("Saque realizado com sucesso!", "success");
     await loadWithdrawal();
-  } catch (e) {
-    showAlert(e.reason || e.message || "Erro ao sacar", "error");
-  }
+  } catch(e) { showAlert(e.reason||e.message||"Erro ao sacar", "error"); }
 }
 </script>
 </body>
