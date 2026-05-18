@@ -34,7 +34,7 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 npm install
 ```
 
-## Testes (51/51 passando)
+## Testes (53/53 passando)
 
 ```bash
 npx hardhat test
@@ -55,6 +55,8 @@ npx hardhat test
 **createSignal()**
 - Cria sinal LONG e adiciona à lista de abertos
 - Cobra taxa de 1.5% para a treasury
+- Rejeita LONG com TP abaixo do preço atual do oracle (exploit WIN instantâneo)
+- Rejeita SHORT com TP acima do preço atual do oracle (exploit WIN instantâneo)
 
 **resolveByOracle()**
 - WIN: qualquer pessoa resolve quando preço atinge TP
