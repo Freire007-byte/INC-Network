@@ -310,6 +310,12 @@
       display:flex; gap:8px; padding:10px 18px 16px 22px; position:relative; z-index:1;
     }
 
+    /* Card entrance animation */
+    @keyframes card-enter {
+      from { opacity: 0; transform: translateY(22px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+
     /* Oracle sparklines */
     .oracle-spark { display:block; width:90px; height:24px; margin:8px auto 6px; }
     .oracle-card:hover .oracle-spark path { filter:drop-shadow(0 0 3px currentColor); }
@@ -533,26 +539,41 @@
     .pair-label { font-weight: 700; margin-bottom: 5px; font-family: 'JetBrains Mono', monospace; }
     .pos-detail { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 
-    /* ── SACAR ── */
-    .withdraw-wrap { max-width: 460px; }
-    .withdraw-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 40px; text-align: center;
+    /* ── SACAR — Premium Balance Card ── */
+    .withdraw-wrap { max-width: 480px; }
+    .balance-card {
+      background: linear-gradient(145deg, #090b14 0%, #0c0f1c 60%, #080b13 100%);
+      border: 1px solid #1e2236; border-radius: 22px; padding: 30px;
       position: relative; overflow: hidden;
     }
-    .withdraw-card::before {
+    .balance-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, #00ffaa, #00e5ff);
+      background: linear-gradient(90deg, #7c6dff, #00e5ff, #00ffaa, #00e5ff, #7c6dff);
+      background-size: 200% 100%; animation: shimmer-line 4s linear infinite;
     }
-    .withdraw-label { font-size: 13px; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
-    .withdraw-amount {
-      font-size: 48px; font-weight: 800; margin: 16px 0;
-      font-family: 'JetBrains Mono', monospace;
-      background: linear-gradient(135deg, var(--green), var(--cyan));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
+    @keyframes shimmer-line { to { background-position: -200% 0; } }
+    .balance-card::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 350px 200px at 110% 0%, #00e5ff06, transparent 70%),
+                  radial-gradient(ellipse 250px 150px at -10% 100%, #7c6dff06, transparent 70%);
     }
-    .withdraw-desc { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+    .bc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; position: relative; z-index: 1; }
+    .bc-logo { font-size: 15px; font-weight: 800; letter-spacing: 2px; color: var(--cyan); text-shadow: 0 0 18px #00e5ff50; font-family: 'JetBrains Mono', monospace; }
+    .bc-net  { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 4px 10px; border-radius: 20px; background: #ffcc0010; border: 1px solid #ffcc0025; color: var(--yellow); font-family: 'JetBrains Mono', monospace; }
+    .bc-body { position: relative; z-index: 1; margin-bottom: 24px; }
+    .bc-label { font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
+    .bc-amount { font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #00ffaa, #00e5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .bc-currency-lbl { font-size: 16px; font-weight: 700; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 6px; }
+    .bc-divider { height: 1px; background: linear-gradient(90deg, transparent, #ffffff0a, transparent); margin: 20px 0; position: relative; z-index: 1; }
+    .bc-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; position: relative; z-index: 1; }
+    .bc-addr { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .bc-addr span { color: var(--text); }
+    .bc-info { font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; position: relative; z-index: 1; }
+    .bc-dots { letter-spacing: 3px; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+
+    /* ── EMPTY ── */
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-icon { font-size: 44px; margin-bottom: 12px; }
 
     /* ── EMPTY ── */
     .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
@@ -1253,14 +1274,34 @@
   <!-- SACAR -->
   <div id="tab-sacar" class="section">
     <div class="withdraw-wrap">
-      <div class="withdraw-card">
-        <div class="withdraw-label">Saldo disponível para saque</div>
-        <div class="withdraw-amount" id="pending-amount">0.0000</div>
-        <div class="withdraw-desc">
-          Recompensas de sinais LOSS e<br>stakes devolvidos de sinais EXPIRED
+      <div class="balance-card">
+        <div class="bc-header">
+          <span class="bc-logo">◈ INC NETWORK</span>
+          <span class="bc-net" id="bc-network-label">TESTNET</span>
+        </div>
+        <div class="bc-body">
+          <div class="bc-label">Saldo disponível para saque</div>
+          <div class="bc-amount" id="pending-amount">0.0000</div>
+          <div class="bc-currency-lbl" id="btn-withdraw-currency">ETH</div>
+        </div>
+        <div class="bc-divider"></div>
+        <div class="bc-footer">
+          <div>
+            <div class="bc-dots">•••• •••• •••• </div>
+            <div class="bc-addr" style="margin-top:4px">
+              <span id="bc-addr-display">—</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="bc-label">Rede</div>
+            <div style="font-size:12px;color:var(--text);font-family:'JetBrains Mono',monospace" id="bc-chain-name">—</div>
+          </div>
+        </div>
+        <div class="bc-info">
+          Recompensas de sinais <b style="color:var(--red)">LOSS</b> e stakes devolvidos de sinais <b style="color:var(--yellow)">EXPIRADOS</b> ficam disponíveis aqui.
         </div>
         <button class="btn-submit" onclick="withdraw()" id="btn-withdraw" disabled>
-          Sacar <span id="btn-withdraw-currency"></span>
+          Sacar agora <span id="bc-withdraw-label"></span>
         </button>
       </div>
     </div>
@@ -1441,6 +1482,11 @@ function updateCurrencyLabels() {
   document.getElementById("label-provider-stake").textContent = `Stake (${c}) — mínimo 0.005`;
   document.getElementById("label-follower-stake").textContent  = `Stake (${c}) — mínimo 0.001`;
   document.getElementById("btn-withdraw-currency").textContent = c;
+  const wl = document.getElementById("bc-withdraw-label"); if (wl) wl.textContent = c;
+  const nn = document.getElementById("bc-network-label");
+  if (nn) { nn.textContent = currentNetwork?.testnet ? "TESTNET" : "MAINNET"; nn.style.color = currentNetwork?.testnet ? "var(--yellow)" : "var(--green)"; }
+  const cn = document.getElementById("bc-chain-name"); if (cn) cn.textContent = currentNetwork?.name ?? "—";
+  const ad = document.getElementById("bc-addr-display"); if (ad && userAddress) ad.innerHTML = `<span>${userAddress.slice(0,8)}…${userAddress.slice(-6)}</span>`;
 }
 
 function updateNetworkBadge() {
@@ -1577,13 +1623,27 @@ async function doConnect(rawProvider) {
 // ══════════════════════════════════════════════
 // STATS
 // ══════════════════════════════════════════════
+function animCount(el, endVal, decimals, suffix) {
+  const start = 0, dur = 900, step = 16;
+  let t = 0;
+  const timer = setInterval(() => {
+    t += step;
+    const ease = 1 - Math.pow(1 - Math.min(t/dur, 1), 3);
+    el.textContent = (start + (endVal - start) * ease).toFixed(decimals) + suffix;
+    if (t >= dur) { el.textContent = endVal.toFixed(decimals) + suffix; clearInterval(timer); }
+  }, step);
+}
+
 async function loadStats() {
   try {
     const [total, vol, fees] = await contract.networkStats();
     const c = currentNetwork?.currency ?? "ETH";
-    document.getElementById("stat-signals").textContent = total.toString();
-    document.getElementById("stat-volume").textContent  = parseFloat(ethers.utils.formatEther(vol)).toFixed(3) + " " + c;
-    document.getElementById("stat-fees").textContent    = parseFloat(ethers.utils.formatEther(fees)).toFixed(4) + " " + c;
+    const sigEl  = document.getElementById("stat-signals");
+    const volEl  = document.getElementById("stat-volume");
+    const feeEl  = document.getElementById("stat-fees");
+    animCount(sigEl,  total.toNumber(), 0, "");
+    animCount(volEl,  parseFloat(ethers.utils.formatEther(vol)),  3, " " + c);
+    animCount(feeEl,  parseFloat(ethers.utils.formatEther(fees)), 4, " " + c);
   } catch {}
 }
 
@@ -1645,10 +1705,12 @@ function applySignalFilters() {
   }
   list.innerHTML = "";
   openSignalsMap = {};
-  for (const sig of filtered) {
-    list.appendChild(buildSignalCard(sig));
+  filtered.forEach((sig, i) => {
+    const card = buildSignalCard(sig);
+    card.style.animation = `card-enter .42s cubic-bezier(.22,.61,.36,1) ${i * 0.06}s both`;
+    list.appendChild(card);
     if (sig.status === 0) openSignalsMap[sig.id.toString()] = sig;
-  }
+  });
   refreshLiveProgress();
 }
 
