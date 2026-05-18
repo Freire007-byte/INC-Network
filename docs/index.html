@@ -857,6 +857,94 @@
       flex: 1; min-height: 0; position: relative;
     }
 
+    /* ── TOAST NOTIFICATIONS ── */
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      display: flex; flex-direction: column; gap: 10px;
+      pointer-events: none; align-items: flex-end;
+    }
+    .toast {
+      min-width: 280px; max-width: 400px;
+      background: rgba(10,11,20,.97); backdrop-filter: blur(20px);
+      border-radius: 13px; padding: 13px 16px;
+      font-size: 13px; font-weight: 600;
+      pointer-events: all; display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.6);
+      animation: toast-in .3s cubic-bezier(.22,.61,.36,1) both;
+    }
+    .toast.exit { animation: toast-out .25s ease forwards; }
+    .toast.success { border: 1px solid #00ffaa35; color: var(--green); }
+    .toast.error   { border: 1px solid #ff3d5735; color: var(--red); }
+    .toast.info    { border: 1px solid #7c6dff35; color: var(--primary); }
+    .toast-icon { font-size: 16px; flex-shrink: 0; }
+    .toast-msg { flex: 1; line-height: 1.4; }
+    .toast-close {
+      margin-left: auto; background: none; border: none; color: var(--muted);
+      font-size: 14px; cursor: pointer; padding: 0 2px; line-height: 1; flex-shrink: 0;
+    }
+    .toast-close:hover { color: var(--text); }
+    @keyframes toast-in  { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes toast-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(30px); opacity: 0; } }
+
+    /* ── SKELETON LOADING ── */
+    .skel-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 22px;
+      animation: card-enter .42s cubic-bezier(.22,.61,.36,1) both;
+    }
+    .skel-line {
+      height: 14px; border-radius: 7px; margin-bottom: 10px;
+      background: linear-gradient(90deg, #ffffff04 25%, #ffffff09 50%, #ffffff04 75%);
+      background-size: 200% 100%;
+      animation: skel-shimmer 1.6s ease-in-out infinite;
+    }
+    .skel-line.w80 { width: 80%; } .skel-line.w60 { width: 60%; }
+    .skel-line.w40 { width: 40%; } .skel-line.h8  { height: 8px; }
+    .skel-line.h20 { height: 20px; margin-bottom: 6px; }
+    @keyframes skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── SORT BAR ── */
+    .sort-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .sort-label { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .sort-select {
+      background: var(--card2); border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
+      outline: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; transition: border-color .2s;
+    }
+    .sort-select:focus { border-color: #7c6dff50; }
+    .sort-select option { background: #12141a; }
+
+    /* ── BTN LOADING STATE ── */
+    .btn.loading { opacity: .65; pointer-events: none; }
+    .btn-submit.loading { opacity: .65; pointer-events: none; }
+
+    /* ── COPY BUTTON ── */
+    .btn-copy {
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 7px; padding: 3px 9px; font-size: 10px; font-weight: 700;
+      cursor: pointer; transition: all .2s; font-family: 'JetBrains Mono', monospace;
+      letter-spacing: .5px;
+    }
+    .btn-copy:hover { color: var(--text); border-color: #7c6dff40; }
+    .btn-copy.copied { color: var(--green); border-color: #00ffaa40; }
+
+    /* ── FOLLOWERS BADGE ── */
+    .sig-followers { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .sig-followers.has { color: var(--cyan); }
+
+    /* ── RSI MINI ── */
+    .rsi-mini { display: inline-flex; align-items: center; gap: 5px; }
+    .rsi-mini-track { width: 32px; height: 3px; background: #ffffff0a; border-radius: 2px; overflow: hidden; display: inline-block; vertical-align: middle; }
+    .rsi-mini-fill  { height: 100%; border-radius: 2px; }
+
+    /* ── SIGNAL SHARE BTN ── */
+    .btn-share {
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 8px; padding: 7px 11px; font-size: 11px; cursor: pointer;
+      transition: all .2s; font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    }
+    .btn-share:hover { border-color: #7c6dff40; color: var(--primary); }
+
     /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -871,6 +959,11 @@
       .oracle-strip { gap: 8px; }
       .oracle-card { min-width: 120px; padding: 14px 10px; }
       .oracle-px { font-size: 16px; }
+      #toast-container { bottom: 12px; right: 12px; left: 12px; align-items: stretch; }
+      .toast { min-width: unset; }
+      .sort-bar { flex-wrap: wrap; }
+      .balance-card { padding: 20px; }
+      .bc-amount { font-size: 38px; }
     }
 
     /* ── NEURAL CANVAS ── */
@@ -1075,8 +1168,8 @@
   </div>
 </header>
 
-<!-- ── ALERT ── -->
-<div id="alert"></div>
+<!-- ── ALERT (legacy, hidden) ── -->
+<div id="alert" style="display:none"></div>
 
 <!-- ══════════════════════════════════════════ -->
 <!-- HERO                                       -->
@@ -1247,6 +1340,16 @@
         </div>
         <span class="signals-count" id="signals-count"></span>
       </div>
+      <!-- Sort bar -->
+      <div class="sort-bar">
+        <span class="sort-label">Ordenar:</span>
+        <select class="sort-select" id="sig-sort" onchange="applySignalFilters()">
+          <option value="newest">Mais recentes</option>
+          <option value="progress">Maior progresso → TP</option>
+          <option value="pool">Maior pool</option>
+          <option value="expiry">Expira primeiro</option>
+        </select>
+      </div>
     </div>
     <div id="signals-list" class="grid">
       <div class="loading"><div class="spinner"></div></div>
@@ -1365,8 +1468,9 @@
         <div class="bc-footer">
           <div>
             <div class="bc-dots">•••• •••• •••• </div>
-            <div class="bc-addr" style="margin-top:4px">
+            <div class="bc-addr" style="margin-top:4px;display:flex;align-items:center;gap:8px">
               <span id="bc-addr-display">—</span>
+              <button class="btn-copy" id="btn-copy-addr" onclick="copyAddress()">COPIAR</button>
             </div>
           </div>
           <div style="text-align:right">
@@ -1487,6 +1591,9 @@
   </div>
 </div>
 
+<!-- ── TOAST CONTAINER ── -->
+<div id="toast-container"></div>
+
 <script>
 // ══════════════════════════════════════════════
 // CONFIGURAÇÃO MULTI-REDE
@@ -1546,12 +1653,45 @@ const fmtNative = n => `${parseFloat(ethers.utils.formatEther(n)).toFixed(4)} ${
 const toPrice   = v => ethers.BigNumber.from(Math.round(parseFloat(v)*1e8).toString());
 const escHtml   = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
-function showAlert(msg, type = "info") {
-  const el = document.getElementById("alert");
-  el.textContent = msg;
-  el.className = type;
-  el.style.display = "block";
-  setTimeout(() => el.style.display = "none", 6000);
+// ── TOAST SYSTEM ──
+let _toastId = 0;
+function showAlert(msg, type = "info") { showToast(msg, type); }
+function showToast(msg, type = "info", duration = 5000) {
+  const container = document.getElementById("toast-container");
+  const icons = { success: "✓", error: "✕", info: "◈" };
+  const id = ++_toastId;
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.id = `toast-${id}`;
+  el.innerHTML = `<span class="toast-icon">${icons[type]||"◈"}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="dismissToast(${id})">✕</button>`;
+  container.appendChild(el);
+  const timer = setTimeout(() => dismissToast(id), duration);
+  el._timer = timer;
+}
+function dismissToast(id) {
+  const el = document.getElementById(`toast-${id}`);
+  if (!el) return;
+  clearTimeout(el._timer);
+  el.classList.add("exit");
+  setTimeout(() => el.remove(), 280);
+}
+
+// ── COPY ADDRESS ──
+function copyAddress() {
+  if (!userAddress) return;
+  navigator.clipboard.writeText(userAddress).then(() => {
+    const btn = document.getElementById("btn-copy-addr");
+    if (!btn) return;
+    btn.textContent = "COPIADO!"; btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "COPIAR"; btn.classList.remove("copied"); }, 2000);
+  }).catch(() => showToast("Não foi possível copiar", "error"));
+}
+
+// ── COPY SIGNAL URL ──
+function shareSignal(id) {
+  const url = `${window.location.origin}${window.location.pathname}#sinal-${id}`;
+  navigator.clipboard.writeText(url).then(() => showToast(`Link do sinal #${id} copiado!`, "success"))
+    .catch(() => showToast("Não foi possível copiar o link", "error"));
 }
 
 function updateCurrencyLabels() {
@@ -1638,7 +1778,7 @@ async function connectWith(type) {
     if (isMobile) {
       window.location.href = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
     } else {
-      showAlert("No celular: abra o browser interno da sua carteira e acesse este site.", "info");
+      showToast("No celular: abra o browser interno da sua carteira e acesse este site.", "info");
     }
     return;
   }
@@ -1651,7 +1791,7 @@ async function connectWith(type) {
       coinbase: "https://www.coinbase.com/wallet",
     };
     window.open(installs[type] || "https://metamask.io/download/", "_blank");
-    return showAlert("Carteira não detectada. Instale e recarregue a página.", "error");
+    return showToast("Carteira não detectada. Instale e recarregue a página.", "error");
   }
 
   await doConnect(raw);
@@ -1666,9 +1806,9 @@ async function doConnect(rawProvider) {
     currentNetwork = NETWORKS[net.chainId];
 
     if (!currentNetwork)
-      return showAlert(`Rede não suportada (Chain ID: ${net.chainId}). Mude para Sepolia ou Polygon.`, "error");
+      return showToast(`Rede não suportada (Chain ID: ${net.chainId}). Mude para Sepolia ou Polygon.`, "error");
     if (!currentNetwork.contract)
-      return showAlert(`Contrato ainda não deployado na ${currentNetwork.name}. Aguarde o deploy.`, "error");
+      return showToast(`Contrato ainda não deployado na ${currentNetwork.name}. Aguarde o deploy.`, "error");
 
     provider    = web3Provider;
     signer      = web3Provider.getSigner();
@@ -1687,13 +1827,13 @@ async function doConnect(rawProvider) {
     await loadStats();
     await loadSignals();
 
-    showAlert(`Conectado na ${currentNetwork.name}!`, "success");
+    showToast(`Conectado na ${currentNetwork.name}!`, "success");
 
     rawProvider.on?.("accountsChanged", () => location.reload());
     rawProvider.on?.("chainChanged",    () => location.reload());
   } catch(e) {
-    if (e.code === 4001) return showAlert("Conexão recusada pelo usuário.", "error");
-    showAlert(e.message || "Erro ao conectar", "error");
+    if (e.code === 4001) return showToast("Conexão recusada pelo usuário.", "error");
+    showToast(e.message || "Erro ao conectar", "error");
   }
 }
 
@@ -1724,29 +1864,72 @@ async function loadStats() {
   } catch {}
 }
 
+// Auto-refresh stats every 30s
+setInterval(() => { if (contract) loadStats(); }, 30000);
+
 // ══════════════════════════════════════════════
 // SINAIS
 // ══════════════════════════════════════════════
+let followerCountsCache = {};
+
+function showSkeletonCards(n = 4) {
+  const list = document.getElementById("signals-list");
+  list.innerHTML = Array.from({length: n}, (_,i) => `
+    <div class="skel-card" style="animation-delay:${i*.08}s">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+        <div style="flex:1"><div class="skel-line h20 w60"></div><div class="skel-line h8 w40"></div></div>
+        <div style="width:80px"><div class="skel-line h20"></div></div>
+      </div>
+      <div class="skel-line w100"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+        <div class="skel-line h20"></div><div class="skel-line h20"></div><div class="skel-line h20"></div>
+      </div>
+      <div class="skel-line h8 w100"></div>
+      <div style="margin-top:14px;display:flex;gap:8px"><div class="skel-line h20 w60" style="flex:1"></div><div class="skel-line h20 w40" style="flex:1"></div></div>
+    </div>
+  `).join('');
+}
+
 async function loadSignals() {
   if (!contract) return;
-  const list = document.getElementById("signals-list");
-  list.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  showSkeletonCards(4);
   try {
     const total = (await contract.totalSignals()).toNumber();
     if (total === 0) {
       allSignalsCache = [];
-      list.innerHTML = '<div class="empty"><div class="empty-icon">📡</div><p>Nenhum sinal criado ainda.<br>Seja o primeiro provider!</p></div>';
+      document.getElementById("signals-list").innerHTML = '<div class="empty"><div class="empty-icon">📡</div><p>Nenhum sinal criado ainda.<br>Seja o primeiro provider!</p></div>';
       const c = document.getElementById("signals-count"); if (c) c.textContent = "0 sinais";
       return;
     }
     allSignalsCache = [];
-    for (let i = total; i >= Math.max(1, total-19); i--) {
-      try { allSignalsCache.push(await contract.getSignal(i)); } catch {}
-    }
+    const from = Math.max(1, total - 19);
+    const fetches = [];
+    for (let i = total; i >= from; i--) fetches.push(contract.getSignal(i).catch(() => null));
+    const results = await Promise.all(fetches);
+    allSignalsCache = results.filter(Boolean);
     applySignalFilters();
+    // Fetch follower counts lazily
+    fetchFollowerCounts();
   } catch(e) {
-    list.innerHTML = `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
+    document.getElementById("signals-list").innerHTML = `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
   }
+}
+
+async function fetchFollowerCounts() {
+  if (!contract || !allSignalsCache.length) return;
+  const openSigs = allSignalsCache.filter(s => s.status === 0);
+  await Promise.all(openSigs.map(async sig => {
+    try {
+      const fc = await contract.followerCount(sig.id);
+      const n  = fc.toNumber();
+      followerCountsCache[sig.id.toString()] = n;
+      const el = document.getElementById(`fc-${sig.id}`);
+      if (el) {
+        el.textContent = n > 0 ? `👥 ${n}` : "sem followers";
+        if (n > 0) el.classList.add("has");
+      }
+    } catch {}
+  }));
 }
 
 function filterPair(pair, btn) {
@@ -1767,11 +1950,43 @@ function filterDir(dir, btn) {
 
 let openSignalsMap = {};
 
+function calcProgressPct(sig) {
+  const sym = sig.pair.replace("/USDT","");
+  const d   = oraclePrices[sym];
+  if (!d) return 0;
+  const entry = sig.entryPrice.toNumber()  / 1e8;
+  const tp    = sig.targetPrice.toNumber() / 1e8;
+  const isLong = sig.direction === 0;
+  const moved  = isLong ? d.price - entry : entry - d.price;
+  const tpDist = isLong ? tp - entry : entry - tp;
+  if (tpDist <= 0) return 0;
+  return (moved / tpDist) * 100;
+}
+
 function applySignalFilters() {
   const list = document.getElementById("signals-list");
-  let filtered = allSignalsCache;
+  let filtered = [...allSignalsCache];
   if (sigFilterPair !== "ALL") filtered = filtered.filter(s => s.pair === sigFilterPair);
   if (sigFilterDir  !== "ALL") filtered = filtered.filter(s => sigFilterDir === "LONG" ? s.direction === 0 : s.direction === 1);
+
+  // Sort
+  const sortVal = document.getElementById("sig-sort")?.value || "newest";
+  if (sortVal === "progress") {
+    filtered.sort((a, b) => calcProgressPct(b) - calcProgressPct(a));
+  } else if (sortVal === "pool") {
+    filtered.sort((a, b) => {
+      const pa = a.providerStake.add(a.followersStake);
+      const pb = b.providerStake.add(b.followersStake);
+      return pb.gt(pa) ? 1 : -1;
+    });
+  } else if (sortVal === "expiry") {
+    filtered = filtered.filter(s => s.status === 0).concat(filtered.filter(s => s.status !== 0));
+    filtered.sort((a, b) => {
+      if (a.status !== 0 || b.status !== 0) return 0;
+      return a.createdAt.toNumber() - b.createdAt.toNumber();
+    });
+  }
+  // "newest" = default order (already descending by id)
 
   const countEl = document.getElementById("signals-count");
   if (countEl) countEl.textContent = `${filtered.length} sinal${filtered.length !== 1 ? "is" : ""}`;
@@ -1917,8 +2132,12 @@ function buildSignalCard(sig) {
     </div>` : ''}
 
     <div class="sig-foot">
-      <span>RSI <b>${sig.rsi}</b></span>
+      <span class="rsi-mini">
+        RSI <b style="color:${sig.rsi<30?'var(--green)':sig.rsi>70?'var(--red)':'var(--text)'}">${sig.rsi}</b>
+        <span class="rsi-mini-track"><span class="rsi-mini-fill" style="width:${sig.rsi}%;background:${sig.rsi<30?'var(--green)':sig.rsi>70?'var(--red)':'var(--yellow)'}"></span></span>
+      </span>
       <span>Pool <b>${fmtNative(pool)}</b></span>
+      <span class="sig-followers" id="fc-${sig.id}" data-id="${sig.id}">👥 —</span>
       ${isOpen
         ? `<span>Exp <b>${expires.toLocaleDateString('pt-BR')}</b></span>`
         : `<span>Res <b>${new Date(sig.resolvedAt.toNumber()*1000).toLocaleDateString('pt-BR')}</b></span>`}
@@ -1929,6 +2148,7 @@ function buildSignalCard(sig) {
       ${isOpen ? `<button class="btn btn-outline" onclick="resolveOracle(${sig.id})">Verificar Oracle</button>` : ''}
       ${isLoss    ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar Recompensa</button>` : ''}
       ${isExpired ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar Stake</button>` : ''}
+      <button class="btn-share" onclick="shareSignal(${sig.id})" title="Compartilhar">🔗</button>
     </div>
   `;
   return div;
@@ -2033,30 +2253,42 @@ async function createSignal() {
     if (sl<=entry) return showAlert("SHORT: Stop Loss deve ser maior que a entrada", "error");
   }
 
+  const submitBtn = document.querySelector("#tab-criar .btn-submit");
+  if (submitBtn) submitBtn.classList.add("loading");
   try {
-    showAlert("Aguardando confirmação na carteira...", "info");
+    showToast("Aguardando confirmação na carteira…", "info");
     const tx = await contract.createSignal(pair, direction, toPrice(entry), toPrice(tp), toPrice(sl), rsi, { value: ethers.utils.parseEther(stake) });
-    showAlert("Transação enviada. Aguardando confirmação...", "info");
+    showToast("TX enviada. Aguardando bloco…", "info");
     await tx.wait();
-    showAlert("Sinal criado com sucesso!", "success");
+    showToast("Sinal criado com sucesso!", "success");
     await loadStats();
     switchTab("sinais");
-  } catch(e) { showAlert(e.reason||e.message||"Erro ao criar sinal", "error"); }
+  } catch(e) {
+    showToast(e.reason||e.message||"Erro ao criar sinal", "error");
+  } finally {
+    if (submitBtn) submitBtn.classList.remove("loading");
+  }
 }
 
 // ══════════════════════════════════════════════
 // SEGUIR SINAL
 // ══════════════════════════════════════════════
 async function followSignal(signalId, stake) {
+  const confirmBtn = document.querySelector("#modal-overlay .btn-primary");
+  if (confirmBtn) confirmBtn.classList.add("loading");
   try {
-    showAlert("Aguardando confirmação na carteira...", "info");
+    showToast("Aguardando confirmação na carteira…", "info");
     const tx = await contract.followSignal(signalId, { value: ethers.utils.parseEther(stake) });
-    showAlert("Transação enviada. Aguardando confirmação...", "info");
+    showToast("TX enviada. Aguardando bloco…", "info");
     await tx.wait();
-    showAlert(`Seguindo sinal #${signalId}!`, "success");
+    showToast(`Seguindo sinal #${signalId}!`, "success");
     await loadStats();
     await loadSignals();
-  } catch(e) { showAlert(e.reason||e.message||"Erro ao seguir sinal", "error"); }
+  } catch(e) {
+    showToast(e.reason||e.message||"Erro ao seguir sinal", "error");
+  } finally {
+    if (confirmBtn) confirmBtn.classList.remove("loading");
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -2064,15 +2296,15 @@ async function followSignal(signalId, stake) {
 // ══════════════════════════════════════════════
 async function resolveOracle(signalId) {
   try {
-    showAlert(`Verificando Chainlink para o sinal #${signalId}...`, "info");
+    showToast(`Verificando Chainlink para o sinal #${signalId}…`, "info");
     const tx = await contract.resolveByOracle(signalId);
     await tx.wait();
-    showAlert(`Sinal #${signalId} resolvido!`, "success");
+    showToast(`Sinal #${signalId} resolvido!`, "success");
     await loadSignals();
   } catch(e) {
     const msg = e.reason||e.message||"";
-    if (msg.includes("nao atingido")) showAlert("TP/SL ainda não atingido — sinal continua aberto.", "info");
-    else showAlert(msg||"Erro ao verificar oracle", "error");
+    if (msg.includes("nao atingido")) showToast("TP/SL ainda não atingido — sinal continua aberto.", "info");
+    else showToast(msg||"Erro ao verificar oracle", "error");
   }
 }
 
@@ -2081,20 +2313,20 @@ async function resolveOracle(signalId) {
 // ══════════════════════════════════════════════
 async function claimReward(signalId) {
   try {
-    showAlert("Resgatando recompensa...", "info");
+    showToast("Resgatando recompensa…", "info");
     await (await contract.claimReward(signalId)).wait();
-    showAlert("Recompensa creditada! Vá em Sacar.", "success");
+    showToast("Recompensa creditada! Vá em Sacar.", "success");
     await loadWithdrawal();
-  } catch(e) { showAlert(e.reason||e.message||"Erro ao resgatar", "error"); }
+  } catch(e) { showToast(e.reason||e.message||"Erro ao resgatar", "error"); }
 }
 
 async function claimExpired(signalId) {
   try {
-    showAlert("Recuperando stake...", "info");
+    showToast("Recuperando stake…", "info");
     await (await contract.claimExpired(signalId)).wait();
-    showAlert("Stake recuperado! Vá em Sacar.", "success");
+    showToast("Stake recuperado! Vá em Sacar.", "success");
     await loadWithdrawal();
-  } catch(e) { showAlert(e.reason||e.message||"Erro ao recuperar stake", "error"); }
+  } catch(e) { showToast(e.reason||e.message||"Erro ao recuperar stake", "error"); }
 }
 
 // ══════════════════════════════════════════════
@@ -2233,12 +2465,18 @@ async function loadWithdrawal() {
 }
 
 async function withdraw() {
+  const btn = document.getElementById("btn-withdraw");
+  if (btn) btn.classList.add("loading");
   try {
-    showAlert("Iniciando saque...", "info");
+    showToast("Iniciando saque…", "info");
     await (await contract.withdraw()).wait();
-    showAlert("Saque realizado com sucesso!", "success");
+    showToast("Saque realizado com sucesso!", "success");
     await loadWithdrawal();
-  } catch(e) { showAlert(e.reason||e.message||"Erro ao sacar", "error"); }
+  } catch(e) {
+    showToast(e.reason||e.message||"Erro ao sacar", "error");
+  } finally {
+    if (btn) btn.classList.remove("loading");
+  }
 }
 
 // ══════════════════════════════════════════════
