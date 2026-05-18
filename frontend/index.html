@@ -9,17 +9,18 @@
   <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
   <style>
     :root {
-      --bg:       #050608;
-      --card:     #0d0e14;
-      --card2:    #111320;
-      --border:   #1a1d2e;
+      --bg:       #03040a;
+      --card:     #080a12;
+      --card2:    #0e1020;
+      --border:   #161928;
       --primary:  #7c6dff;
       --cyan:     #00e5ff;
       --green:    #00ffaa;
       --red:      #ff3d57;
+      --magenta:  #ff3d8a;
       --yellow:   #ffcc00;
-      --text:     #e8eaf6;
-      --muted:    #565870;
+      --text:     #dde1f7;
+      --muted:    #4a4e6a;
       --radius:   14px;
       --glow-p:   0 0 20px #7c6dff55;
       --glow-c:   0 0 20px #00e5ff44;
@@ -214,7 +215,104 @@
     .section.active { display: block; }
 
     /* ── CARDS ── */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+
+    /* ══════════════════════════════════════════
+       SIGNAL CARD V2 — Mission Briefing Style
+       ══════════════════════════════════════════ */
+    .sig-card {
+      position: relative; overflow: hidden;
+      background: var(--card); border-radius: 16px;
+      border: 1px solid var(--border);
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+    }
+    .sig-card::after {
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+      border-radius:16px 0 0 16px; pointer-events:none;
+    }
+    .sig-card.dir-long::after  { background:linear-gradient(180deg,#00e5ff,#7c6dff); box-shadow:0 0 14px #00e5ff50; }
+    .sig-card.dir-short::after { background:linear-gradient(180deg,#ff3d8a,#7c6dff); box-shadow:0 0 14px #ff3d8a50; }
+    .sig-card:hover { border-color:#7c6dff40; transform:translateY(-3px); box-shadow:0 12px 50px #00000070,0 0 30px #7c6dff0e; }
+
+    .sig-wave { position:absolute; top:0; right:0; width:55%; height:100%; pointer-events:none; }
+
+    .sig-head {
+      display:flex; justify-content:space-between; align-items:flex-start;
+      padding:18px 20px 10px 22px; position:relative; z-index:1;
+    }
+    .sig-pair { font-size:19px; font-weight:800; letter-spacing:-.5px; font-family:'JetBrains Mono',monospace; }
+    .sig-meta { font-size:10px; color:var(--muted); letter-spacing:1.5px; margin-top:3px; font-family:'JetBrains Mono',monospace; }
+    .sig-badges { display:flex; gap:6px; align-items:center; }
+    .sig-dir {
+      font-size:11px; font-weight:800; letter-spacing:.5px; padding:4px 10px;
+      border-radius:6px; font-family:'JetBrains Mono',monospace;
+    }
+    .sig-dir.long  { background:#00e5ff14; border:1px solid #00e5ff35; color:var(--cyan); }
+    .sig-dir.short { background:#ff3d8a14; border:1px solid #ff3d8a35; color:var(--magenta); }
+    .sig-stat {
+      font-size:10px; font-weight:700; letter-spacing:.5px; padding:4px 10px;
+      border-radius:6px; display:flex; align-items:center; gap:5px;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .sig-stat.open    { background:#7c6dff14; border:1px solid #7c6dff30; color:var(--primary); }
+    .sig-stat.win     { background:#00ffaa14; border:1px solid #00ffaa30; color:var(--green); }
+    .sig-stat.loss    { background:#ff3d5714; border:1px solid #ff3d5730; color:var(--red); }
+    .sig-stat.expired { background:#ffcc0014; border:1px solid #ffcc0030; color:var(--yellow); }
+    .sdot { width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 2s infinite; }
+
+    .sig-levels {
+      display:flex; align-items:center; padding:6px 20px 12px 22px;
+      position:relative; z-index:1; gap:4px;
+    }
+    .sig-lvl { flex:1; }
+    .sig-lvl-l { font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:4px;font-family:'JetBrains Mono',monospace; }
+    .sig-lvl-v { font-size:13px;font-weight:800;font-family:'JetBrains Mono',monospace; }
+    .sig-lvl-v.ent { color:var(--text); }
+    .sig-lvl-v.tp  { color:var(--green); }
+    .sig-lvl-v.sl  { color:var(--red); }
+    .sig-arr { color:var(--muted);font-size:14px;padding:0 4px;align-self:center;margin-top:14px;opacity:.5; }
+
+    .sig-live {
+      margin:0 18px 12px 22px; background:#ffffff04; border:1px solid #ffffff07;
+      border-radius:10px; padding:10px 14px; position:relative; z-index:1;
+    }
+    .sig-live-row {
+      display:flex; align-items:center; gap:8px; margin-bottom:8px;
+      font-family:'JetBrains Mono',monospace; font-size:11px; flex-wrap:wrap;
+    }
+    .slabel {
+      font-size:8px; font-weight:800; letter-spacing:2px; color:var(--cyan);
+      background:#00e5ff0e; border:1px solid #00e5ff20; border-radius:4px; padding:2px 6px;
+    }
+    .sprice { font-size:14px; font-weight:800; color:var(--text); }
+    .spnl   { font-weight:800; }
+    .spnl.pos { color:var(--green); }
+    .spnl.neg { color:var(--red); }
+    .sdist { margin-left:auto; color:var(--muted); font-size:10px; }
+    .sig-ptrack { height:4px; background:#ffffff0a; border-radius:2px; overflow:hidden; }
+    .sig-pfill {
+      height:100%; border-radius:2px;
+      background:linear-gradient(90deg,#7c6dff,#00e5ff);
+      transition:width .8s cubic-bezier(.4,0,.2,1);
+    }
+    .sig-pfill.near-tp  { background:linear-gradient(90deg,#00e5ff,#00ffaa); box-shadow:0 0 6px #00ffaa50; }
+    .sig-pfill.near-sl  { background:linear-gradient(90deg,#ffcc00,#ff3d57); }
+    .sig-pfill.win-zone { background:var(--green); box-shadow:0 0 10px #00ffaa60; }
+
+    .sig-foot {
+      display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;
+      padding:10px 20px 10px 22px; border-top:1px solid #ffffff07;
+      font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace;
+      position:relative; z-index:1;
+    }
+    .sig-foot b { color:var(--text); }
+    .sig-acts {
+      display:flex; gap:8px; padding:10px 18px 16px 22px; position:relative; z-index:1;
+    }
+
+    /* Oracle sparklines */
+    .oracle-spark { display:block; width:90px; height:24px; margin:8px auto 6px; }
+    .oracle-card:hover .oracle-spark path { filter:drop-shadow(0 0 3px currentColor); }
 
     .card {
       background: var(--card);
@@ -931,6 +1029,7 @@
       <div class="oracle-sym">BTC/USDT</div>
       <div class="oracle-px" id="oprice-BTC">—</div>
       <div class="oracle-chg flat" id="ochg-BTC">—</div>
+      <svg class="oracle-spark" id="spark-BTC" viewBox="0 0 90 24"><path id="spark-path-BTC" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
       <div class="oracle-card-hint">▶ GRÁFICO</div>
     </div>
@@ -939,6 +1038,7 @@
       <div class="oracle-sym">ETH/USDT</div>
       <div class="oracle-px" id="oprice-ETH">—</div>
       <div class="oracle-chg flat" id="ochg-ETH">—</div>
+      <svg class="oracle-spark" id="spark-ETH" viewBox="0 0 90 24"><path id="spark-path-ETH" fill="none" stroke="#7c6dff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
       <div class="oracle-card-hint">▶ GRÁFICO</div>
     </div>
@@ -947,6 +1047,7 @@
       <div class="oracle-sym">SOL/USDT</div>
       <div class="oracle-px" id="oprice-SOL">—</div>
       <div class="oracle-chg flat" id="ochg-SOL">—</div>
+      <svg class="oracle-spark" id="spark-SOL" viewBox="0 0 90 24"><path id="spark-path-SOL" fill="none" stroke="#00ffaa" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
       <div class="oracle-card-hint">▶ GRÁFICO</div>
     </div>
@@ -955,6 +1056,7 @@
       <div class="oracle-sym">BNB/USDT</div>
       <div class="oracle-px" id="oprice-BNB">—</div>
       <div class="oracle-chg flat" id="ochg-BNB">—</div>
+      <svg class="oracle-spark" id="spark-BNB" viewBox="0 0 90 24"><path id="spark-path-BNB" fill="none" stroke="#ffcc00" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
       <div class="oracle-card-hint">▶ GRÁFICO</div>
     </div>
@@ -1579,18 +1681,32 @@ function refreshLiveProgress() {
 
     pxEl.textContent = fmtOraclePrice(current, sym);
     pnlEl.textContent = (pnl >= 0 ? "+" : "") + pnl.toFixed(2) + "%";
-    pnlEl.className = "lp-pnl " + (pnl >= 0 ? "pos" : "neg");
+    pnlEl.className = "spnl " + (pnl >= 0 ? "pos" : "neg");
 
     if (pct >= 100)       distEl.textContent = "🎯 TP atingido!";
     else if (pct <= -100) distEl.textContent = "⚠ SL atingido!";
-    else                  distEl.textContent = (100 - clamped).toFixed(1) + "% restante → TP";
+    else                  distEl.textContent = (100 - clamped).toFixed(1) + "% → TP";
 
     fillEl.style.width = clamped + "%";
-    fillEl.className = "lp-fill" +
+    fillEl.className = "sig-pfill" +
       (pct >= 100  ? " win-zone"  :
        pct >= 75   ? " near-tp"   :
        pct <= -60  ? " near-sl"   : "");
   }
+}
+
+function genWavePath(sig) {
+  const id = sig.id.toNumber ? sig.id.toNumber() : parseInt(sig.id.toString());
+  let s = (id * 2654435761) >>> 0;
+  const rng = () => { s = ((s * 1664525) + 1013904223) >>> 0; return s / 4294967296; };
+  const W = 200, H = 80, n = 22, isLong = sig.direction === 0;
+  let y = H * 0.55, pts = [];
+  for (let i = 0; i < n; i++) {
+    const x = (i / (n-1)) * W;
+    y = Math.max(6, Math.min(H-6, y + (rng() - 0.48 + (isLong ? -0.04 : 0.04)) * 14));
+    pts.push(`${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`);
+  }
+  return pts.join(' ');
 }
 
 function buildSignalCard(sig) {
@@ -1601,69 +1717,79 @@ function buildSignalCard(sig) {
   const pool       = sig.providerStake.add(sig.followersStake);
   const expires    = new Date(sig.createdAt.toNumber()*1000 + 7*86400000);
   const isProvider = userAddress && sig.provider.toLowerCase() === userAddress.toLowerCase();
-  const rsiColor   = sig.rsi < 30 ? "var(--green)" : sig.rsi > 70 ? "var(--red)" : "var(--yellow)";
+  const dc         = isLong ? '#00e5ff' : '#ff3d8a';
+  const sigId      = sig.id.toString().padStart(4,'0');
+  const wave       = genWavePath(sig);
+  const sKey       = ['open','win','loss','expired'][sig.status];
+  const sLbl       = ['ATIVO','WIN','LOSS','EXPIRADO'][sig.status];
 
-  const div = document.createElement("div");
-  div.className = "card";
+  const div = document.createElement('div');
+  div.className = `sig-card dir-${isLong?'long':'short'}`;
   div.innerHTML = `
-    <div class="card-header">
+    <svg class="sig-wave" viewBox="0 0 200 80" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="wg${sigId}" x1="0" x2="1">
+          <stop offset="0%" stop-color="${dc}" stop-opacity="0"/>
+          <stop offset="60%" stop-color="${dc}" stop-opacity="0.09"/>
+          <stop offset="100%" stop-color="${dc}" stop-opacity="0.02"/>
+        </linearGradient>
+      </defs>
+      <path d="${wave}" stroke="${dc}" stroke-width="1.5" fill="none"/>
+      <path d="${wave} L200,80 L0,80 Z" fill="url(#wg${sigId})"/>
+    </svg>
+
+    <div class="sig-head">
       <div>
-        <div class="pair">${escHtml(sig.pair)}</div>
-        <div class="provider-addr">${escHtml(sig.provider.slice(0,6))}...${escHtml(sig.provider.slice(-4))}</div>
+        <div class="sig-pair">${escHtml(sig.pair)}</div>
+        <div class="sig-meta">SIGNAL #${sigId} · ${escHtml(sig.provider.slice(0,6))}…${escHtml(sig.provider.slice(-4))}</div>
       </div>
-      <div class="badges">
-        <span class="badge ${isLong?"long":"short"}">${DIR_LABEL[sig.direction]}</span>
-        <span class="badge ${STATUS_CLASS[sig.status]}">${STATUS_LABEL[sig.status]}</span>
+      <div class="sig-badges">
+        <span class="sig-dir ${isLong?'long':'short'}">${isLong?'↑ LONG':'↓ SHORT'}</span>
+        <span class="sig-stat ${sKey}">${isOpen?'<span class="sdot"></span>':''} ${sLbl}</span>
       </div>
     </div>
 
-    <div class="price-row">
-      <div class="price-item">
-        <label>Entrada</label>
-        <span class="entry">${fmt(sig.entryPrice)}</span>
+    <div class="sig-levels">
+      <div class="sig-lvl">
+        <div class="sig-lvl-l">Entrada</div>
+        <div class="sig-lvl-v ent">${fmt(sig.entryPrice)}</div>
       </div>
-      <div class="price-item">
-        <label>Take Profit</label>
-        <span class="tp">${fmt(sig.targetPrice)}</span>
+      <div class="sig-arr">→</div>
+      <div class="sig-lvl">
+        <div class="sig-lvl-l">Target</div>
+        <div class="sig-lvl-v tp">${fmt(sig.targetPrice)}</div>
       </div>
-      <div class="price-item">
-        <label>Stop Loss</label>
-        <span class="sl">${fmt(sig.stopPrice)}</span>
+      <div class="sig-arr" style="opacity:.25">│</div>
+      <div class="sig-lvl" style="text-align:right">
+        <div class="sig-lvl-l">Stop</div>
+        <div class="sig-lvl-v sl">${fmt(sig.stopPrice)}</div>
       </div>
     </div>
 
     ${isOpen ? `
-    <div class="live-progress">
-      <div class="lp-header">
-        <span class="lp-current">Atual: <b id="lp-px-${sig.id}">carregando…</b></span>
-        <span class="lp-pnl" id="lp-pnl-${sig.id}">—</span>
-        <span class="lp-dist" id="lp-dist-${sig.id}">—</span>
+    <div class="sig-live">
+      <div class="sig-live-row">
+        <span class="slabel">AO VIVO</span>
+        <span class="sprice" id="lp-px-${sig.id}">—</span>
+        <span class="spnl" id="lp-pnl-${sig.id}">—</span>
+        <span class="sdist" id="lp-dist-${sig.id}">—</span>
       </div>
-      <div class="lp-track">
-        <div class="lp-fill" id="lp-fill-${sig.id}" style="width:0%"></div>
-      </div>
-    </div>` : ""}
+      <div class="sig-ptrack"><div class="sig-pfill" id="lp-fill-${sig.id}" style="width:0%"></div></div>
+    </div>` : ''}
 
-    <div class="rsi-row">
-      <div class="rsi-header">
-        <span>RSI <b style="color:${rsiColor}">${sig.rsi}</b></span>
-        <span>Pool <b style="color:var(--text)">${fmtNative(pool)}</b></span>
-      </div>
-      <div class="rsi-bar"><div class="rsi-fill" style="width:${sig.rsi}%;background:${rsiColor}"></div></div>
-    </div>
-
-    <div class="card-meta">
-      <span>Stake: <b>${fmtNative(sig.providerStake)}</b></span>
+    <div class="sig-foot">
+      <span>RSI <b>${sig.rsi}</b></span>
+      <span>Pool <b>${fmtNative(pool)}</b></span>
       ${isOpen
-        ? `<span>Expira: <b>${expires.toLocaleDateString("pt-BR")}</b></span>`
-        : `<span>Resolvido: <b>${new Date(sig.resolvedAt.toNumber()*1000).toLocaleDateString("pt-BR")}</b></span>`}
+        ? `<span>Exp <b>${expires.toLocaleDateString('pt-BR')}</b></span>`
+        : `<span>Res <b>${new Date(sig.resolvedAt.toNumber()*1000).toLocaleDateString('pt-BR')}</b></span>`}
     </div>
 
-    <div class="card-actions">
-      ${isOpen && !isProvider ? `<button class="btn btn-primary" onclick="openFollowModal(${sig.id},'${sig.pair}',${sig.direction})">Seguir Sinal</button>` : ""}
-      ${isOpen ? `<button class="btn btn-outline" onclick="resolveOracle(${sig.id})">Verificar Oracle</button>` : ""}
-      ${isLoss    ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar Recompensa</button>` : ""}
-      ${isExpired ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar Stake</button>` : ""}
+    <div class="sig-acts">
+      ${isOpen && !isProvider ? `<button class="btn btn-primary" onclick="openFollowModal(${sig.id},'${sig.pair}',${sig.direction})">Seguir Sinal</button>` : ''}
+      ${isOpen ? `<button class="btn btn-outline" onclick="resolveOracle(${sig.id})">Verificar Oracle</button>` : ''}
+      ${isLoss    ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar Recompensa</button>` : ''}
+      ${isExpired ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar Stake</button>` : ''}
     </div>
   `;
   return div;
@@ -2060,6 +2186,8 @@ document.addEventListener("keydown", e => {
 // ══════════════════════════════════════════════
 const ORACLE_SYMS = ["BTC", "ETH", "SOL", "BNB"];
 let oraclePrices  = {};
+const priceHistory = { BTC:[], ETH:[], SOL:[], BNB:[] };
+const SPARK_MAX = 24;
 
 function fmtOraclePrice(price, sym) {
   if (sym === "BTC") return "$" + price.toLocaleString("en-US", {maximumFractionDigits: 0});
@@ -2105,6 +2233,8 @@ async function fetchAndUpdateOracle() {
     if (!data[sym]) continue;
     const prev = oraclePrices[sym]?.price ?? data[sym].price;
     oraclePrices[sym] = { price: data[sym].price, prev, change24h: data[sym].change24h ?? 0 };
+    priceHistory[sym].push(data[sym].price);
+    if (priceHistory[sym].length > SPARK_MAX) priceHistory[sym].shift();
   }
   renderOracleUI();
 }
@@ -2127,6 +2257,21 @@ function renderOracleUI() {
     const sign = chg > 0 ? "▲" : chg < 0 ? "▼" : "";
     cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
     cEl.className   = `oracle-chg ${dir}`;
+  }
+
+  // ── sparklines oracle cards ──
+  for (const sym of ORACLE_SYMS) {
+    const hist = priceHistory[sym];
+    const el   = document.getElementById(`spark-path-${sym}`);
+    if (!el || hist.length < 2) continue;
+    const W = 90, H = 22;
+    const mn = Math.min(...hist), mx = Math.max(...hist), rng = mx - mn || 1;
+    const pts = hist.map((p,i) => {
+      const x = (i/(hist.length-1))*W;
+      const y = H - ((p-mn)/rng)*(H-4) - 2;
+      return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    el.setAttribute('d', pts.join(' '));
   }
 
   // ── live P&L nos cards ──
