@@ -564,6 +564,60 @@
     .bc-label { font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
     .bc-amount { font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #00ffaa, #00e5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .bc-currency-lbl { font-size: 16px; font-weight: 700; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 6px; }
+
+    /* ── PORTFOLIO / POSITIONS ── */
+    .portfolio-summary { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+    .ps-card {
+      flex: 1; min-width: 120px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px;
+    }
+    .ps-label { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; }
+    .ps-val { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text); }
+    .ps-val.green { color: var(--green); }
+    .ps-val.yellow { color: var(--yellow); }
+
+    .pos-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; margin-bottom: 10px;
+      position: relative; overflow: hidden;
+      transition: border-color .2s, transform .2s;
+      animation: card-enter .42s cubic-bezier(.22,.61,.36,1) both;
+    }
+    .pos-card::after {
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:16px 0 0 16px;
+    }
+    .pos-card.dir-long::after  { background: var(--cyan); }
+    .pos-card.dir-short::after { background: var(--magenta); }
+    .pos-card:hover { border-color:#7c6dff30; transform:translateY(-1px); }
+    .pos-head { display:flex; justify-content:space-between; align-items:center; padding:16px 18px 8px 22px; }
+    .pos-pair { font-size:17px; font-weight:800; font-family:'JetBrains Mono',monospace; }
+    .pos-id   { font-size:10px; color:var(--muted); font-family:'JetBrains Mono',monospace; letter-spacing:1px; margin-top:3px; }
+    .pos-body { padding:0 18px 12px 22px; }
+    .pos-prices { display:flex; gap:22px; margin-bottom:10px; flex-wrap:wrap; }
+    .pos-px { font-size:11px; }
+    .pos-px-l { font-size:9px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; font-family:'JetBrains Mono',monospace; display:block; margin-bottom:3px; }
+    .pos-px-v { font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--text); font-size:13px; }
+    .pos-live-row { display:flex; gap:8px; align-items:center; margin-bottom:7px; font-family:'JetBrains Mono',monospace; font-size:11px; flex-wrap:wrap; }
+    .pos-ptrack { height:4px; background:#ffffff08; border-radius:2px; overflow:hidden; }
+    .pos-pfill { height:100%; border-radius:2px; background:linear-gradient(90deg,#7c6dff,#00e5ff); transition:width .8s ease; }
+    .pos-pfill.nt { background:linear-gradient(90deg,#00e5ff,#00ffaa); }
+    .pos-pfill.ns { background:linear-gradient(90deg,#ffcc00,#ff3d57); }
+    .pos-foot { display:flex; justify-content:space-between; align-items:center; padding:10px 18px 14px 22px; border-top:1px solid #ffffff06; flex-wrap:wrap; gap:8px; }
+    .pos-stake { font-size:12px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+    .pos-stake b { color:var(--text); }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { width:100%; max-width:700px; margin:44px auto 0; padding:0 20px; position:relative; z-index:1; }
+    .how-tag { font-size:9px; font-weight:700; letter-spacing:3px; color:var(--muted); text-transform:uppercase; text-align:center; margin-bottom:22px; }
+    .how-steps { display:flex; align-items:flex-start; justify-content:center; }
+    .how-step { flex:1; max-width:185px; text-align:center; padding:0 10px; }
+    .how-ico { width:48px; height:48px; border-radius:14px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+    .how-step:nth-child(1) .how-ico { background:#00e5ff0c; border:1px solid #00e5ff18; }
+    .how-step:nth-child(3) .how-ico { background:#7c6dff0c; border:1px solid #7c6dff18; }
+    .how-step:nth-child(5) .how-ico { background:#00ffaa0c; border:1px solid #00ffaa18; }
+    .how-stitle { font-size:13px; font-weight:800; color:var(--text); margin-bottom:5px; }
+    .how-sdesc  { font-size:11px; color:var(--muted); line-height:1.55; }
+    .how-conn { flex-shrink:0; border-top:1px dashed #ffffff0e; width:28px; margin-top:24px; }
     .bc-divider { height: 1px; background: linear-gradient(90deg, transparent, #ffffff0a, transparent); margin: 20px 0; position: relative; z-index: 1; }
     .bc-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; position: relative; z-index: 1; }
     .bc-addr { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
@@ -1084,6 +1138,29 @@
   </div>
 
   <div class="hero-scan"></div>
+
+  <div class="how-section">
+    <div class="how-tag">◈ Como Funciona</div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-ico">📡</div>
+        <div class="how-stitle">Provider Publica</div>
+        <div class="how-sdesc">Faz stake real e define entrada, TP e SL validados pelo oracle Chainlink</div>
+      </div>
+      <div class="how-conn"></div>
+      <div class="how-step">
+        <div class="how-ico">🤝</div>
+        <div class="how-stitle">Followers Apostam</div>
+        <div class="how-sdesc">Até 500 followers fazem stake no mesmo sinal multiplicando o pool</div>
+      </div>
+      <div class="how-conn"></div>
+      <div class="how-step">
+        <div class="how-ico">⚡</div>
+        <div class="how-stitle">Chainlink Resolve</div>
+        <div class="how-sdesc">Oracle verifica TP e SL automaticamente — sem intermediários</div>
+      </div>
+    </div>
+  </div>
 
   <div class="hero-actions">
     <button class="btn-hero" onclick="showWalletModal()">Conectar Carteira</button>
@@ -2021,15 +2098,15 @@ async function claimExpired(signalId) {
 }
 
 // ══════════════════════════════════════════════
-// POSIÇÕES (últimos 50 sinais)
+// POSIÇÕES — portfolio view
 // ══════════════════════════════════════════════
 async function loadPositions() {
   if (!contract||!userAddress) return;
   const list = document.getElementById("positions-list");
   list.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
-    const total   = (await contract.totalSignals()).toNumber();
-    const limit   = Math.min(total, 50);
+    const total = (await contract.totalSignals()).toNumber();
+    const limit = Math.min(total, 50);
     const positions = [];
     for (let i = total; i > total-limit; i--) {
       try {
@@ -2038,36 +2115,109 @@ async function loadPositions() {
       } catch {}
     }
     if (positions.length === 0) {
-      list.innerHTML = '<div class="empty"><div class="empty-icon">📂</div><p>Você não está seguindo nenhum sinal nos últimos 50.</p></div>';
+      list.innerHTML = '<div class="empty"><div class="empty-icon">📂</div><p>Nenhuma posição encontrada nos últimos 50 sinais.</p></div>';
       return;
     }
-    list.innerHTML = "";
-    for (const {sig, pos} of positions) {
-      const div = document.createElement("div");
-      div.className = "position-row";
-      const canClaim   = (sig.status===2||sig.status===3) && !pos.claimed;
-      const statusColor = sig.status===1?"var(--green)":sig.status===2?"var(--red)":sig.status===3?"var(--yellow)":"var(--primary)";
-      div.innerHTML = `
-        <div class="position-info">
-          <div class="pair-label">${sig.pair} <span class="badge ${sig.direction===0?"long":"short"}" style="font-size:10px">${DIR_LABEL[sig.direction]}</span></div>
-          <div class="pos-detail">
-            Stake: <b>${fmtNative(pos.amount)}</b> &nbsp;·&nbsp;
-            <b style="color:${statusColor}">${STATUS_LABEL[sig.status]}</b>
-            ${pos.claimed?' &nbsp;·&nbsp; <span style="color:var(--green)">✓ Resgatado</span>':""}
-          </div>
+
+    const c           = currentNetwork?.currency ?? "ETH";
+    const totalStake  = positions.reduce((a,{pos}) => a.add(pos.amount), ethers.BigNumber.from(0));
+    const openCount   = positions.filter(({sig}) => sig.status===0).length;
+    const pendingClaim = positions.filter(({sig,pos}) => (sig.status===2||sig.status===3) && !pos.claimed).length;
+
+    list.innerHTML = `
+      <div class="portfolio-summary">
+        <div class="ps-card">
+          <div class="ps-label">Posições Abertas</div>
+          <div class="ps-val">${openCount}</div>
         </div>
-        <div>
-          ${canClaim&&sig.status===2?`<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar</button>`:""}
-          ${canClaim&&sig.status===3?`<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar</button>`:""}
-          ${!canClaim&&sig.status===0?`<span style="color:var(--muted);font-size:12px">Em aberto</span>`:""}
-          ${sig.status===1?`<span style="color:var(--red);font-size:12px">Provider ganhou</span>`:""}
-          ${pos.claimed?`<span style="color:var(--green);font-size:13px">✓</span>`:""}
-        </div>`;
-      list.appendChild(div);
-    }
+        <div class="ps-card">
+          <div class="ps-label">Stake Total</div>
+          <div class="ps-val">${parseFloat(ethers.utils.formatEther(totalStake)).toFixed(4)} ${c}</div>
+        </div>
+        <div class="ps-card">
+          <div class="ps-label">Resgates Pendentes</div>
+          <div class="ps-val ${pendingClaim>0?'yellow':''}">${pendingClaim}</div>
+        </div>
+      </div>
+    `;
+
+    positions.forEach(({sig,pos}, idx) => {
+      const card = buildPositionCard(sig, pos, c);
+      card.style.animationDelay = `${idx * 0.06}s`;
+      list.appendChild(card);
+    });
   } catch(e) {
     list.innerHTML = `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
   }
+}
+
+function buildPositionCard(sig, pos, c) {
+  const isOpen    = sig.status === 0;
+  const isLoss    = sig.status === 2;
+  const isExpired = sig.status === 3;
+  const isWin     = sig.status === 1;
+  const isLong    = sig.direction === 0;
+  const canClaim  = (isLoss||isExpired) && !pos.claimed;
+  const sLbl      = ['● ABERTO','✓ WIN','✗ LOSS','○ EXPIRADO'][sig.status];
+  const sColor    = ['var(--primary)','var(--green)','var(--red)','var(--yellow)'][sig.status];
+  const sigId     = sig.id.toString().padStart(4,'0');
+
+  // Live P&L for open positions
+  let liveHtml = '';
+  if (isOpen) {
+    const sym = sig.pair.replace('/USDT','');
+    const d   = oraclePrices[sym];
+    if (d) {
+      const entry = sig.entryPrice.toNumber()  / 1e8;
+      const tp    = sig.targetPrice.toNumber() / 1e8;
+      const sl    = sig.stopPrice.toNumber()   / 1e8;
+      const cur   = d.price;
+      const pnl   = isLong ? (cur-entry)/entry*100 : (entry-cur)/entry*100;
+      const pct   = Math.max(0, Math.min(100, isLong ? (cur-entry)/(tp-entry)*100 : (entry-cur)/(entry-tp)*100));
+      const fc    = pct>=75?'nt':pct<=-60?'ns':'';
+      liveHtml = `
+        <div class="pos-live-row">
+          <span class="slabel">AO VIVO</span>
+          <b style="font-family:'JetBrains Mono',monospace;font-size:13px">${fmtOraclePrice(cur,sym)}</b>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:800;color:${pnl>=0?'var(--green)':'var(--red)'}">${pnl>=0?'+':''}${pnl.toFixed(2)}%</span>
+          <span style="margin-left:auto;color:var(--muted);font-size:10px;font-family:'JetBrains Mono',monospace">${(100-pct).toFixed(1)}% → TP</span>
+        </div>
+        <div class="pos-ptrack"><div class="pos-pfill ${fc}" style="width:${pct}%"></div></div>`;
+    }
+  }
+
+  const div = document.createElement('div');
+  div.className = `pos-card dir-${isLong?'long':'short'}`;
+  div.innerHTML = `
+    <div class="pos-head">
+      <div>
+        <div class="pos-pair">${escHtml(sig.pair)}</div>
+        <div class="pos-id">SIGNAL #${sigId}</div>
+      </div>
+      <div class="sig-badges">
+        <span class="sig-dir ${isLong?'long':'short'}">${isLong?'↑ LONG':'↓ SHORT'}</span>
+        <span style="font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${sColor}">${sLbl}</span>
+      </div>
+    </div>
+    <div class="pos-body">
+      <div class="pos-prices">
+        <div class="pos-px"><span class="pos-px-l">Entrada</span><span class="pos-px-v">${fmt(sig.entryPrice)}</span></div>
+        <div class="pos-px"><span class="pos-px-l">Target</span><span class="pos-px-v" style="color:var(--green)">${fmt(sig.targetPrice)}</span></div>
+        <div class="pos-px"><span class="pos-px-l">Stop</span><span class="pos-px-v" style="color:var(--red)">${fmt(sig.stopPrice)}</span></div>
+        <div class="pos-px"><span class="pos-px-l">Meu Stake</span><span class="pos-px-v" style="color:var(--cyan)">${fmtNative(pos.amount)}</span></div>
+      </div>
+      ${liveHtml}
+    </div>
+    <div class="pos-foot">
+      <span class="pos-stake">${pos.claimed?'<span style="color:var(--green)">✓ Resgatado</span>':''}</span>
+      <div class="sig-acts" style="padding:0">
+        ${canClaim&&isLoss    ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar</button>` : ''}
+        ${canClaim&&isExpired ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar Stake</button>` : ''}
+        ${isWin               ? `<span style="color:var(--red);font-size:12px;font-family:'JetBrains Mono',monospace">Provider ganhou</span>` : ''}
+        ${isOpen              ? `<button class="btn btn-outline" onclick="resolveOracle(${sig.id})">Verificar Oracle</button>` : ''}
+      </div>
+    </div>`;
+  return div;
 }
 
 // ══════════════════════════════════════════════
@@ -2076,9 +2226,8 @@ async function loadPositions() {
 async function loadWithdrawal() {
   if (!contract||!userAddress) return;
   try {
-    const pending   = await contract.pendingWithdrawal(userAddress);
-    const c         = currentNetwork?.currency ?? "";
-    document.getElementById("pending-amount").textContent = `${parseFloat(ethers.utils.formatEther(pending)).toFixed(4)} ${c}`;
+    const pending = await contract.pendingWithdrawal(userAddress);
+    document.getElementById("pending-amount").textContent = parseFloat(ethers.utils.formatEther(pending)).toFixed(4);
     document.getElementById("btn-withdraw").disabled = pending.isZero();
   } catch {}
 }
