@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
     :root {
       --bg:       #03040a;
@@ -1046,6 +1047,205 @@
       box-shadow: 0 0 30px rgba(124,109,255,.15) !important;
     }
 
+    /* ══════════════════════════════════════════
+       INC WALLET PANEL
+       ══════════════════════════════════════════ */
+    .wallet-backdrop {
+      position: fixed; inset: 0; z-index: 600;
+      background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .wallet-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .wallet-panel {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 601;
+      width: 360px; max-width: 100vw;
+      background: #070810; border-left: 1px solid #1e2236;
+      transform: translateX(105%);
+      transition: transform .35s cubic-bezier(.22,.61,.36,1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .wallet-panel.open { transform: translateX(0); box-shadow: -20px 0 60px rgba(0,0,0,.8); }
+
+    .wp-screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; min-height: 0; }
+    .wp-screen.active { display: flex; }
+
+    .wp-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid #1e2236; flex-shrink: 0;
+      background: rgba(7,8,16,.98);
+    }
+    .wp-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+    .wp-close {
+      background: none; border: none; color: var(--muted); font-size: 18px;
+      cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: all .2s; line-height: 1;
+    }
+    .wp-close:hover { color: var(--text); background: #ffffff08; }
+    .wp-back {
+      background: none; border: none; color: var(--muted); font-size: 13px;
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 600; transition: color .2s; padding: 0;
+    }
+    .wp-back:hover { color: var(--text); }
+
+    .wp-body { padding: 22px 20px; flex: 1; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+
+    /* welcome */
+    .wp-welcome-logo {
+      width: 68px; height: 68px; border-radius: 18px; margin: 0 auto 16px;
+      background: linear-gradient(135deg, #7c6dff, #00e5ff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace; box-shadow: 0 0 40px #7c6dff50;
+    }
+
+    /* buttons */
+    .wp-btn {
+      width: 100%; padding: 13px 16px; border-radius: 12px; font-size: 14px; font-weight: 700;
+      cursor: pointer; border: none; transition: all .2s; font-family: 'Space Grotesk', sans-serif;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .wp-btn:disabled { opacity: .4; pointer-events: none; }
+    .wp-btn-primary { background: linear-gradient(135deg,#7c6dff,#5b4fff); color:#fff; box-shadow:0 0 20px #7c6dff30; }
+    .wp-btn-primary:hover { box-shadow:0 0 30px #7c6dff60; transform:translateY(-1px); }
+    .wp-btn-outline { background:#ffffff04; border:1px solid var(--border); color:var(--text); }
+    .wp-btn-outline:hover { border-color:#7c6dff50; }
+    .wp-btn-icon { font-size:20px; flex-shrink:0; }
+    .wp-btn-sub { font-size:11px; color:rgba(255,255,255,.6); margin-top:2px; }
+    .wp-btn-center { justify-content: center; }
+
+    /* form */
+    .wp-label { font-size:10px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; font-weight:700; font-family:'JetBrains Mono',monospace; margin-bottom:6px; display:block; }
+    .wp-input {
+      width:100%; background:#ffffff05; border:1px solid var(--border);
+      border-radius:10px; padding:11px 14px; color:var(--text);
+      font-size:14px; outline:none; transition:all .2s; font-family:'Space Grotesk',sans-serif;
+      resize:none;
+    }
+    .wp-input:focus { border-color:#7c6dff60; box-shadow:0 0 0 3px #7c6dff15; }
+    .wp-input-group { display:flex; flex-direction:column; gap:6px; }
+
+    /* seed grid */
+    .wp-seed-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; }
+    .wp-seed-word {
+      background:#ffffff05; border:1px solid var(--border); border-radius:7px;
+      padding:6px 8px; font-size:11px; font-family:'JetBrains Mono',monospace;
+      color:var(--text); display:flex; align-items:center; gap:5px;
+    }
+    .wp-seed-num { color:var(--muted); font-size:9px; min-width:14px; }
+
+    /* warn */
+    .wp-warn {
+      background:#ffcc0008; border:1px solid #ffcc0025; border-radius:10px;
+      padding:12px 14px; font-size:12px; color:var(--yellow); display:flex; gap:8px; line-height:1.5;
+    }
+
+    /* check */
+    .wp-check { display:flex; align-items:flex-start; gap:10px; font-size:12px; color:var(--muted); cursor:pointer; }
+    .wp-check input { width:15px; height:15px; accent-color:var(--primary); flex-shrink:0; margin-top:2px; }
+
+    /* avatar */
+    .wp-avatar {
+      width:38px; height:38px; border-radius:10px; flex-shrink:0;
+      background:linear-gradient(135deg,#7c6dff,#00e5ff);
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:900; color:#fff; font-family:'JetBrains Mono',monospace;
+    }
+
+    /* balance card */
+    .wp-balance-card {
+      background:linear-gradient(145deg,#090b14,#0d1022); border:1px solid #1e2236;
+      border-radius:18px; padding:22px; text-align:center; position:relative; overflow:hidden; flex-shrink:0;
+    }
+    .wp-balance-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,#7c6dff,#00e5ff,#00ffaa,#00e5ff,#7c6dff);
+      background-size:200% 100%; animation:shimmer-line 4s linear infinite;
+    }
+    .wp-bal-eth {
+      font-size:34px; font-weight:800; font-family:'JetBrains Mono',monospace; letter-spacing:-1px;
+      background:linear-gradient(135deg,#fff,#00e5ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .wp-bal-usd { font-size:12px; color:var(--muted); margin-top:4px; font-family:'JetBrains Mono',monospace; }
+
+    /* token row */
+    .wp-token-row {
+      display:flex; align-items:center; justify-content:space-between;
+      background:#7c6dff08; border:1px solid #7c6dff18; border-radius:12px; padding:12px 16px; flex-shrink:0;
+    }
+    .wp-tok-logo {
+      width:30px; height:30px; border-radius:8px;
+      background:linear-gradient(135deg,#7c6dff,#00e5ff);
+      display:flex; align-items:center; justify-content:center;
+      font-size:9px; font-weight:900; color:#fff; font-family:'JetBrains Mono',monospace;
+    }
+    .wp-tok-bal { font-size:13px; font-weight:800; color:var(--primary); font-family:'JetBrains Mono',monospace; }
+
+    /* actions grid */
+    .wp-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0; }
+    .wp-act {
+      background:#ffffff05; border:1px solid var(--border); border-radius:12px;
+      padding:14px; text-align:center; cursor:pointer; transition:all .2s;
+    }
+    .wp-act:hover { border-color:#7c6dff50; transform:translateY(-1px); box-shadow:0 4px 20px #7c6dff15; }
+    .wp-act-ico { font-size:22px; margin-bottom:6px; }
+    .wp-act-lbl { font-size:12px; font-weight:700; color:var(--text); }
+
+    /* send token switch */
+    .wp-tok-switch { display:flex; gap:5px; background:#ffffff05; border-radius:10px; padding:4px; }
+    .wp-tok-opt {
+      flex:1; padding:7px; border-radius:7px; font-size:12px; font-weight:700;
+      cursor:pointer; text-align:center; border:none; background:transparent;
+      color:var(--muted); transition:all .2s; font-family:'Space Grotesk',sans-serif;
+    }
+    .wp-tok-opt.active { background:var(--card2); color:var(--text); }
+
+    /* qr */
+    .wp-qr-wrap {
+      background:#fff; border-radius:14px; padding:14px; width:fit-content; margin:0 auto; flex-shrink:0;
+    }
+
+    /* import tabs */
+    .wp-imp-tabs { display:flex; gap:4px; background:#ffffff05; border-radius:10px; padding:4px; }
+    .wp-imp-tab {
+      flex:1; padding:7px; border-radius:7px; font-size:12px; font-weight:700;
+      cursor:pointer; text-align:center; border:none; background:transparent;
+      color:var(--muted); transition:all .2s; font-family:'Space Grotesk',sans-serif;
+    }
+    .wp-imp-tab.active { background:var(--card2); color:var(--text); }
+
+    /* lock / network */
+    .wp-lock-btn {
+      background:none; border:1px solid var(--border); color:var(--muted);
+      border-radius:8px; padding:5px 11px; font-size:11px; font-weight:700;
+      cursor:pointer; transition:all .2s; font-family:'Space Grotesk',sans-serif;
+    }
+    .wp-lock-btn:hover { border-color:#ff3d5730; color:var(--red); }
+    .wp-net-badge {
+      font-size:9px; font-weight:700; padding:2px 7px; border-radius:6px;
+      font-family:'JetBrains Mono',monospace; display:inline-block;
+    }
+    .wp-net-badge.testnet { background:#ffcc0010; border:1px solid #ffcc0020; color:var(--yellow); }
+    .wp-net-badge.mainnet { background:#00ffaa10; border:1px solid #00ffaa20; color:var(--green); }
+
+    /* addr row */
+    .wp-addr-row { display:flex; align-items:center; gap:10px; background:#ffffff04; border:1px solid var(--border); border-radius:12px; padding:11px 14px; }
+    .wp-addr-mono { font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--text); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    .wp-divider { height:1px; background:var(--border); flex-shrink:0; }
+
+    /* header wallet btn */
+    #btn-wallet {
+      background: #7c6dff14; border: 1px solid #7c6dff35; color: var(--primary);
+      border-radius: 10px; padding: 8px 16px; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all .2s; font-family: 'Space Grotesk', sans-serif;
+      display: flex; align-items: center; gap: 7px;
+    }
+    #btn-wallet:hover { background: #7c6dff22; box-shadow: 0 0 20px #7c6dff30; }
+    .wbtn-dot { width:7px; height:7px; border-radius:50%; background:var(--primary); box-shadow:0 0 8px var(--primary); animation:pulse 2s infinite; }
+
+    @media (max-width:500px) { .wallet-panel { width:100vw; } }
+
     /* ── NEURAL CANVAS ── */
     #neural-canvas {
       position: fixed; inset: 0; z-index: 0;
@@ -1243,6 +1443,9 @@
     </div>
   </div>
   <div class="header-right">
+    <button id="btn-wallet" onclick="wOpenPanel()">
+      <span class="wbtn-dot"></span> INC Wallet
+    </button>
     <span class="network-badge" id="network-name">—</span>
     <button id="btn-connect" onclick="showWalletModal()">Conectar Carteira</button>
   </div>
@@ -1744,6 +1947,224 @@
     </div>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- INC WALLET PANEL                          -->
+<!-- ══════════════════════════════════════════ -->
+<div class="wallet-backdrop" id="wallet-backdrop" onclick="wClosePanel()"></div>
+<div class="wallet-panel" id="wallet-panel">
+
+  <!-- ── SETUP ── -->
+  <div class="wp-screen active" id="wp-setup">
+    <div class="wp-header">
+      <div class="wp-title"><span style="color:var(--primary)">◈</span> INC Wallet</div>
+      <button class="wp-close" onclick="wClosePanel()">✕</button>
+    </div>
+    <div class="wp-body" style="justify-content:center;padding-top:30px">
+      <div style="text-align:center">
+        <div class="wp-welcome-logo">INC</div>
+        <div style="font-size:19px;font-weight:800;margin-bottom:8px">Sua Carteira Web3</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:28px">Gerencie ETH e $INC.<br>Suas chaves, seu dinheiro.</div>
+      </div>
+      <button class="wp-btn wp-btn-primary" onclick="wShowScreen('create')">
+        <span class="wp-btn-icon">✨</span>
+        <div><div style="font-size:14px;font-weight:700">Criar nova carteira</div><div class="wp-btn-sub">Gera uma nova carteira segura</div></div>
+      </button>
+      <button class="wp-btn wp-btn-outline" onclick="wShowScreen('import')">
+        <span class="wp-btn-icon">🔑</span>
+        <div><div style="font-size:14px;font-weight:700">Importar carteira</div><div class="wp-btn-sub" style="color:var(--muted)">Chave privada ou frase seed</div></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── CREATE ── -->
+  <div class="wp-screen" id="wp-create">
+    <div class="wp-header">
+      <button class="wp-back" onclick="wShowScreen('setup')">← Voltar</button>
+      <button class="wp-close" onclick="wClosePanel()">✕</button>
+    </div>
+    <div class="wp-body">
+      <div style="font-size:17px;font-weight:800">Criar Carteira</div>
+      <div style="font-size:13px;color:var(--muted)">Escolha uma senha para proteger esta carteira no dispositivo.</div>
+      <div class="wp-input-group">
+        <label class="wp-label">Senha</label>
+        <input class="wp-input" type="password" id="wc-pass" placeholder="Mínimo 8 caracteres" />
+      </div>
+      <div class="wp-input-group">
+        <label class="wp-label">Confirmar senha</label>
+        <input class="wp-input" type="password" id="wc-pass2" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')wCreateStep1()" />
+      </div>
+      <!-- seed section (hidden initially) -->
+      <div id="wc-seed-sec" style="display:none;flex-direction:column;gap:10px">
+        <div class="wp-divider"></div>
+        <label class="wp-label">Frase de recuperação — salve agora!</label>
+        <div class="wp-seed-grid" id="wc-seed-grid"></div>
+        <div class="wp-warn"><span style="font-size:16px;flex-shrink:0">⚠️</span><span>Anote estas 12 palavras em papel. Sem elas, não é possível recuperar a carteira.</span></div>
+        <label class="wp-check" id="wc-check-label">
+          <input type="checkbox" id="wc-saved" onchange="wCheckSaved()" />
+          Salvei a frase com segurança
+        </label>
+      </div>
+      <button class="wp-btn wp-btn-primary" id="wc-btn" onclick="wCreateStep1()">
+        Gerar frase de recuperação →
+      </button>
+    </div>
+  </div>
+
+  <!-- ── IMPORT ── -->
+  <div class="wp-screen" id="wp-import">
+    <div class="wp-header">
+      <button class="wp-back" onclick="wShowScreen('setup')">← Voltar</button>
+      <button class="wp-close" onclick="wClosePanel()">✕</button>
+    </div>
+    <div class="wp-body">
+      <div style="font-size:17px;font-weight:800">Importar Carteira</div>
+      <div class="wp-imp-tabs">
+        <button class="wp-imp-tab active" id="wtab-pk"   onclick="wImpTab('pk')">Chave Privada</button>
+        <button class="wp-imp-tab"        id="wtab-seed" onclick="wImpTab('seed')">Frase Seed</button>
+      </div>
+      <div id="wi-pk-wrap">
+        <div class="wp-input-group">
+          <label class="wp-label">Chave Privada (0x…)</label>
+          <input class="wp-input" type="password" id="wi-pk" placeholder="0x…" />
+        </div>
+      </div>
+      <div id="wi-seed-wrap" style="display:none">
+        <div class="wp-input-group">
+          <label class="wp-label">Frase Seed (12 palavras)</label>
+          <textarea class="wp-input" id="wi-mn" rows="3" placeholder="palavra1 palavra2 palavra3 …"></textarea>
+        </div>
+      </div>
+      <div class="wp-input-group">
+        <label class="wp-label">Senha de proteção</label>
+        <input class="wp-input" type="password" id="wi-pass" placeholder="Mínimo 8 caracteres" />
+      </div>
+      <button class="wp-btn wp-btn-primary" onclick="wImport()">
+        <span class="wp-btn-icon">🔑</span><div style="font-size:14px;font-weight:700">Importar</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── UNLOCK ── -->
+  <div class="wp-screen" id="wp-unlock">
+    <div class="wp-header">
+      <div class="wp-title"><span style="color:var(--primary)">◈</span> INC Wallet</div>
+      <button class="wp-close" onclick="wClosePanel()">✕</button>
+    </div>
+    <div class="wp-body" style="align-items:center;justify-content:center;text-align:center;padding-top:40px">
+      <div class="wp-welcome-logo" style="margin-bottom:18px">INC</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:6px">Desbloquear</div>
+      <div id="wu-preview" style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:22px">—</div>
+      <div class="wp-input-group" style="width:100%;text-align:left">
+        <label class="wp-label">Senha</label>
+        <input class="wp-input" type="password" id="wu-pass" placeholder="Sua senha" onkeydown="if(event.key==='Enter')wUnlock()" />
+      </div>
+      <button class="wp-btn wp-btn-primary" style="margin-top:8px" onclick="wUnlock()">Desbloquear</button>
+      <button style="margin-top:14px;background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:'Space Grotesk',sans-serif" onclick="wForget()">Esquecer esta carteira</button>
+    </div>
+  </div>
+
+  <!-- ── MAIN ── -->
+  <div class="wp-screen" id="wp-main">
+    <div class="wp-header">
+      <div class="wp-title">
+        <div class="wp-avatar" id="wm-av">INC</div>
+        <div>
+          <div style="font-size:14px;font-weight:800;line-height:1.2">INC Wallet</div>
+          <span class="wp-net-badge testnet" id="wm-net">Sepolia</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="wp-lock-btn" onclick="wLock()">🔒</button>
+        <button class="wp-close" onclick="wClosePanel()">✕</button>
+      </div>
+    </div>
+    <div class="wp-body">
+      <!-- Address -->
+      <div class="wp-addr-row">
+        <div class="wp-addr-mono" id="wm-addr">—</div>
+        <button class="btn-copy" id="wm-cpbtn" onclick="wCopyAddr()">COPIAR</button>
+      </div>
+      <!-- ETH Balance -->
+      <div class="wp-balance-card">
+        <div style="font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:8px">SALDO ETH</div>
+        <div class="wp-bal-eth" id="wm-eth">0.0000</div>
+        <div class="wp-bal-usd" id="wm-usd">≈ $0.00 USD</div>
+      </div>
+      <!-- $INC Token -->
+      <div class="wp-token-row">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="wp-tok-logo">INC</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">INC Token</div>
+            <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">$INC · ERC-20</div>
+          </div>
+        </div>
+        <div class="wp-tok-bal" id="wm-inc">—</div>
+      </div>
+      <!-- Actions -->
+      <div class="wp-actions">
+        <div class="wp-act" onclick="wShowSend()">
+          <div class="wp-act-ico">↑</div>
+          <div class="wp-act-lbl">Enviar</div>
+        </div>
+        <div class="wp-act" onclick="wShowReceive()">
+          <div class="wp-act-ico">↓</div>
+          <div class="wp-act-lbl">Receber</div>
+        </div>
+      </div>
+      <button class="wp-btn wp-btn-outline wp-btn-center" onclick="wLoadBal()">↻ Atualizar saldos</button>
+    </div>
+  </div>
+
+  <!-- ── SEND ── -->
+  <div class="wp-screen" id="wp-send">
+    <div class="wp-header">
+      <button class="wp-back" onclick="wShowScreen('main')">← Voltar</button>
+      <button class="wp-close" onclick="wClosePanel()">✕</button>
+    </div>
+    <div class="wp-body">
+      <div style="font-size:17px;font-weight:800">Enviar</div>
+      <div class="wp-tok-switch">
+        <button class="wp-tok-opt active" id="ws-eth-tab" onclick="wSendTab('eth')">ETH</button>
+        <button class="wp-tok-opt" id="ws-inc-tab" onclick="wSendTab('inc')">$INC</button>
+      </div>
+      <div class="wp-input-group">
+        <label class="wp-label">Endereço destinatário</label>
+        <input class="wp-input" id="ws-to" placeholder="0x…" />
+      </div>
+      <div class="wp-input-group">
+        <label class="wp-label" id="ws-amt-lbl">Valor (ETH)</label>
+        <input class="wp-input" type="number" id="ws-amt" placeholder="0.0" step="0.0001" min="0" />
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace">
+          Disponível: <span id="ws-avail" style="color:var(--text)">—</span>
+        </div>
+      </div>
+      <button class="wp-btn wp-btn-primary" id="ws-btn" onclick="wDoSend()">
+        <span class="wp-btn-icon">↑</span><div style="font-size:14px;font-weight:700">Confirmar envio</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── RECEIVE ── -->
+  <div class="wp-screen" id="wp-receive">
+    <div class="wp-header">
+      <button class="wp-back" onclick="wShowScreen('main')">← Voltar</button>
+      <button class="wp-close" onclick="wClosePanel()">✕</button>
+    </div>
+    <div class="wp-body" style="align-items:center;text-align:center">
+      <div style="font-size:17px;font-weight:800;align-self:flex-start">Receber</div>
+      <div style="font-size:13px;color:var(--muted);align-self:flex-start;margin-bottom:16px">Envie ETH ou $INC para este endereço</div>
+      <div class="wp-qr-wrap"><canvas id="wp-qr" width="200" height="200"></canvas></div>
+      <div style="margin-top:16px;width:100%;background:#ffffff05;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:left">
+        <div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;font-family:'JetBrains Mono',monospace;margin-bottom:6px">SEU ENDEREÇO</div>
+        <div id="wr-addr" style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text);word-break:break-all;line-height:1.7">—</div>
+      </div>
+      <button class="wp-btn wp-btn-primary wp-btn-center" style="margin-top:10px" onclick="wCopyRec()">📋 Copiar endereço</button>
+    </div>
+  </div>
+
+</div><!-- end wallet-panel -->
 
 <!-- ── TOAST CONTAINER ── -->
 <div id="toast-container"></div>
@@ -2938,6 +3359,261 @@ async function initLiveOracle() {
   }
   setTimeout(doGlitch, 3000 + Math.random() * 4000);
 })();
+
+// ══════════════════════════════════════════════
+// INC WALLET — Integrated Web Wallet
+// ══════════════════════════════════════════════
+const W_KEY   = 'inc_wallet_v1';
+const INC_TKN = '0xeAa4FAF815e36caaa082C71aC8ca962F531443d7';
+const ERC20_MIN = [
+  "function balanceOf(address) view returns (uint256)",
+  "function transfer(address to, uint256 amount) returns (bool)",
+];
+
+let _wWallet = null;         // ethers.Wallet (unlocked)
+let _wAddr   = null;         // current address
+let _wToken  = 'eth';        // 'eth' | 'inc'
+let _wNewWal = null;         // temp wallet during create
+
+// ── Panel open/close ─────────────────────────
+function wOpenPanel() {
+  document.getElementById("wallet-backdrop").classList.add("open");
+  document.getElementById("wallet-panel").classList.add("open");
+  const stored = _wLoad();
+  if (!stored) {
+    wShowScreen('setup');
+  } else if (_wWallet) {
+    wShowScreen('main');
+    wLoadBal();
+  } else {
+    _wAddr = stored.address;
+    const p = document.getElementById("wu-preview");
+    if (p) p.textContent = stored.address.slice(0,8) + "…" + stored.address.slice(-6);
+    wShowScreen('unlock');
+  }
+}
+function wClosePanel() {
+  document.getElementById("wallet-backdrop").classList.remove("open");
+  document.getElementById("wallet-panel").classList.remove("open");
+}
+function wShowScreen(id) {
+  document.querySelectorAll(".wp-screen").forEach(s => s.classList.remove("active"));
+  const el = document.getElementById("wp-" + id);
+  if (el) el.classList.add("active");
+}
+function _wLoad() {
+  try { return JSON.parse(localStorage.getItem(W_KEY)); } catch { return null; }
+}
+
+// ── Crypto (PBKDF2 + AES-GCM) ───────────────
+async function _wEnc(text, pwd) {
+  const e = new TextEncoder();
+  const km = await crypto.subtle.importKey("raw", e.encode(pwd), "PBKDF2", false, ["deriveKey"]);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const key  = await crypto.subtle.deriveKey(
+    { name:"PBKDF2", salt, iterations:150000, hash:"SHA-256" },
+    km, { name:"AES-GCM", length:256 }, false, ["encrypt","decrypt"]
+  );
+  const iv  = crypto.getRandomValues(new Uint8Array(12));
+  const enc = await crypto.subtle.encrypt({ name:"AES-GCM", iv }, key, e.encode(text));
+  const out = new Uint8Array(28 + enc.byteLength);
+  out.set(salt, 0); out.set(iv, 16); out.set(new Uint8Array(enc), 28);
+  return btoa(String.fromCharCode(...out));
+}
+async function _wDec(b64, pwd) {
+  const raw  = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const salt = raw.slice(0,16), iv = raw.slice(16,28), data = raw.slice(28);
+  const e  = new TextEncoder();
+  const km = await crypto.subtle.importKey("raw", e.encode(pwd), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    { name:"PBKDF2", salt, iterations:150000, hash:"SHA-256" },
+    km, { name:"AES-GCM", length:256 }, false, ["encrypt","decrypt"]
+  );
+  const dec = await crypto.subtle.decrypt({ name:"AES-GCM", iv }, key, data);
+  return new TextDecoder().decode(dec);
+}
+
+// ── Create ────────────────────────────────────
+function wCreateStep1() {
+  const pass  = document.getElementById("wc-pass")?.value;
+  const pass2 = document.getElementById("wc-pass2")?.value;
+  const sec   = document.getElementById("wc-seed-sec");
+  const btn   = document.getElementById("wc-btn");
+  if (sec.style.display === 'flex') return; // already shown
+  if (!pass || pass.length < 8) return showToast("Senha mínima: 8 caracteres", "error");
+  if (pass !== pass2) return showToast("Senhas não conferem", "error");
+  _wNewWal = ethers.Wallet.createRandom();
+  const words = _wNewWal.mnemonic.phrase.split(' ');
+  document.getElementById("wc-seed-grid").innerHTML =
+    words.map((w,i) => `<div class="wp-seed-word"><span class="wp-seed-num">${i+1}</span>${w}</div>`).join('');
+  sec.style.display = 'flex';
+  btn.textContent = "Criar Carteira";
+  btn.onclick = wCreateFinish;
+  btn.disabled = true;
+}
+function wCheckSaved() {
+  const ok  = document.getElementById("wc-saved")?.checked;
+  const btn = document.getElementById("wc-btn");
+  if (btn) btn.disabled = !ok;
+}
+async function wCreateFinish() {
+  const pass = document.getElementById("wc-pass")?.value;
+  if (!_wNewWal) return;
+  const btn = document.getElementById("wc-btn");
+  btn.textContent = "Criando…"; btn.disabled = true;
+  try {
+    const enc = await _wEnc(_wNewWal.privateKey, pass);
+    localStorage.setItem(W_KEY, JSON.stringify({ address: _wNewWal.address, enc, ts: Date.now() }));
+    _wWallet = _wNewWal; _wAddr = _wNewWal.address; _wNewWal = null;
+    _wGoMain(); showToast("Carteira criada!", "success");
+  } catch(e) { showToast("Erro: " + e.message, "error"); btn.textContent = "Criar Carteira"; btn.disabled = false; }
+}
+
+// ── Import ─────────────────────────────────────
+function wImpTab(type) {
+  document.querySelectorAll(".wp-imp-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("wtab-"+type).classList.add("active");
+  document.getElementById("wi-pk-wrap").style.display   = type==="pk"   ? "block" : "none";
+  document.getElementById("wi-seed-wrap").style.display = type==="seed" ? "block" : "none";
+}
+async function wImport() {
+  const isPk   = document.getElementById("wtab-pk").classList.contains("active");
+  const pass   = document.getElementById("wi-pass")?.value;
+  if (!pass || pass.length < 8) return showToast("Senha mínima: 8 caracteres", "error");
+  let wal;
+  try {
+    if (isPk) {
+      const pk = document.getElementById("wi-pk")?.value?.trim();
+      if (!pk) return showToast("Insira a chave privada", "error");
+      wal = new ethers.Wallet(pk);
+    } else {
+      const mn = document.getElementById("wi-mn")?.value?.trim();
+      if (!mn) return showToast("Insira a frase seed", "error");
+      wal = ethers.Wallet.fromMnemonic(mn);
+    }
+  } catch(e) { return showToast("Chave/frase inválida", "error"); }
+  try {
+    const enc = await _wEnc(wal.privateKey, pass);
+    localStorage.setItem(W_KEY, JSON.stringify({ address: wal.address, enc, ts: Date.now() }));
+    _wWallet = wal; _wAddr = wal.address;
+    _wGoMain(); showToast("Carteira importada!", "success");
+  } catch(e) { showToast("Erro ao importar: " + e.message, "error"); }
+}
+
+// ── Unlock / Lock ──────────────────────────────
+async function wUnlock() {
+  const pass   = document.getElementById("wu-pass")?.value;
+  if (!pass) return showToast("Digite sua senha", "error");
+  const stored = _wLoad();
+  if (!stored) return wShowScreen('setup');
+  try {
+    const pk = await _wDec(stored.enc, pass);
+    _wWallet = new ethers.Wallet(pk); _wAddr = _wWallet.address;
+    document.getElementById("wu-pass").value = "";
+    _wGoMain();
+  } catch { showToast("Senha incorreta", "error"); }
+}
+function wLock() { _wWallet = null; wShowScreen('unlock'); }
+function wForget() {
+  if (!confirm("Tem certeza? Sem a frase seed não é possível recuperar.")) return;
+  localStorage.removeItem(W_KEY); _wWallet = null; _wAddr = null;
+  wShowScreen('setup');
+}
+
+// ── Main screen ────────────────────────────────
+function _wGoMain() {
+  const addr = _wAddr || _wWallet?.address; if (!addr) return;
+  document.getElementById("wm-addr").textContent  = addr.slice(0,10) + "…" + addr.slice(-8);
+  document.getElementById("wm-av").textContent     = addr.slice(2,4).toUpperCase();
+  const nb = document.getElementById("wm-net");
+  if (nb && currentNetwork) { nb.textContent = currentNetwork.name; nb.className = "wp-net-badge " + (currentNetwork.testnet?"testnet":"mainnet"); }
+  wShowScreen('main'); wLoadBal();
+}
+function wCopyAddr() {
+  const a = _wAddr||_wWallet?.address; if (!a) return;
+  navigator.clipboard.writeText(a).then(() => {
+    const b = document.getElementById("wm-cpbtn");
+    if (b) { b.textContent="COPIADO!"; b.classList.add("copied"); setTimeout(()=>{b.textContent="COPIAR";b.classList.remove("copied");},2000); }
+  });
+}
+
+// ── Balances ───────────────────────────────────
+async function wLoadBal() {
+  const addr = _wAddr || _wWallet?.address; if (!addr) return;
+  const prov = provider || new ethers.providers.JsonRpcProvider("https://rpc.sepolia.eth.gateway.fm");
+  try {
+    const balWei = await prov.getBalance(addr);
+    const bal    = parseFloat(ethers.utils.formatEther(balWei));
+    const ethEl  = document.getElementById("wm-eth"); if (ethEl) ethEl.textContent = bal.toFixed(4);
+    const px = oraclePrices["ETH"]?.price || 0;
+    const usdEl = document.getElementById("wm-usd"); if (usdEl) usdEl.textContent = "≈ $" + (bal*px).toLocaleString("en-US",{maximumFractionDigits:2}) + " USD";
+    // update send available
+    if (_wToken==='eth') { const av=document.getElementById("ws-avail"); if(av) av.textContent=bal.toFixed(6)+" ETH"; }
+  } catch {}
+  try {
+    const tkAddr = currentNetwork?.token || INC_TKN;
+    const tok  = new ethers.Contract(tkAddr, ERC20_MIN, prov);
+    const bInc = await tok.balanceOf(addr);
+    const inc  = parseFloat(ethers.utils.formatUnits(bInc, 18));
+    const iEl  = document.getElementById("wm-inc"); if (iEl) iEl.textContent = inc.toLocaleString("en-US",{maximumFractionDigits:2}) + " INC";
+    if (_wToken==='inc') { const av=document.getElementById("ws-avail"); if(av) av.textContent=inc.toLocaleString("en-US",{maximumFractionDigits:2})+" $INC"; }
+  } catch {}
+}
+
+// ── Send ───────────────────────────────────────
+function wShowSend() { wSendTab(_wToken); wShowScreen('send'); wLoadBal(); }
+function wSendTab(type) {
+  _wToken = type;
+  document.querySelectorAll(".wp-tok-opt").forEach(b => b.classList.remove("active"));
+  const t = document.getElementById("ws-"+type+"-tab"); if (t) t.classList.add("active");
+  const l = document.getElementById("ws-amt-lbl"); if (l) l.textContent = "Valor (" + (type==='eth'?"ETH":"$INC") + ")";
+  wLoadBal();
+}
+async function wDoSend() {
+  if (!_wWallet) return showToast("Desbloqueie a carteira primeiro", "error");
+  const to  = document.getElementById("ws-to")?.value?.trim();
+  const amt = document.getElementById("ws-amt")?.value;
+  if (!to || !ethers.utils.isAddress(to)) return showToast("Endereço inválido", "error");
+  if (!amt || parseFloat(amt) <= 0)       return showToast("Valor inválido", "error");
+  const btn = document.getElementById("ws-btn");
+  const origTxt = btn.innerHTML;
+  btn.innerHTML = '<span class="wp-btn-icon">⏳</span><div>Enviando…</div>'; btn.disabled = true;
+  try {
+    const prov = provider || new ethers.providers.JsonRpcProvider("https://rpc.sepolia.eth.gateway.fm");
+    const cw   = _wWallet.connect(prov);
+    if (_wToken === 'eth') {
+      const tx = await cw.sendTransaction({ to, value: ethers.utils.parseEther(amt) });
+      showToast("TX enviada! " + tx.hash.slice(0,14) + "…", "info");
+      await tx.wait(); showToast("ETH enviado com sucesso!", "success");
+    } else {
+      const tkAddr = currentNetwork?.token || INC_TKN;
+      const tok = new ethers.Contract(tkAddr, ERC20_MIN, cw);
+      const tx  = await tok.transfer(to, ethers.utils.parseUnits(amt, 18));
+      showToast("TX enviada! " + tx.hash.slice(0,14) + "…", "info");
+      await tx.wait(); showToast("$INC enviado com sucesso!", "success");
+    }
+    document.getElementById("ws-to").value = "";
+    document.getElementById("ws-amt").value = "";
+    wShowScreen('main'); wLoadBal();
+  } catch(e) { showToast(e.reason || e.message || "Erro ao enviar", "error"); }
+  finally { btn.innerHTML = origTxt; btn.disabled = false; }
+}
+
+// ── Receive / QR ───────────────────────────────
+function wShowReceive() {
+  const addr = _wAddr || _wWallet?.address; if (!addr) return;
+  wShowScreen('receive');
+  const el = document.getElementById("wr-addr"); if (el) el.textContent = addr;
+  // Generate QR code
+  if (window.QRCode) {
+    const canvas = document.getElementById("wp-qr");
+    if (canvas) QRCode.toCanvas(canvas, addr, { width:200, margin:1, color:{ dark:"#000", light:"#fff" } }, () => {});
+  }
+}
+function wCopyRec() {
+  const a = _wAddr || _wWallet?.address; if (!a) return;
+  navigator.clipboard.writeText(a).then(() => showToast("Endereço copiado!", "success"));
+}
 
 // ── TOKEN SECTION ──
 function scrollToToken() {
