@@ -3,3 +3,4 @@ node_modules/
 artifacts/
 cache/
 node.log
+vault-bot.log
