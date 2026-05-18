@@ -1322,98 +1322,101 @@ async function withdraw() {
 })();
 
 // ══════════════════════════════════════════════
-// LIVE ORACLE (Chainlink mainnet via public RPC)
+// LIVE ORACLE — Binance REST API (CORS ok, USDT pairs reais)
+// Fallback: CoinGecko → Chainlink RPC
 // ══════════════════════════════════════════════
-const ORACLE_RPC = "https://ethereum.publicnode.com";
-const ORACLE_FEEDS = {
-  BTC: "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88b",
-  ETH: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
-  SOL: "0x4ffC43a60e009B551865A93d232E33Fce9f01507",
-  BNB: "0x14e613AC84a31f709eadbEF2dD6360A0f0FC3Af6",
-};
-const FEED_ABI_MIN = [
-  "function latestRoundData() view returns (uint80,int256,uint256,uint256,uint80)",
-  "function decimals() view returns (uint8)"
-];
-
-let oraclePrices = {};
-let oracleRpcProvider;
-
-async function fetchAndUpdateOracle() {
-  const syms = Object.keys(ORACLE_FEEDS);
-  const results = await Promise.allSettled(syms.map(async sym => {
-    const feed  = new ethers.Contract(ORACLE_FEEDS[sym], FEED_ABI_MIN, oracleRpcProvider);
-    const [, answer] = await feed.latestRoundData();
-    const dec   = await feed.decimals();
-    const price = answer.toNumber() / Math.pow(10, dec);
-    return { sym, price };
-  }));
-  let updated = false;
-  for (const r of results) {
-    if (r.status === "fulfilled") {
-      const { sym, price } = r.value;
-      const prev = oraclePrices[sym]?.price ?? price;
-      oraclePrices[sym] = { price, prev };
-      updated = true;
-    }
-  }
-  if (updated) renderOracleUI();
-}
+const ORACLE_SYMS = ["BTC", "ETH", "SOL", "BNB"];
+let oraclePrices  = {};
 
 function fmtOraclePrice(price, sym) {
   if (sym === "BTC") return "$" + price.toLocaleString("en-US", {maximumFractionDigits: 0});
-  if (sym === "ETH") return "$" + price.toLocaleString("en-US", {maximumFractionDigits: 1});
+  if (sym === "ETH") return "$" + price.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
   return "$" + price.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
-function renderOracleUI() {
-  const syms = Object.keys(ORACLE_FEEDS);
+async function fetchBinance() {
+  const pairs = encodeURIComponent('["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT"]');
+  const r = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${pairs}`);
+  if (!r.ok) throw new Error("binance " + r.status);
+  const data = await r.json();
+  const out  = {};
+  for (const t of data) {
+    const sym = t.symbol.replace("USDT", "");
+    out[sym] = { price: parseFloat(t.lastPrice), change24h: parseFloat(t.priceChangePercent) };
+  }
+  return out;
+}
 
+async function fetchCoinGecko() {
+  const r = await fetch(
+    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin&vs_currencies=usd&include_24hr_change=true"
+  );
+  if (!r.ok) throw new Error("coingecko " + r.status);
+  const d = await r.json();
+  return {
+    BTC: { price: d.bitcoin.usd,      change24h: d.bitcoin.usd_24h_change },
+    ETH: { price: d.ethereum.usd,     change24h: d.ethereum.usd_24h_change },
+    SOL: { price: d.solana.usd,       change24h: d.solana.usd_24h_change },
+    BNB: { price: d.binancecoin.usd,  change24h: d.binancecoin.usd_24h_change },
+  };
+}
+
+async function fetchAndUpdateOracle() {
+  let data;
+  try       { data = await fetchBinance(); }
+  catch(e1) {
+    try     { data = await fetchCoinGecko(); }
+    catch(e2) { console.warn("oracle fetch failed", e2); return; }
+  }
+  for (const sym of ORACLE_SYMS) {
+    if (!data[sym]) continue;
+    const prev = oraclePrices[sym]?.price ?? data[sym].price;
+    oraclePrices[sym] = { price: data[sym].price, prev, change24h: data[sym].change24h ?? 0 };
+  }
+  renderOracleUI();
+}
+
+function renderOracleUI() {
   // ── oracle cards ──
-  for (const sym of syms) {
+  for (const sym of ORACLE_SYMS) {
     const d = oraclePrices[sym]; if (!d) continue;
     const pEl = document.getElementById(`oprice-${sym}`);
     const cEl = document.getElementById(`ochg-${sym}`);
     if (!pEl) continue;
-    const dir = d.price > d.prev ? "up" : d.price < d.prev ? "down" : "flat";
-    const pct = d.prev ? ((d.price - d.prev) / d.prev * 100) : 0;
+    const chg = d.change24h ?? 0;
+    const dir = chg > 0 ? "up" : chg < 0 ? "down" : "flat";
     pEl.textContent = fmtOraclePrice(d.price, sym);
-    if (dir !== "flat") {
-      pEl.className = `oracle-px flash-${dir}`;
-      setTimeout(() => { pEl.className = "oracle-px"; }, 1000);
+    if (d.price !== d.prev) {
+      const flashDir = d.price > d.prev ? "up" : "down";
+      pEl.className = `oracle-px flash-${flashDir}`;
+      setTimeout(() => { if (pEl) pEl.className = "oracle-px"; }, 1000);
     }
-    cEl.textContent = dir === "flat" ? "—" : `${dir === "up" ? "▲" : "▼"} ${Math.abs(pct).toFixed(3)}%`;
+    const sign = chg > 0 ? "▲" : chg < 0 ? "▼" : "";
+    cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
     cEl.className   = `oracle-chg ${dir}`;
   }
 
   // ── ticker ──
   const track = document.getElementById("ticker-track");
   if (!track) return;
-  const html = syms.map(sym => {
+  const html = ORACLE_SYMS.map(sym => {
     const d = oraclePrices[sym]; if (!d) return "";
-    const dir = d.price >= d.prev ? "up" : "down";
-    const pct = d.prev ? Math.abs((d.price - d.prev) / d.prev * 100).toFixed(3) : "0.000";
+    const chg = d.change24h ?? 0;
+    const dir = chg >= 0 ? "up" : "down";
+    const sign = chg >= 0 ? "▲" : "▼";
     return `<div class="ticker-item">
       <span class="ticker-dot"></span>
       <span class="ticker-sym">${sym}/USDT</span>
       <span class="ticker-px">${fmtOraclePrice(d.price, sym)}</span>
-      <span class="ticker-chg ${dir}">${dir === "up" ? "▲" : "▼"} ${pct}%</span>
+      <span class="ticker-chg ${dir}">${sign} ${Math.abs(chg).toFixed(2)}%</span>
     </div>`;
   }).join("");
-  track.innerHTML = html + html; // duplicate for infinite scroll
+  track.innerHTML = html + html;
 }
 
 async function initLiveOracle() {
-  try {
-    oracleRpcProvider = new ethers.providers.JsonRpcProvider(ORACLE_RPC);
-    await fetchAndUpdateOracle();
-    setInterval(fetchAndUpdateOracle, 30000);
-  } catch(e) {
-    // fallback with approximate prices
-    const sim = { BTC: 67450, ETH: 3520, SOL: 186, BNB: 615 };
-    for (const [s, p] of Object.entries(sim)) oraclePrices[s] = { price: p, prev: p };
-    renderOracleUI();
-  }
+  await fetchAndUpdateOracle();
+  setInterval(fetchAndUpdateOracle, 20000);
 }
 
 // ── GLITCH LOGO ──
