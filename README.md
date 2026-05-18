@@ -1,4 +1,4 @@
-# INC Network — Proof-of-Signal
+# INC Network — Proof-of-Signal + $INC Token
 
 Smart contract de staking de sinais on-chain com resolução automática via Chainlink Oracle.
 
@@ -12,6 +12,17 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 | **Rede** | Sepolia Testnet (Chain ID: 11155111) |
 | **Treasury** | `0xc23dC262362C105774c0F05f7a166D3515310D03` |
 | **Taxa** | 1.5% |
+
+## $INC Token (Sepolia Testnet)
+
+| Item | Valor |
+|---|---|
+| **Contrato** | `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` |
+| **Etherscan** | https://sepolia.etherscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7 |
+| **Símbolo** | $INC |
+| **Supply** | 100,000,000 INC |
+| **Decimais** | 18 |
+| **Padrão** | ERC-20 · Burnable · Pausable · Ownable2Step |
 
 ## Chainlink Automation
 

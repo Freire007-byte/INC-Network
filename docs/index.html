@@ -1325,9 +1325,13 @@
   <div id="token-section" class="token-section">
     <div class="token-header">
       <div class="token-logo">INC</div>
-      <div>
+      <div style="flex:1">
         <div class="token-name">INC Network Token <span class="token-sym">$INC</span></div>
-        <div class="token-desc">Token utilitário da rede INC · ERC-20 · Multichain · Supply fixo</div>
+        <div class="token-desc" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          ERC-20 · Supply fixo · Multichain
+          <a href="https://sepolia.etherscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7" target="_blank" style="color:var(--cyan);font-size:11px;font-family:'JetBrains Mono',monospace;text-decoration:none;border:1px solid #00e5ff25;padding:2px 8px;border-radius:6px;white-space:nowrap">0xeAa4…43d7 ↗</a>
+          <span style="font-size:10px;background:#00ffaa0c;border:1px solid #00ffaa20;color:var(--green);padding:2px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:700">✓ VERIFICADO</span>
+        </div>
       </div>
     </div>
 
@@ -1753,14 +1757,22 @@ const NETWORKS = {
     name:     "Sepolia",
     currency: "ETH",
     contract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+    token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
     testnet:  true,
   },
   137: {
     name:     "Polygon",
     currency: "MATIC",
     contract: "",
+    token:    "",
     testnet:  false,
   },
+};
+
+// $INC token Etherscan links
+const TOKEN_EXPLORER = {
+  11155111: "https://sepolia.etherscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+  137:      "",
 };
 
 const ABI = [
