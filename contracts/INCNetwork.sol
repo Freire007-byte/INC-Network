@@ -701,7 +701,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
             uint80, int256 answer, uint256, uint256 updatedAt, uint80
         ) {
             if (answer <= 0) return (false, 0);
-            if (block.timestamp - updatedAt > PRICE_STALENESS_THRESHOLD) return (false, 0);
+            if (updatedAt > block.timestamp || block.timestamp - updatedAt > PRICE_STALENESS_THRESHOLD) return (false, 0);
 
             uint8 dec = AggregatorV3Interface(feed).decimals();
             uint256 p = uint256(answer);
