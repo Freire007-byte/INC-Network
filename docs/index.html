@@ -966,6 +966,86 @@
       .bc-amount { font-size: 38px; }
     }
 
+    /* ── TOKEN SECTION ── */
+    .token-section {
+      width: 100%; max-width: 740px; margin: 32px auto 0;
+      background: rgba(10,11,20,.9); border: 1px solid #1e2236;
+      border-radius: 20px; padding: 28px 30px;
+      position: relative; overflow: hidden; z-index: 1;
+    }
+    .token-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #7c6dff, #00e5ff, #7c6dff);
+      background-size: 200% 100%; animation: shimmer-line 4s linear infinite;
+    }
+    .token-header {
+      display: flex; align-items: center; gap: 18px; margin-bottom: 22px;
+    }
+    .token-logo {
+      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+      background: linear-gradient(135deg, #7c6dff, #00e5ff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 900; color: #fff; letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 0 20px #7c6dff40;
+    }
+    .token-name {
+      font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -.3px;
+    }
+    .token-sym {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      color: var(--primary); margin-left: 6px;
+    }
+    .token-desc { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* Supply allocation bar */
+    .token-supply-bar {
+      display: flex; height: 28px; border-radius: 8px; overflow: hidden;
+      margin-bottom: 18px; gap: 2px;
+    }
+    .tsb-item {
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      font-size: 9px; font-weight: 800; color: #fff; letter-spacing: .5px;
+      white-space: nowrap; overflow: hidden; min-width: 0;
+      font-family: 'JetBrains Mono', monospace; opacity: .95;
+      transition: opacity .2s, flex .3s; cursor: default;
+    }
+    .tsb-item:hover { opacity: 1; }
+    .tsb-pct { font-size: 11px; font-weight: 900; }
+    .tsb-lbl { opacity: .8; }
+
+    /* Token stats grid */
+    .token-stats {
+      display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .ts-item {
+      flex: 1; min-width: 90px; background: #ffffff04; border: 1px solid #ffffff08;
+      border-radius: 12px; padding: 12px 14px; text-align: center;
+    }
+    .ts-label { font-size: 9px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px; }
+    .ts-val { font-size: 18px; font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; letter-spacing: -.5px; }
+    .ts-sub { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+    /* Token utility */
+    .token-utility {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .tu-item {
+      display: flex; align-items: center; gap: 10px;
+      background: #7c6dff07; border: 1px solid #7c6dff15; border-radius: 10px;
+      padding: 10px 14px; font-size: 12px; color: var(--text);
+    }
+    .tu-ico { font-size: 16px; flex-shrink: 0; }
+
+    .inc-token-card {
+      background: rgba(124,109,255,.04);
+      border-color: rgba(124,109,255,.2) !important;
+    }
+    .inc-token-card:hover {
+      border-color: rgba(124,109,255,.5) !important;
+      box-shadow: 0 0 30px rgba(124,109,255,.15) !important;
+    }
+
     /* ── NEURAL CANVAS ── */
     #neural-canvas {
       position: fixed; inset: 0; z-index: 0;
@@ -1227,6 +1307,76 @@
       <svg class="oracle-spark" id="spark-BNB" viewBox="0 0 90 24"><path id="spark-path-BNB" fill="none" stroke="#ffcc00" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
       <div class="oracle-card-hint">▶ GRÁFICO</div>
+    </div>
+
+    <!-- $INC TOKEN CARD -->
+    <div class="oracle-card inc-token-card" onclick="scrollToToken()">
+      <div class="oracle-live-badge"><span class="oracle-live-dot" style="background:var(--primary);box-shadow:0 0 6px var(--primary)"></span>TOKEN</div>
+      <div class="oracle-sym" style="color:var(--primary)">$INC</div>
+      <div class="oracle-px" id="oprice-INC" style="font-size:15px">IDO EM BREVE</div>
+      <div class="oracle-chg flat" id="ochg-INC">—</div>
+      <svg class="oracle-spark" id="spark-INC" viewBox="0 0 90 24"><path id="spark-path-INC" fill="none" stroke="#7c6dff" stroke-width="1.5" opacity="0.6"/></svg>
+      <div class="oracle-footer" style="color:var(--primary);opacity:.7">INC NETWORK</div>
+      <div class="oracle-card-hint" style="color:var(--primary)">◈ TOKENOMICS</div>
+    </div>
+  </div>
+
+  <!-- TOKEN INFO SECTION -->
+  <div id="token-section" class="token-section">
+    <div class="token-header">
+      <div class="token-logo">INC</div>
+      <div>
+        <div class="token-name">INC Network Token <span class="token-sym">$INC</span></div>
+        <div class="token-desc">Token utilitário da rede INC · ERC-20 · Multichain · Supply fixo</div>
+      </div>
+    </div>
+
+    <div class="token-supply-bar">
+      <div class="tsb-item" style="flex:4;background:linear-gradient(90deg,#7c6dff,#5b4fff)">
+        <span class="tsb-pct">40%</span><span class="tsb-lbl">Ecosystem</span>
+      </div>
+      <div class="tsb-item" style="flex:2;background:linear-gradient(90deg,#00e5ff,#007acc)">
+        <span class="tsb-pct">20%</span><span class="tsb-lbl">Team</span>
+      </div>
+      <div class="tsb-item" style="flex:2;background:linear-gradient(90deg,#00ffaa,#00cc88)">
+        <span class="tsb-pct">20%</span><span class="tsb-lbl">Liquidity</span>
+      </div>
+      <div class="tsb-item" style="flex:1;background:linear-gradient(90deg,#ffcc00,#ff9900)">
+        <span class="tsb-pct">10%</span><span class="tsb-lbl">Treasury</span>
+      </div>
+      <div class="tsb-item" style="flex:1;background:linear-gradient(90deg,#ff3d8a,#c0195f)">
+        <span class="tsb-pct">10%</span><span class="tsb-lbl">IDO</span>
+      </div>
+    </div>
+
+    <div class="token-stats">
+      <div class="ts-item">
+        <div class="ts-label">Supply Total</div>
+        <div class="ts-val">100,000,000</div>
+        <div class="ts-sub">$INC (fixo)</div>
+      </div>
+      <div class="ts-item">
+        <div class="ts-label">Redes</div>
+        <div class="ts-val">6+</div>
+        <div class="ts-sub">Multichain</div>
+      </div>
+      <div class="ts-item">
+        <div class="ts-label">Decimais</div>
+        <div class="ts-val">18</div>
+        <div class="ts-sub">ERC-20</div>
+      </div>
+      <div class="ts-item">
+        <div class="ts-label">Protocolo</div>
+        <div class="ts-val">1.5%</div>
+        <div class="ts-sub">Fee desc. holders</div>
+      </div>
+    </div>
+
+    <div class="token-utility">
+      <div class="tu-item"><span class="tu-ico">💎</span><span>Desconto na taxa do protocolo</span></div>
+      <div class="tu-item"><span class="tu-ico">🏛️</span><span>Governança on-chain</span></div>
+      <div class="tu-item"><span class="tu-ico">🔥</span><span>Queima deflacionária</span></div>
+      <div class="tu-item"><span class="tu-ico">🌐</span><span>Staking rewards multichain</span></div>
     </div>
   </div>
 
@@ -2776,6 +2926,12 @@ async function initLiveOracle() {
   }
   setTimeout(doGlitch, 3000 + Math.random() * 4000);
 })();
+
+// ── TOKEN SECTION ──
+function scrollToToken() {
+  const el = document.getElementById("token-section");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
 
 // ── BOOT ──
 initLiveOracle();
