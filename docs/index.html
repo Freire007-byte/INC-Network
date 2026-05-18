@@ -345,6 +345,46 @@
     }
     .fee-banner b { color: var(--primary); }
 
+    /* ── FORM ORACLE PRICE ── */
+    .oracle-price-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #00e5ff06; border: 1px solid #00e5ff18;
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 22px;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .oracle-price-label { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+    .oracle-price-val {
+      font-size: 24px; font-weight: 800; color: var(--text);
+      font-family: 'JetBrains Mono', monospace; letter-spacing: -.5px;
+    }
+    .oracle-price-chg { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-left: 8px; }
+    .oracle-price-chg.up   { color: var(--green); }
+    .oracle-price-chg.down { color: var(--red); }
+    .oracle-price-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-use-price {
+      background: #00e5ff14; border: 1px solid #00e5ff35; color: var(--cyan);
+      border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all .2s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-use-price:hover { background: #00e5ff22; transform: translateY(-1px); }
+    .btn-chart-sm {
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all .2s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-chart-sm:hover { border-color: #7c6dff50; color: var(--primary); }
+
+    .pct-btns { display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap; }
+    .pct-btn {
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: all .15s; border: 1px solid transparent;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pct-btn.tp { background: #00ffaa0c; border-color: #00ffaa22; color: var(--green); }
+    .pct-btn.tp:hover { background: #00ffaa22; }
+    .pct-btn.sl { background: #ff3d570c; border-color: #ff3d5722; color: var(--red); }
+    .pct-btn.sl:hover { background: #ff3d5722; }
+
     .btn-submit {
       width: 100%; background: linear-gradient(135deg, #7c6dff, #00e5ff);
       color: #fff; border: none; border-radius: 12px;
@@ -992,27 +1032,43 @@
         <div class="form-title">Publicar Novo Sinal</div>
         <div class="form-subtitle">Stake real. Resolução automática via Chainlink.</div>
 
+        <!-- Preço oracle ao vivo do par selecionado -->
+        <div class="oracle-price-row">
+          <div>
+            <div class="oracle-price-label" id="form-oracle-label">BTC/USDT — Preço Oracle Atual</div>
+            <div>
+              <span class="oracle-price-val" id="form-oracle-val">—</span>
+              <span class="oracle-price-chg" id="form-oracle-chg"></span>
+            </div>
+          </div>
+          <div class="oracle-price-actions">
+            <button class="btn-use-price" onclick="fillEntryFromOracle()">← Usar como Entrada</button>
+            <button class="btn-chart-sm" onclick="openChartFromForm()">📈 Gráfico</button>
+          </div>
+        </div>
+
         <div class="fee-banner">
           <span>⚡</span>
           Taxa da rede: <b>1.5%</b> do stake vai para a treasury INC.
         </div>
 
-        <div class="form-row">
-          <label>Par de Moedas</label>
-          <select id="f-pair">
-            <option value="BTC/USDT">BTC/USDT</option>
-            <option value="ETH/USDT">ETH/USDT</option>
-            <option value="SOL/USDT">SOL/USDT</option>
-            <option value="BNB/USDT">BNB/USDT</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label>Direção</label>
-          <select id="f-direction">
-            <option value="0">LONG — preço vai subir</option>
-            <option value="1">SHORT — preço vai cair</option>
-          </select>
+        <div class="form-2col">
+          <div class="form-row">
+            <label>Par de Moedas</label>
+            <select id="f-pair" onchange="updateFormOracle()">
+              <option value="BTC/USDT">BTC/USDT</option>
+              <option value="ETH/USDT">ETH/USDT</option>
+              <option value="SOL/USDT">SOL/USDT</option>
+              <option value="BNB/USDT">BNB/USDT</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Direção</label>
+            <select id="f-direction">
+              <option value="0">LONG — preço vai subir</option>
+              <option value="1">SHORT — preço vai cair</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-2col">
@@ -1030,12 +1086,20 @@
           <div class="form-row">
             <label>Take Profit (USD)</label>
             <input type="number" id="f-tp" placeholder="68000" step="0.01" />
-            <div class="form-hint">LONG: maior · SHORT: menor</div>
+            <div class="pct-btns">
+              <button class="pct-btn tp" onclick="setTP(3)">+3%</button>
+              <button class="pct-btn tp" onclick="setTP(5)">+5%</button>
+              <button class="pct-btn tp" onclick="setTP(10)">+10%</button>
+            </div>
           </div>
           <div class="form-row">
             <label>Stop Loss (USD)</label>
             <input type="number" id="f-sl" placeholder="62000" step="0.01" />
-            <div class="form-hint">LONG: menor · SHORT: maior</div>
+            <div class="pct-btns">
+              <button class="pct-btn sl" onclick="setSL(2)">-2%</button>
+              <button class="pct-btn sl" onclick="setSL(3)">-3%</button>
+              <button class="pct-btn sl" onclick="setSL(5)">-5%</button>
+            </div>
           </div>
         </div>
 
@@ -1264,6 +1328,7 @@ function switchTab(name) {
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById(`tab-${name}`).classList.add("active");
   if (name === "sinais")   loadSignals();
+  if (name === "criar")    updateFormOracle();
   if (name === "posicoes") loadPositions();
   if (name === "sacar")    loadWithdrawal();
 }
@@ -1537,6 +1602,55 @@ async function confirmFollow() {
   if (!stake || parseFloat(stake) < 0.001) return showAlert("Stake mínimo: 0.001", "error");
   closeModal();
   await followSignal(pendingFollowId, stake);
+}
+
+// ══════════════════════════════════════════════
+// CRIAR SINAL — helpers oracle
+// ══════════════════════════════════════════════
+function getFormSym() {
+  return (document.getElementById("f-pair")?.value || "BTC/USDT").replace("/USDT","");
+}
+
+function updateFormOracle() {
+  const sym  = getFormSym();
+  const d    = oraclePrices[sym];
+  const lEl  = document.getElementById("form-oracle-label");
+  const vEl  = document.getElementById("form-oracle-val");
+  const cEl  = document.getElementById("form-oracle-chg");
+  if (lEl) lEl.textContent = sym + "/USDT — Preço Oracle Atual";
+  if (!d)  { if (vEl) vEl.textContent = "Carregando..."; return; }
+  if (vEl) vEl.textContent = fmtOraclePrice(d.price, sym);
+  if (cEl) {
+    const chg  = d.change24h ?? 0;
+    const sign = chg > 0 ? "▲" : chg < 0 ? "▼" : "";
+    cEl.textContent = chg === 0 ? "" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
+    cEl.className   = `oracle-price-chg ${chg > 0 ? "up" : chg < 0 ? "down" : ""}`;
+  }
+}
+
+function fillEntryFromOracle() {
+  const sym = getFormSym();
+  const d   = oraclePrices[sym];
+  if (!d) return showAlert("Preço oracle não carregado ainda", "error");
+  document.getElementById("f-entry").value = d.price.toFixed(2);
+}
+
+function openChartFromForm() { openChart(getFormSym()); }
+
+function setTP(pct) {
+  const dir   = parseInt(document.getElementById("f-direction").value);
+  const entry = parseFloat(document.getElementById("f-entry").value) || oraclePrices[getFormSym()]?.price;
+  if (!entry) return showAlert("Preencha o preço de entrada primeiro", "error");
+  const result = dir === 0 ? entry * (1 + pct/100) : entry * (1 - pct/100);
+  document.getElementById("f-tp").value = result.toFixed(2);
+}
+
+function setSL(pct) {
+  const dir   = parseInt(document.getElementById("f-direction").value);
+  const entry = parseFloat(document.getElementById("f-entry").value) || oraclePrices[getFormSym()]?.price;
+  if (!entry) return showAlert("Preencha o preço de entrada primeiro", "error");
+  const result = dir === 0 ? entry * (1 - pct/100) : entry * (1 + pct/100);
+  document.getElementById("f-sl").value = result.toFixed(2);
 }
 
 // ══════════════════════════════════════════════
@@ -1924,6 +2038,9 @@ function renderOracleUI() {
     cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
     cEl.className   = `oracle-chg ${dir}`;
   }
+
+  // ── form oracle price ──
+  updateFormOracle();
 
   // ── market chips (sinais tab) ──
   for (const sym of ORACLE_SYMS) {
