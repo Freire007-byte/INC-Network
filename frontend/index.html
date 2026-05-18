@@ -275,6 +275,34 @@
     }
     .card-meta b { color: var(--text); }
 
+    /* ── LIVE P&L PROGRESS ── */
+    .live-progress {
+      margin-bottom: 14px; background: #ffffff03;
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px;
+    }
+    .lp-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace;
+      flex-wrap: wrap; gap: 4px;
+    }
+    .lp-current { color: var(--muted); }
+    .lp-current b { color: var(--text); font-size: 12px; }
+    .lp-pnl { font-weight: 800; font-size: 12px; }
+    .lp-pnl.pos { color: var(--green); }
+    .lp-pnl.neg { color: var(--red); }
+    .lp-dist { color: var(--muted); font-size: 10px; letter-spacing: .5px; }
+    .lp-track {
+      height: 5px; background: var(--border); border-radius: 3px; overflow: hidden;
+    }
+    .lp-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, #7c6dff, #00e5ff);
+      transition: width .8s cubic-bezier(.4,0,.2,1);
+    }
+    .lp-fill.near-tp { background: linear-gradient(90deg, #00e5ff, #00ffaa); box-shadow: 0 0 6px #00ffaa60; }
+    .lp-fill.near-sl { background: linear-gradient(90deg, #ffcc00, #ff3d57); }
+    .lp-fill.win-zone { background: var(--green); box-shadow: 0 0 8px #00ffaa70; }
+
     .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
     /* ── BUTTONS ── */
@@ -1498,6 +1526,8 @@ function filterDir(dir, btn) {
   applySignalFilters();
 }
 
+let openSignalsMap = {};
+
 function applySignalFilters() {
   const list = document.getElementById("signals-list");
   let filtered = allSignalsCache;
@@ -1512,7 +1542,55 @@ function applySignalFilters() {
     return;
   }
   list.innerHTML = "";
-  for (const sig of filtered) list.appendChild(buildSignalCard(sig));
+  openSignalsMap = {};
+  for (const sig of filtered) {
+    list.appendChild(buildSignalCard(sig));
+    if (sig.status === 0) openSignalsMap[sig.id.toString()] = sig;
+  }
+  refreshLiveProgress();
+}
+
+function refreshLiveProgress() {
+  for (const [id, sig] of Object.entries(openSignalsMap)) {
+    const sym = sig.pair.replace("/USDT","");
+    const d   = oraclePrices[sym];
+    if (!d) continue;
+
+    const entry   = sig.entryPrice.toNumber()  / 1e8;
+    const tp      = sig.targetPrice.toNumber() / 1e8;
+    const sl      = sig.stopPrice.toNumber()   / 1e8;
+    const current = d.price;
+    const isLong  = sig.direction === 0;
+
+    let pct = isLong
+      ? (current - entry) / (tp - entry) * 100
+      : (entry - current) / (entry - tp) * 100;
+
+    const clamped = Math.max(0, Math.min(100, pct));
+    const pnl     = isLong
+      ? (current - entry) / entry * 100
+      : (entry - current) / entry * 100;
+
+    const pxEl   = document.getElementById(`lp-px-${id}`);
+    const pnlEl  = document.getElementById(`lp-pnl-${id}`);
+    const distEl = document.getElementById(`lp-dist-${id}`);
+    const fillEl = document.getElementById(`lp-fill-${id}`);
+    if (!pxEl) continue;
+
+    pxEl.textContent = fmtOraclePrice(current, sym);
+    pnlEl.textContent = (pnl >= 0 ? "+" : "") + pnl.toFixed(2) + "%";
+    pnlEl.className = "lp-pnl " + (pnl >= 0 ? "pos" : "neg");
+
+    if (pct >= 100)       distEl.textContent = "🎯 TP atingido!";
+    else if (pct <= -100) distEl.textContent = "⚠ SL atingido!";
+    else                  distEl.textContent = (100 - clamped).toFixed(1) + "% restante → TP";
+
+    fillEl.style.width = clamped + "%";
+    fillEl.className = "lp-fill" +
+      (pct >= 100  ? " win-zone"  :
+       pct >= 75   ? " near-tp"   :
+       pct <= -60  ? " near-sl"   : "");
+  }
 }
 
 function buildSignalCard(sig) {
@@ -1553,6 +1631,18 @@ function buildSignalCard(sig) {
         <span class="sl">${fmt(sig.stopPrice)}</span>
       </div>
     </div>
+
+    ${isOpen ? `
+    <div class="live-progress">
+      <div class="lp-header">
+        <span class="lp-current">Atual: <b id="lp-px-${sig.id}">carregando…</b></span>
+        <span class="lp-pnl" id="lp-pnl-${sig.id}">—</span>
+        <span class="lp-dist" id="lp-dist-${sig.id}">—</span>
+      </div>
+      <div class="lp-track">
+        <div class="lp-fill" id="lp-fill-${sig.id}" style="width:0%"></div>
+      </div>
+    </div>` : ""}
 
     <div class="rsi-row">
       <div class="rsi-header">
@@ -2038,6 +2128,9 @@ function renderOracleUI() {
     cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
     cEl.className   = `oracle-chg ${dir}`;
   }
+
+  // ── live P&L nos cards ──
+  refreshLiveProgress();
 
   // ── form oracle price ──
   updateFormOracle();
