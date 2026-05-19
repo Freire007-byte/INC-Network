@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#03040a"/>
+      <stop offset="100%" style="stop-color:#080b18"/>
+    </linearGradient>
+    <linearGradient id="grd1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c6dff"/>
+      <stop offset="100%" style="stop-color:#00e5ff"/>
+    </linearGradient>
+    <linearGradient id="eco"  x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#7c6dff"/><stop offset="100%" style="stop-color:#5b4fff"/></linearGradient>
+    <linearGradient id="team" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#00e5ff"/><stop offset="100%" style="stop-color:#007acc"/></linearGradient>
+    <linearGradient id="liq"  x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#00ffaa"/><stop offset="100%" style="stop-color:#00cc88"/></linearGradient>
+    <linearGradient id="tre"  x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ffcc00"/><stop offset="100%" style="stop-color:#ff9900"/></linearGradient>
+    <linearGradient id="ido"  x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ff3d8a"/><stop offset="100%" style="stop-color:#c0195f"/></linearGradient>
+    <radialGradient id="orb1" cx="30%" cy="30%">
+      <stop offset="0%" style="stop-color:#7c6dff;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#7c6dff;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <rect width="1080" height="1080" fill="url(#orb1)"/>
+
+  <!-- Grid -->
+  <g opacity="0.03" stroke="#7c6dff" stroke-width="1">
+    <line x1="0" y1="135" x2="1080" y2="135"/><line x1="0" y1="270" x2="1080" y2="270"/>
+    <line x1="0" y1="405" x2="1080" y2="405"/><line x1="0" y1="540" x2="1080" y2="540"/>
+    <line x1="0" y1="675" x2="1080" y2="675"/><line x1="0" y1="810" x2="1080" y2="810"/>
+    <line x1="135" y1="0" x2="135" y2="1080"/><line x1="270" y1="0" x2="270" y2="1080"/>
+    <line x1="405" y1="0" x2="405" y2="1080"/><line x1="540" y1="0" x2="540" y2="1080"/>
+    <line x1="675" y1="0" x2="675" y2="1080"/><line x1="810" y1="0" x2="810" y2="1080"/>
+    <line x1="945" y1="0" x2="945" y2="1080"/>
+  </g>
+
+  <!-- Header -->
+  <text x="540" y="100"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900" font-size="22" letter-spacing="8"
+    text-anchor="middle" fill="#7c6dff" opacity="0.8">◈ TOKENOMICS</text>
+
+  <text x="540" y="180"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900" font-size="72"
+    text-anchor="middle" fill="url(#grd1)" filter="url(#softglow)">$INC</text>
+  <text x="540" y="225"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900" font-size="24" letter-spacing="2"
+    text-anchor="middle" fill="#ffffff" opacity="0.9">INC Network Token</text>
+
+  <!-- Stats row -->
+  <g font-family="Arial, sans-serif">
+    <!-- Supply -->
+    <rect x="80" y="265" width="270" height="90" rx="14" fill="#0e1020" stroke="#161928" stroke-width="1.5"/>
+    <text x="215" y="300" font-weight="400" font-size="12" letter-spacing="2" text-anchor="middle" fill="#4a4e6a">SUPPLY TOTAL</text>
+    <text x="215" y="334" font-weight="900" font-size="22" text-anchor="middle" fill="#ffffff">100,000,000</text>
+
+    <!-- Price -->
+    <rect x="405" y="265" width="270" height="90" rx="14" fill="#0e1020" stroke="#161928" stroke-width="1.5"/>
+    <text x="540" y="300" font-weight="400" font-size="12" letter-spacing="2" text-anchor="middle" fill="#4a4e6a">PREÇO INICIAL</text>
+    <text x="540" y="334" font-weight="900" font-size="28" text-anchor="middle" fill="#00ffaa" filter="url(#softglow)">$0.01</text>
+
+    <!-- Networks -->
+    <rect x="730" y="265" width="270" height="90" rx="14" fill="#0e1020" stroke="#161928" stroke-width="1.5"/>
+    <text x="865" y="300" font-weight="400" font-size="12" letter-spacing="2" text-anchor="middle" fill="#4a4e6a">REDES</text>
+    <text x="865" y="334" font-weight="900" font-size="28" text-anchor="middle" fill="#ffffff">3+</text>
+  </g>
+
+  <!-- Distribution bar -->
+  <text x="80" y="415"
+    font-family="Arial, sans-serif" font-weight="700" font-size="13" letter-spacing="3"
+    fill="#4a4e6a">DISTRIBUIÇÃO</text>
+
+  <!-- Bar segments (total width 920, starting x=80) -->
+  <!-- 40% Ecosystem = 368px -->
+  <rect x="80"  y="435" width="366" height="56" rx="10" fill="url(#eco)"/>
+  <text x="263" y="469" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="20" text-anchor="middle" fill="#fff">40%</text>
+  <!-- 20% Team = 184px -->
+  <rect x="450" y="435" width="182" height="56" rx="10" fill="url(#team)"/>
+  <text x="541" y="469" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="20" text-anchor="middle" fill="#fff">20%</text>
+  <!-- 20% Liquidity = 184px -->
+  <rect x="636" y="435" width="182" height="56" rx="10" fill="url(#liq)"/>
+  <text x="727" y="469" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="20" text-anchor="middle" fill="#fff">20%</text>
+  <!-- 10% Treasury = 92px -->
+  <rect x="822" y="435" width="88" height="56" rx="10" fill="url(#tre)"/>
+  <text x="866" y="469" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="16" text-anchor="middle" fill="#fff">10%</text>
+  <!-- 10% IDO = 92px -->
+  <!-- <rect x="914" y="435" width="88" height="56" rx="10" fill="url(#ido)"/> -->
+
+  <!-- Legend -->
+  <g font-family="Arial, sans-serif" font-size="15">
+    <rect x="80"  y="520" width="14" height="14" rx="3" fill="url(#eco)"/>
+    <text x="103" y="533" fill="#dde1f7" font-weight="600">Ecosystem</text>
+    <text x="200" y="533" fill="#4a4e6a">40,000,000 INC</text>
+
+    <rect x="380" y="520" width="14" height="14" rx="3" fill="url(#team)"/>
+    <text x="403" y="533" fill="#dde1f7" font-weight="600">Team</text>
+    <text x="450" y="533" fill="#4a4e6a">20,000,000 INC</text>
+
+    <rect x="650" y="520" width="14" height="14" rx="3" fill="url(#liq)"/>
+    <text x="673" y="533" fill="#dde1f7" font-weight="600">Liquidity</text>
+    <text x="745" y="533" fill="#4a4e6a">20,000,000 INC</text>
+
+    <rect x="80"  y="558" width="14" height="14" rx="3" fill="url(#tre)"/>
+    <text x="103" y="571" fill="#dde1f7" font-weight="600">Treasury</text>
+    <text x="180" y="571" fill="#4a4e6a">10,000,000 INC</text>
+
+    <rect x="380" y="558" width="14" height="14" rx="3" fill="url(#ido)"/>
+    <text x="403" y="571" fill="#dde1f7" font-weight="600">IDO / Airdrop</text>
+    <text x="510" y="571" fill="#4a4e6a">10,000,000 INC</text>
+  </g>
+
+  <!-- Divider -->
+  <rect x="80" y="608" width="920" height="1" fill="#161928"/>
+
+  <!-- Utilities -->
+  <text x="80" y="648"
+    font-family="Arial, sans-serif" font-weight="700" font-size="13" letter-spacing="3"
+    fill="#4a4e6a">UTILIDADES DO TOKEN</text>
+
+  <g font-family="Arial, sans-serif" font-size="17">
+    <rect x="80"  y="668" width="440" height="58" rx="12" fill="#7c6dff08" stroke="#7c6dff20" stroke-width="1"/>
+    <text x="108" y="703" fill="#dde1f7">💎  Desconto na taxa do protocolo</text>
+
+    <rect x="560" y="668" width="440" height="58" rx="12" fill="#7c6dff08" stroke="#7c6dff20" stroke-width="1"/>
+    <text x="588" y="703" fill="#dde1f7">🏛️  Governança on-chain</text>
+
+    <rect x="80"  y="740" width="440" height="58" rx="12" fill="#7c6dff08" stroke="#7c6dff20" stroke-width="1"/>
+    <text x="108" y="775" fill="#dde1f7">🔥  Queima deflacionária</text>
+
+    <rect x="560" y="740" width="440" height="58" rx="12" fill="#7c6dff08" stroke="#7c6dff20" stroke-width="1"/>
+    <text x="588" y="775" fill="#dde1f7">🌐  Staking rewards multichain</text>
+  </g>
+
+  <!-- Token address -->
+  <rect x="80" y="832" width="920" height="58" rx="12" fill="#00e5ff06" stroke="#00e5ff20" stroke-width="1"/>
+  <text x="540" y="856" font-family="'Courier New', monospace" font-size="11" letter-spacing="2"
+    text-anchor="middle" fill="#4a4e6a">TOKEN CONTRACT (ARBITRUM / POLYGON)</text>
+  <text x="540" y="877" font-family="'Courier New', monospace" font-size="14" font-weight="700"
+    text-anchor="middle" fill="#00e5ff">0xeAa4FAF815e36caaa082C71aC8ca962F531443d7</text>
+
+  <!-- Where to buy -->
+  <rect x="80" y="916" width="920" height="58" rx="12" fill="#00ffaa08" stroke="#00ffaa25" stroke-width="1.5"/>
+  <text x="540" y="940" font-family="Arial, sans-serif" font-size="12" letter-spacing="2"
+    text-anchor="middle" fill="#4a4e6a">ONDE COMPRAR</text>
+  <text x="540" y="961" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="17" letter-spacing="2"
+    text-anchor="middle" fill="#00ffaa">Uniswap V3 · Arbitrum · Polygon · Avalanche</text>
+
+  <!-- Footer -->
+  <rect x="0" y="1000" width="1080" height="80" fill="#060710"/>
+  <rect x="0" y="1000" width="1080" height="1" fill="#161928"/>
+  <text x="540" y="1048"
+    font-family="'Courier New', monospace" font-size="16" letter-spacing="3"
+    text-anchor="middle" fill="#4a4e6a">@incnetwork · app.incnetwork.xyz</text>
+</svg>

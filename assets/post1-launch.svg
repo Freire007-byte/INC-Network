@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#03040a"/>
+      <stop offset="100%" style="stop-color:#080b18"/>
+    </linearGradient>
+    <linearGradient id="grd1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c6dff"/>
+      <stop offset="100%" style="stop-color:#00e5ff"/>
+    </linearGradient>
+    <linearGradient id="grd2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7c6dff;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#7c6dff;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#00e5ff;stop-opacity:0"/>
+    </linearGradient>
+    <radialGradient id="orb1" cx="25%" cy="25%">
+      <stop offset="0%" style="stop-color:#7c6dff;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#7c6dff;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="orb2" cx="75%" cy="75%">
+      <stop offset="0%" style="stop-color:#00e5ff;stop-opacity:0.10"/>
+      <stop offset="100%" style="stop-color:#00e5ff;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <rect width="1080" height="1080" fill="url(#orb1)"/>
+  <rect width="1080" height="1080" fill="url(#orb2)"/>
+
+  <!-- Grid lines -->
+  <g opacity="0.04" stroke="#7c6dff" stroke-width="1">
+    <line x1="0" y1="135" x2="1080" y2="135"/>
+    <line x1="0" y1="270" x2="1080" y2="270"/>
+    <line x1="0" y1="405" x2="1080" y2="405"/>
+    <line x1="0" y1="540" x2="1080" y2="540"/>
+    <line x1="0" y1="675" x2="1080" y2="675"/>
+    <line x1="0" y1="810" x2="1080" y2="810"/>
+    <line x1="0" y1="945" x2="1080" y2="945"/>
+    <line x1="135" y1="0" x2="135" y2="1080"/>
+    <line x1="270" y1="0" x2="270" y2="1080"/>
+    <line x1="405" y1="0" x2="405" y2="1080"/>
+    <line x1="540" y1="0" x2="540" y2="1080"/>
+    <line x1="675" y1="0" x2="675" y2="1080"/>
+    <line x1="810" y1="0" x2="810" y2="1080"/>
+    <line x1="945" y1="0" x2="945" y2="1080"/>
+  </g>
+
+  <!-- Signal arcs -->
+  <circle cx="540" cy="420" r="280" fill="none" stroke="url(#grd1)" stroke-width="1.5" opacity="0.15"/>
+  <circle cx="540" cy="420" r="220" fill="none" stroke="url(#grd1)" stroke-width="1" opacity="0.12"/>
+  <circle cx="540" cy="420" r="160" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.10"/>
+
+  <!-- Logo circle -->
+  <circle cx="540" cy="370" r="110" fill="#0a0b18" stroke="url(#grd1)" stroke-width="2.5"/>
+  <circle cx="540" cy="370" r="102" fill="none" stroke="url(#grd1)" stroke-width="1" opacity="0.3"/>
+
+  <!-- INC logo text -->
+  <text x="540" y="392"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900" font-size="68" letter-spacing="3"
+    text-anchor="middle" fill="url(#grd1)" filter="url(#softglow)">INC</text>
+  <text x="540" y="414"
+    font-family="Arial, sans-serif"
+    font-weight="700" font-size="13" letter-spacing="6"
+    text-anchor="middle" fill="#7c6dff" opacity="0.8">NETWORK</text>
+
+  <!-- NOW LIVE badge -->
+  <rect x="390" y="510" width="300" height="52" rx="26"
+    fill="none" stroke="url(#grd1)" stroke-width="2"/>
+  <rect x="392" y="512" width="296" height="48" rx="24"
+    fill="#00ffaa08"/>
+  <text x="540" y="543"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900" font-size="20" letter-spacing="6"
+    text-anchor="middle" fill="#00ffaa" filter="url(#softglow)">◉ NOW LIVE</text>
+
+  <!-- Divider -->
+  <rect x="240" y="600" width="600" height="1.5" rx="1" fill="url(#grd2)" opacity="0.5"/>
+
+  <!-- Main headline -->
+  <text x="540" y="660"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900" font-size="44" letter-spacing="1"
+    text-anchor="middle" fill="#ffffff">Proof-of-Signal</text>
+  <text x="540" y="710"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900" font-size="44" letter-spacing="1"
+    text-anchor="middle" fill="url(#grd1)">Protocol</text>
+
+  <!-- Subtitle -->
+  <text x="540" y="762"
+    font-family="Arial, sans-serif"
+    font-weight="400" font-size="18" letter-spacing="1"
+    text-anchor="middle" fill="#8890b0">Sinais on-chain · Stake real · Oracle Chainlink</text>
+
+  <!-- Network badges -->
+  <g font-family="Arial, sans-serif" font-weight="700" font-size="14" letter-spacing="1">
+    <!-- Arbitrum -->
+    <rect x="200" y="810" width="160" height="38" rx="19" fill="#7c6dff15" stroke="#7c6dff50" stroke-width="1.5"/>
+    <text x="280" y="834" text-anchor="middle" fill="#7c6dff">⬡ ARBITRUM</text>
+    <!-- Polygon -->
+    <rect x="460" y="810" width="160" height="38" rx="19" fill="#7c6dff15" stroke="#7c6dff50" stroke-width="1.5"/>
+    <text x="540" y="834" text-anchor="middle" fill="#a370ff">⬡ POLYGON</text>
+    <!-- Avalanche -->
+    <rect x="720" y="810" width="160" height="38" rx="19" fill="#00e5ff15" stroke="#00e5ff40" stroke-width="1.5"/>
+    <text x="800" y="834" text-anchor="middle" fill="#00e5ff">⬡ AVALANCHE</text>
+  </g>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="980" width="1080" height="100" fill="#060710"/>
+  <rect x="0" y="980" width="1080" height="1.5" fill="url(#grd2)" opacity="0.4"/>
+  <text x="540" y="1040"
+    font-family="'Courier New', monospace"
+    font-weight="700" font-size="18" letter-spacing="3"
+    text-anchor="middle" fill="#4a4e6a">app.incnetwork.xyz · @incnetwork</text>
+</svg>
