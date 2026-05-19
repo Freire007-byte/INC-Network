@@ -24,6 +24,21 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 | **Decimais** | 18 |
 | **Padrão** | ERC-20 · Burnable · Pausable · Ownable2Step |
 
+## Pools de Liquidez (Uniswap V3)
+
+| Rede | Par | Pool | Preço |
+|---|---|---|---|
+| Arbitrum | $INC / WETH | [`0x8770e3B0aE902092dE06F821ff59b48F961F098D`](https://app.uniswap.org/explore/pools/arbitrum/0x8770e3B0aE902092dE06F821ff59b48F961F098D) | $0.01 |
+| Polygon | $INC / WMATIC | [`0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1`](https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1) | $0.01 |
+| Avalanche | $INC / WAVAX | [`0xa04A83aD438866788f54b67e6e9BB96E569C3061`](https://app.uniswap.org/explore/pools/avalanche/0xa04A83aD438866788f54b67e6e9BB96E569C3061) | $0.01 |
+
+### Como comprar $INC
+
+1. Acesse [app.uniswap.org](https://app.uniswap.org)
+2. Selecione a rede (Arbitrum, Polygon ou Avalanche)
+3. Cole o endereço do token: `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` (Arbitrum/Polygon) ou `0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B` (Avalanche)
+4. Troque ETH/MATIC/AVAX por $INC
+
 ## Contratos Mainnet
 
 | Rede | Contrato | Explorer |
