@@ -29,6 +29,7 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 | Rede | Contrato | Explorer |
 |---|---|---|
 | Polygon | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://polygonscan.com/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
+| Ethereum | `0xAD4Fbde4810f3919F169c827A582aed34330ADA0` | https://etherscan.io/address/0xAD4Fbde4810f3919F169c827A582aed34330ADA0 |
 | Arbitrum | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://arbiscan.io/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
 | Optimism | — | em breve |
 | BNB Chain | — | em breve |

@@ -15,7 +15,7 @@ module.exports = {
       },
       chainId: 31337,
     },
-    ethereum:  { url: "https://eth.llamarpc.com",                      chainId: 1,      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
+    ethereum:  { url: "https://ethereum-rpc.publicnode.com",           chainId: 1,      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     arbitrum:  { url: "https://arb1.arbitrum.io/rpc",                  chainId: 42161,  accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     polygon:   { url: process.env.POLYGON_RPC_URL || "https://polygon-bor-rpc.publicnode.com",  chainId: 137,    accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     bnb:       { url: "https://bsc-dataseed.binance.org",              chainId: 56,     accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
