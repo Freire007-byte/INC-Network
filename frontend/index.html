@@ -216,7 +216,7 @@
     .section.active { display: block; }
 
     /* ── CARDS ── */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
 
     /* ══════════════════════════════════════════
        SIGNAL CARD V2 — Mission Briefing Style
@@ -792,6 +792,7 @@
     .market-chip-chg.down { color: var(--red); }
     .market-chip-chg.flat { color: var(--muted); }
     .market-chip-icon { font-size: 12px; color: var(--muted); }
+    @media(max-width:480px){ .market-chip { padding: 6px 10px; } }
 
     .filter-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
     .filter-group { display: flex; gap: 4px; }
@@ -1659,25 +1660,25 @@
           <span class="market-chip-sym">BTC</span>
           <span class="market-chip-px" id="mc-BTC">—</span>
           <span class="market-chip-chg flat" id="mcc-BTC">—</span>
-          <span class="market-chip-icon">📈</span>
+          <span style="font-size:9px;color:var(--muted);margin-left:2px" id="mct-BTC"></span>
         </div>
         <div class="market-chip" onclick="openChart('ETH')">
           <span class="market-chip-sym">ETH</span>
           <span class="market-chip-px" id="mc-ETH">—</span>
           <span class="market-chip-chg flat" id="mcc-ETH">—</span>
-          <span class="market-chip-icon">📈</span>
+          <span style="font-size:9px;color:var(--muted);margin-left:2px" id="mct-ETH"></span>
         </div>
         <div class="market-chip" onclick="openChart('SOL')">
           <span class="market-chip-sym">SOL</span>
           <span class="market-chip-px" id="mc-SOL">—</span>
           <span class="market-chip-chg flat" id="mcc-SOL">—</span>
-          <span class="market-chip-icon">📈</span>
+          <span style="font-size:9px;color:var(--muted);margin-left:2px" id="mct-SOL"></span>
         </div>
         <div class="market-chip" onclick="openChart('BNB')">
           <span class="market-chip-sym">BNB</span>
           <span class="market-chip-px" id="mc-BNB">—</span>
           <span class="market-chip-chg flat" id="mcc-BNB">—</span>
-          <span class="market-chip-icon">📈</span>
+          <span style="font-size:9px;color:var(--muted);margin-left:2px" id="mct-BNB"></span>
         </div>
       </div>
       <!-- Filtros -->
@@ -1964,7 +1965,8 @@
       <div style="text-align:center">
         <div class="wp-welcome-logo">INC</div>
         <div style="font-size:19px;font-weight:800;margin-bottom:8px">Sua Carteira Web3</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:28px">Gerencie ETH e $INC.<br>Suas chaves, seu dinheiro.</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">Gerencie ETH e $INC.<br>Suas chaves, seu dinheiro.</div>
+        <div style="font-size:11px;background:#f59e0b15;border:1px solid #f59e0b40;color:#f59e0b;border-radius:8px;padding:8px 12px;margin-bottom:20px;line-height:1.5">⚠️ Carteira quente — não guarde grandes valores aqui.</div>
       </div>
       <button class="wp-btn wp-btn-primary" onclick="wShowScreen('create')">
         <span class="wp-btn-icon">✨</span>
@@ -2431,9 +2433,9 @@ async function doConnect(rawProvider) {
     currentNetwork = NETWORKS[net.chainId];
 
     if (!currentNetwork)
-      return showToast(`Rede não suportada (Chain ID: ${net.chainId}). Mude para Sepolia ou Polygon.`, "error");
+      return showToast(`Rede não suportada (Chain ID: ${net.chainId}). Conecte em Ethereum, Polygon, Arbitrum, Avalanche ou Sepolia.`, "error");
     if (!currentNetwork.contract)
-      return showToast(`Contrato ainda não deployado na ${currentNetwork.name}. Aguarde o deploy.`, "error");
+      return showToast(`🚧 Deploy na ${currentNetwork.name} em breve. Tente Polygon, Arbitrum ou Ethereum.`, "error");
 
     provider    = web3Provider;
     signer      = web3Provider.getSigner();
@@ -2527,7 +2529,7 @@ async function loadSignals() {
       return;
     }
     allSignalsCache = [];
-    const from = Math.max(1, total - 19);
+    const from = Math.max(1, total - 49);
     const fetches = [];
     for (let i = total; i >= from; i--) fetches.push(contract.getSignal(i).catch(() => null));
     const results = await Promise.all(fetches);
@@ -2884,9 +2886,10 @@ async function createSignal() {
     showToast("Aguardando confirmação na carteira…", "info");
     const tx = await contract.createSignal(pair, direction, toPrice(entry), toPrice(tp), toPrice(sl), rsi, { value: ethers.utils.parseEther(stake) });
     showToast("TX enviada. Aguardando bloco…", "info");
-    await tx.wait();
-    showToast("Sinal criado com sucesso!", "success");
+    const receipt = await tx.wait();
+    showToast(`Sinal criado! TX: ${receipt.hash.slice(0,10)}…`, "success", 8000);
     await loadStats();
+    await loadSignals();
     switchTab("sinais");
   } catch(e) {
     showToast(e.reason||e.message||"Erro ao criar sinal", "error");
@@ -2905,8 +2908,8 @@ async function followSignal(signalId, stake) {
     showToast("Aguardando confirmação na carteira…", "info");
     const tx = await contract.followSignal(signalId, { value: ethers.utils.parseEther(stake) });
     showToast("TX enviada. Aguardando bloco…", "info");
-    await tx.wait();
-    showToast(`Seguindo sinal #${signalId}!`, "success");
+    const receipt = await tx.wait();
+    showToast(`Seguindo sinal #${signalId}! TX: ${receipt.hash.slice(0,10)}…`, "success", 8000);
     await loadStats();
     await loadSignals();
   } catch(e) {
@@ -3306,7 +3309,7 @@ async function fetchAndUpdateOracle() {
   for (const sym of ORACLE_SYMS) {
     if (!data[sym]) continue;
     const prev = oraclePrices[sym]?.price ?? data[sym].price;
-    oraclePrices[sym] = { price: data[sym].price, prev, change24h: data[sym].change24h ?? 0 };
+    oraclePrices[sym] = { price: data[sym].price, prev, change24h: data[sym].change24h ?? 0, ts: Date.now() };
     priceHistory[sym].push(data[sym].price);
     if (priceHistory[sym].length > SPARK_MAX) priceHistory[sym].shift();
   }
@@ -3355,16 +3358,22 @@ function renderOracleUI() {
   updateFormOracle();
 
   // ── market chips (sinais tab) ──
+  const nowMs = Date.now();
   for (const sym of ORACLE_SYMS) {
     const d = oraclePrices[sym]; if (!d) continue;
     const pEl = document.getElementById(`mc-${sym}`);
     const cEl = document.getElementById(`mcc-${sym}`);
+    const tEl = document.getElementById(`mct-${sym}`);
     if (!pEl) continue;
     const chg = d.change24h ?? 0;
     const sign = chg > 0 ? "▲" : chg < 0 ? "▼" : "";
     pEl.textContent = fmtOraclePrice(d.price, sym);
     cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
     cEl.className   = `market-chip-chg ${chg > 0 ? "up" : chg < 0 ? "down" : "flat"}`;
+    if (tEl && d.ts) {
+      const sec = Math.floor((nowMs - d.ts) / 1000);
+      tEl.textContent = sec < 60 ? `${sec}s atrás` : `${Math.floor(sec/60)}m atrás`;
+    }
   }
 
   // ── ticker ──
