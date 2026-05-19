@@ -192,19 +192,30 @@ npx hardhat run scripts/deploy-all.js --network rootstock
 ## Verificação multi-chain
 
 ```bash
+# Ethereum
+npx hardhat verify --network ethereum 0xAD4Fbde4810f3919F169c827A582aed34330ADA0 "0xc23dC262362C105774c0F05f7a166D3515310D03" "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679"
+
 # Polygon
-npx hardhat verify --network polygon ENDERECO "TREASURY" "OWNER"
+npx hardhat verify --network polygon 0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC "0xc23dC262362C105774c0F05f7a166D3515310D03" "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679"
 
 # Arbitrum
-npx hardhat verify --network arbitrum ENDERECO "TREASURY" "OWNER"
+npx hardhat verify --network arbitrum 0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC "0xc23dC262362C105774c0F05f7a166D3515310D03" "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679"
+
+# Avalanche
+npx hardhat verify --network avalanche 0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC "0xc23dC262362C105774c0F05f7a166D3515310D03" "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679"
 ```
 
-## Registro do Chainlink Automation (Polygon)
+## Registro do Chainlink Automation (por rede)
 
-Adicione `INC_CONTRACT_POLYGON` no `.env` após o deploy, depois:
+Requer LINK na carteira do deployer em cada rede.
 
 ```bash
+npx hardhat run scripts/register-upkeep.js --network ethereum
 npx hardhat run scripts/register-upkeep.js --network polygon
+npx hardhat run scripts/register-upkeep.js --network arbitrum
+npx hardhat run scripts/register-upkeep.js --network avalanche
+npx hardhat run scripts/register-upkeep.js --network bnb       # após deploy
+npx hardhat run scripts/register-upkeep.js --network optimism  # após deploy
 ```
 
 ## Segurança
