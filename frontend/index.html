@@ -1039,6 +1039,37 @@
     }
     .tu-ico { font-size: 16px; flex-shrink: 0; }
 
+    .buy-inc-section {
+      margin-top: 18px;
+      border-top: 1px solid #ffffff08;
+      padding-top: 18px;
+    }
+    .buy-inc-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;
+    }
+    .buy-inc-grid {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .buy-inc-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: #00ffaa06; border: 1px solid #00ffaa20;
+      border-radius: 10px; padding: 12px 16px;
+      text-decoration: none; color: var(--text);
+      transition: all .2s; cursor: pointer;
+    }
+    .buy-inc-btn:hover {
+      background: #00ffaa10; border-color: #00ffaa50;
+      box-shadow: 0 0 16px #00ffaa15;
+      transform: translateY(-1px);
+    }
+    .buy-net-icon { font-size: 18px; color: var(--green); flex-shrink: 0; }
+    .buy-net-info { display: flex; flex-direction: column; flex: 1; }
+    .buy-net-name { font-size: 13px; font-weight: 700; }
+    .buy-net-pair { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+    .buy-net-arrow { font-size: 14px; color: var(--green); opacity: .6; }
+
     .inc-token-card {
       background: rgba(124,109,255,.04);
       border-color: rgba(124,109,255,.2) !important;
@@ -1585,6 +1616,39 @@
       <div class="tu-item"><span class="tu-ico">🏛️</span><span>Governança on-chain</span></div>
       <div class="tu-item"><span class="tu-ico">🔥</span><span>Queima deflacionária</span></div>
       <div class="tu-item"><span class="tu-ico">🌐</span><span>Staking rewards multichain</span></div>
+    </div>
+
+    <div class="buy-inc-section">
+      <div class="buy-inc-title">◈ Onde Comprar $INC</div>
+      <div class="buy-inc-grid">
+        <a class="buy-inc-btn" href="https://app.uniswap.org/explore/pools/arbitrum/0x8770e3B0aE902092dE06F821ff59b48F961F098D" target="_blank">
+          <span class="buy-net-icon">⬡</span>
+          <span class="buy-net-info">
+            <span class="buy-net-name">Arbitrum</span>
+            <span class="buy-net-pair">INC / WETH · Uniswap V3</span>
+          </span>
+          <span class="buy-net-arrow">↗</span>
+        </a>
+        <a class="buy-inc-btn" href="https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1" target="_blank">
+          <span class="buy-net-icon">⬡</span>
+          <span class="buy-net-info">
+            <span class="buy-net-name">Polygon</span>
+            <span class="buy-net-pair">INC / WMATIC · Uniswap V3</span>
+          </span>
+          <span class="buy-net-arrow">↗</span>
+        </a>
+        <a class="buy-inc-btn" href="https://app.uniswap.org/explore/pools/avalanche/0xa04A83aD438866788f54b67e6e9BB96E569C3061" target="_blank">
+          <span class="buy-net-icon">⬡</span>
+          <span class="buy-net-info">
+            <span class="buy-net-name">Avalanche</span>
+            <span class="buy-net-pair">INC / WAVAX · Uniswap V3</span>
+          </span>
+          <span class="buy-net-arrow">↗</span>
+        </a>
+      </div>
+      <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">
+        Preço inicial: <span style="color:var(--green);font-weight:700">$0.01 / INC</span>
+      </div>
     </div>
   </div>
 
@@ -2194,14 +2258,16 @@ const NETWORKS = {
     name:     "Polygon",
     currency: "MATIC",
     contract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
-    token:    "",
+    token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+    pool:     "0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1",
     testnet:  false,
   },
   42161: {
     name:     "Arbitrum",
     currency: "ETH",
     contract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
-    token:    "",
+    token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+    pool:     "0x8770e3B0aE902092dE06F821ff59b48F961F098D",
     testnet:  false,
   },
   10: {
@@ -2209,6 +2275,7 @@ const NETWORKS = {
     currency: "ETH",
     contract: "",
     token:    "",
+    pool:     "",
     testnet:  false,
   },
   56: {
@@ -2216,13 +2283,15 @@ const NETWORKS = {
     currency: "BNB",
     contract: "",
     token:    "",
+    pool:     "",
     testnet:  false,
   },
   43114: {
     name:     "Avalanche",
     currency: "AVAX",
     contract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
-    token:    "",
+    token:    "0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
+    pool:     "0xa04A83aD438866788f54b67e6e9BB96E569C3061",
     testnet:  false,
   },
   30: {
@@ -2234,10 +2303,19 @@ const NETWORKS = {
   },
 };
 
-// $INC token Etherscan links
+// $INC token explorer links
 const TOKEN_EXPLORER = {
   11155111: "https://sepolia.etherscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
-  137:      "",
+  137:      "https://polygonscan.com/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+  42161:    "https://arbiscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+  43114:    "https://snowscan.xyz/token/0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
+};
+
+// Uniswap V3 pool links
+const POOL_LINKS = {
+  42161: { label: "Arbitrum · INC/WETH",  url: "https://app.uniswap.org/explore/pools/arbitrum/0x8770e3B0aE902092dE06F821ff59b48F961F098D" },
+  137:   { label: "Polygon · INC/WMATIC",  url: "https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1" },
+  43114: { label: "Avalanche · INC/WAVAX", url: "https://app.uniswap.org/explore/pools/avalanche/0xa04A83aD438866788f54b67e6e9BB96E569C3061" },
 };
 
 const ABI = [
