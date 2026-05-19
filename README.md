@@ -24,6 +24,17 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 | **Decimais** | 18 |
 | **Padrão** | ERC-20 · Burnable · Pausable · Ownable2Step |
 
+## Contratos Mainnet
+
+| Rede | Contrato | Explorer |
+|---|---|---|
+| Polygon | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://polygonscan.com/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
+| Arbitrum | — | em breve |
+| Optimism | — | em breve |
+| BNB Chain | — | em breve |
+| Avalanche | — | em breve |
+| Rootstock | — | em breve |
+
 ## Chainlink Automation
 
 | Item | Valor |
