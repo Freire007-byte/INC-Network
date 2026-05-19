@@ -29,10 +29,10 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 | Rede | Contrato | Explorer |
 |---|---|---|
 | Polygon | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://polygonscan.com/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
-| Arbitrum | — | em breve |
+| Arbitrum | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://arbiscan.io/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
 | Optimism | — | em breve |
 | BNB Chain | — | em breve |
-| Avalanche | — | em breve |
+| Avalanche | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://snowscan.xyz/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
 | Rootstock | — | em breve |
 
 ## Chainlink Automation
