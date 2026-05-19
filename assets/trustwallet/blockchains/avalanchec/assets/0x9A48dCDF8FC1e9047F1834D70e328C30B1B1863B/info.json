@@ -1,0 +1,15 @@
+{
+  "name": "INC Network Token",
+  "website": "https://freire007-byte.github.io/INC-Network",
+  "description": "INC Network is a Proof-of-Signal protocol where providers stake real ETH to publish trading signals validated by Chainlink Oracle. Followers stake on signals and winners receive the full pool.",
+  "explorer": "https://snowscan.xyz/token/0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
+  "type": "ERC20",
+  "symbol": "INC",
+  "decimals": 18,
+  "id": "0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
+  "links": [
+    { "name": "github",   "url": "https://github.com/Freire007-byte/INC-Network" },
+    { "name": "twitter",  "url": "https://twitter.com/incnetwork" },
+    { "name": "instagram","url": "https://instagram.com/incnetwork" }
+  ]
+}
