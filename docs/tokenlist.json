@@ -1,0 +1,45 @@
+{
+  "name": "INC Network Token List",
+  "timestamp": "2026-05-19T00:00:00.000Z",
+  "version": { "major": 1, "minor": 0, "patch": 0 },
+  "logoURI": "https://raw.githubusercontent.com/Freire007-byte/INC-Network/master/assets/logo.png",
+  "keywords": ["inc", "defi", "proof-of-signal"],
+  "tokens": [
+    {
+      "chainId": 42161,
+      "address": "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+      "name": "INC Network Token",
+      "symbol": "INC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/Freire007-byte/INC-Network/master/assets/logo.png",
+      "tags": ["defi", "proof-of-signal"]
+    },
+    {
+      "chainId": 137,
+      "address": "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+      "name": "INC Network Token",
+      "symbol": "INC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/Freire007-byte/INC-Network/master/assets/logo.png",
+      "tags": ["defi", "proof-of-signal"]
+    },
+    {
+      "chainId": 43114,
+      "address": "0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
+      "name": "INC Network Token",
+      "symbol": "INC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/Freire007-byte/INC-Network/master/assets/logo.png",
+      "tags": ["defi", "proof-of-signal"]
+    },
+    {
+      "chainId": 1,
+      "address": "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
+      "name": "INC Network Token",
+      "symbol": "INC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/Freire007-byte/INC-Network/master/assets/logo.png",
+      "tags": ["defi", "proof-of-signal"]
+    }
+  ]
+}
