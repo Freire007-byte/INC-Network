@@ -30,7 +30,7 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 |---|---|
 | **Upkeep ID** | `75439110777960276467956536149758701315749263214294222503003354522819246112710` |
 | **Dashboard** | https://automation.chain.link/sepolia |
-| **LINK depositado** | 5 LINK |
+| **LINK depositado** | 5 LINK (25 LINK disponíveis na carteira) |
 
 ## Feeds Chainlink configurados (Sepolia)
 
