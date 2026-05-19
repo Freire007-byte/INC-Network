@@ -170,6 +170,7 @@ npx hardhat run scripts/deploy-all.js --network polygon
 npx hardhat run scripts/deploy-all.js --network bnb
 npx hardhat run scripts/deploy-all.js --network optimism
 npx hardhat run scripts/deploy-all.js --network avalanche
+npx hardhat run scripts/deploy-all.js --network rootstock
 ```
 
 > Feeds BTC/USDT e ETH/USDT são configurados automaticamente em cada rede.
