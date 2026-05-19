@@ -1,6 +1,6 @@
 {
   "name": "inc-network-contract",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "description": "INC Network — Smart Contract com Chainlink Oracle",
   "scripts": {
     "compile": "npx hardhat compile",
