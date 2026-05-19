@@ -26,11 +26,11 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 
 ## Pools de Liquidez (Uniswap V3)
 
-| Rede | Par | Pool | Preço |
-|---|---|---|---|
-| Arbitrum | $INC / WETH | [`0x8770e3B0aE902092dE06F821ff59b48F961F098D`](https://app.uniswap.org/explore/pools/arbitrum/0x8770e3B0aE902092dE06F821ff59b48F961F098D) | $0.01 |
-| Polygon | $INC / WMATIC | [`0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1`](https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1) | $0.01 |
-| Avalanche | $INC / WAVAX | [`0xa04A83aD438866788f54b67e6e9BB96E569C3061`](https://app.uniswap.org/explore/pools/avalanche/0xa04A83aD438866788f54b67e6e9BB96E569C3061) | $0.01 |
+| Rede | Par | Pool | Preço | Liquidez |
+|---|---|---|---|---|
+| Arbitrum | $INC / WETH | [`0x8770e3B0...`](https://app.uniswap.org/explore/pools/arbitrum/0x8770e3B0aE902092dE06F821ff59b48F961F098D) | $0.01 | 0.008 WETH + 2,400 INC |
+| Polygon | $INC / WMATIC | [`0xc15de190...`](https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1) | $0.01 | 6 WMATIC + 300 INC |
+| Avalanche | $INC / WAVAX | [`0xa04A83aD...`](https://app.uniswap.org/explore/pools/avalanche/0xa04A83aD438866788f54b67e6e9BB96E569C3061) | $0.01 | 0.15 WAVAX + 375 INC |
 
 ### Como comprar $INC
 
