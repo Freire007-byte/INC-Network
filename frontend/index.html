@@ -1482,6 +1482,10 @@
       <div class="stat-label">Taxas</div>
       <div class="stat-value" id="stat-fees">—</div>
     </div>
+    <div class="stat-item">
+      <div class="stat-label">$INC</div>
+      <div class="stat-value" id="stat-inc-price" style="color:var(--green)">—</div>
+    </div>
   </div>
   <div class="header-right">
     <button id="btn-wallet" onclick="wOpenPanel()">
@@ -2580,6 +2584,28 @@ async function loadStats() {
 
 // Auto-refresh stats every 30s
 setInterval(() => { if (contract) loadStats(); }, 30000);
+
+// ── $INC live price from Uniswap V3 pool (Arbitrum) ──────────────────────────
+async function loadINCPrice() {
+  try {
+    const provider = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
+    const poolABI  = ["function slot0() view returns (uint160 sqrtPriceX96,int24,uint16,uint16,uint16,uint8,bool)"];
+    // Pool INC/WETH Arbitrum — token0=WETH, token1=INC
+    const pool = new ethers.Contract("0x8770e3B0aE902092dE06F821ff59b48F961F098D", poolABI, provider);
+    const { sqrtPriceX96 } = await pool.slot0();
+    // price = (sqrtPriceX96 / 2^96)^2  → INC per WETH
+    const Q96   = ethers.BigNumber.from("2").pow(96);
+    const price = sqrtPriceX96.mul(sqrtPriceX96).div(Q96).div(Q96); // INC per WETH (integer)
+    // Convert to ETH per INC then to USD (estimate ETH~$3000)
+    // priceINCinETH = 1 / price_INC_per_ETH
+    const priceINCperETH = parseFloat(sqrtPriceX96.toString()) / Math.pow(2, 96);
+    const priceINCinUSD  = (priceINCperETH * priceINCperETH * 3000).toFixed(6);
+    const el = document.getElementById("stat-inc-price");
+    if (el) el.textContent = "$" + priceINCinUSD;
+  } catch {}
+}
+loadINCPrice();
+setInterval(loadINCPrice, 60000);
 
 // ══════════════════════════════════════════════
 // SINAIS

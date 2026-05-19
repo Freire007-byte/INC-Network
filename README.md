@@ -39,17 +39,25 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 3. Cole o endereço do token: `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` (Arbitrum/Polygon) ou `0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B` (Avalanche)
 4. Troque ETH/MATIC/AVAX por $INC
 
-## Contratos Mainnet
+## Contratos Mainnet — INCNetwork ✅ Verificados
 
 | Rede | Contrato | Explorer |
 |---|---|---|
-| Polygon | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://polygonscan.com/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
-| Ethereum | `0xAD4Fbde4810f3919F169c827A582aed34330ADA0` | https://etherscan.io/address/0xAD4Fbde4810f3919F169c827A582aed34330ADA0 |
-| Arbitrum | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://arbiscan.io/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
-| Optimism | — | em breve |
+| Ethereum | `0xAD4Fbde4810f3919F169c827A582aed34330ADA0` | [![verified](https://img.shields.io/badge/etherscan-verified-brightgreen)](https://etherscan.io/address/0xAD4Fbde4810f3919F169c827A582aed34330ADA0#code) |
+| Arbitrum | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | [![verified](https://img.shields.io/badge/arbiscan-verified-brightgreen)](https://arbiscan.io/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC#code) |
+| Polygon | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | [![verified](https://img.shields.io/badge/polygonscan-verified-brightgreen)](https://polygonscan.com/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC#code) |
+| Avalanche | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | [![verified](https://img.shields.io/badge/snowscan-verified-brightgreen)](https://snowscan.xyz/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC#code) |
 | BNB Chain | — | em breve |
-| Avalanche | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` | https://snowscan.xyz/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC |
+| Optimism | — | em breve |
 | Rootstock | — | em breve |
+
+## $INC Token Mainnet ✅ Verificados
+
+| Rede | Contrato | Explorer |
+|---|---|---|
+| Arbitrum | `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` | [![verified](https://img.shields.io/badge/arbiscan-verified-brightgreen)](https://arbiscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7) |
+| Polygon | `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` | [![verified](https://img.shields.io/badge/polygonscan-verified-brightgreen)](https://polygonscan.com/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7) |
+| Avalanche | `0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B` | [![verified](https://img.shields.io/badge/snowscan-verified-brightgreen)](https://snowscan.xyz/token/0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B) |
 
 ## Chainlink Automation
 
