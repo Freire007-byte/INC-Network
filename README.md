@@ -6,12 +6,12 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 
 | Item | Valor |
 |---|---|
-| **Contrato** | `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` |
-| **Etherscan** | https://sepolia.etherscan.io/address/0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC#code |
-| **Versão** | v1.3 |
+| **Contrato** | `0x3aF7127ca9Fa313D4AB7FAcdf7062F0FA5574993` |
+| **Etherscan** | https://sepolia.etherscan.io/address/0x3aF7127ca9Fa313D4AB7FAcdf7062F0FA5574993#code |
+| **Versão** | v1.4 |
 | **Rede** | Sepolia Testnet (Chain ID: 11155111) |
 | **Treasury** | `0xc23dC262362C105774c0F05f7a166D3515310D03` |
-| **Taxa** | 1.5% |
+| **Taxa** | 3.5% |
 
 ## $INC Token (Sepolia Testnet)
 
@@ -28,7 +28,7 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 
 | Item | Valor |
 |---|---|
-| **Upkeep ID** | `30272584736006106819135222498325581770119847735504215194734786949589372446626` |
+| **Upkeep ID** | `75439110777960276467956536149758701315749263214294222503003354522819246112710` |
 | **Dashboard** | https://automation.chain.link/sepolia |
 | **LINK depositado** | 5 LINK |
 
@@ -45,7 +45,7 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 npm install
 ```
 
-## Testes (53/53 passando)
+## Testes (68/68 passando)
 
 ```bash
 npx hardhat test
@@ -65,7 +65,7 @@ npx hardhat test
 
 **createSignal()**
 - Cria sinal LONG e adiciona à lista de abertos
-- Cobra taxa de 1.5% para a treasury
+- Cobra taxa de 3.5% para a treasury
 - Rejeita LONG com TP abaixo do preço atual do oracle (exploit WIN instantâneo)
 - Rejeita SHORT com TP acima do preço atual do oracle (exploit WIN instantâneo)
 

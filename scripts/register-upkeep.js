@@ -6,7 +6,7 @@ const NETWORK_CONFIG = {
     linkToken:  "0x779877A7B0D9E8603169DdbD7836e478b4624789",
     registrar:  "0xb0E49c5D0d05cbc241d68c05BC5BA1d1B7B72976",
     dashboard:  "https://automation.chain.link/sepolia",
-    incContract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+    incContract: "0x3aF7127ca9Fa313D4AB7FAcdf7062F0FA5574993",
   },
   polygon: {
     linkToken:  "0xb0897686c545045aFc77CF20eC7A532E3120E0F1",

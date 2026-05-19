@@ -99,9 +99,9 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
       expect(sig.status).to.equal(0); // OPEN
     });
 
-    it("Cobra taxa de 1.5% para a treasury", async () => {
+    it("Cobra taxa de 3.5% para a treasury", async () => {
       await createBtcSignal();
-      const fee = PROVIDER_STAKE * 150n / 10000n;
+      const fee = PROVIDER_STAKE * 350n / 10000n;
       // Taxa acumulada via pull-payment em pendingWithdrawal[treasury]
       expect(await contract.pendingWithdrawal(treasury.address)).to.equal(fee);
     });
@@ -404,13 +404,13 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
     it("Follower recupera stake após sinal expirado", async () => {
       await contract.connect(follower1).claimExpired(1);
       const pending = await contract.pendingWithdrawal(follower1.address);
-      const expectedStake = FOLLOWER_STAKE * 9850n / 10000n; // descontando 1.5% de taxa
+      const expectedStake = FOLLOWER_STAKE * 9650n / 10000n; // descontando 3.5% de taxa
       expect(pending).to.equal(expectedStake);
     });
 
     it("Provider recupera stake após sinal expirado", async () => {
       const pending = await contract.pendingWithdrawal(provider.address);
-      const expectedStake = PROVIDER_STAKE * 9850n / 10000n;
+      const expectedStake = PROVIDER_STAKE * 9650n / 10000n;
       expect(pending).to.equal(expectedStake);
     });
 
@@ -523,8 +523,8 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
     });
 
     it("Treasury acumula taxas de createSignal e followSignal", async () => {
-      const feeProvider  = PROVIDER_STAKE * 150n / 10000n;
-      const feeFollower  = FOLLOWER_STAKE * 150n / 10000n;
+      const feeProvider  = PROVIDER_STAKE * 350n / 10000n;
+      const feeFollower  = FOLLOWER_STAKE * 350n / 10000n;
       const totalFees    = feeProvider + feeFollower;
       expect(await contract.pendingWithdrawal(treasury.address)).to.equal(totalFees);
     });
@@ -544,8 +544,8 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
 
     it("Treasury acumula taxas de múltiplos sinais", async () => {
       await createBtcSignal(0); // segundo sinal
-      const feeUnitProvider = PROVIDER_STAKE * 150n / 10000n;
-      const feeUnitFollower = FOLLOWER_STAKE * 150n / 10000n;
+      const feeUnitProvider = PROVIDER_STAKE * 350n / 10000n;
+      const feeUnitFollower = FOLLOWER_STAKE * 350n / 10000n;
       // 2 createSignal + 1 followSignal
       const expected = feeUnitProvider * 2n + feeUnitFollower;
       expect(await contract.pendingWithdrawal(treasury.address)).to.equal(expected);

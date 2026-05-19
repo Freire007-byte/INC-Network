@@ -92,7 +92,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
 
     // ── CONSTANTES ────────────────────────────────────────────────────────────
 
-    uint256 public constant NETWORK_FEE_BPS            = 150;
+    uint256 public constant NETWORK_FEE_BPS            = 350;
     uint256 public constant BPS_BASE                   = 10_000;
     uint256 public constant MIN_PROVIDER_STAKE         = 0.005 ether;
     uint256 public constant MIN_FOLLOWER_STAKE         = 0.001 ether;
