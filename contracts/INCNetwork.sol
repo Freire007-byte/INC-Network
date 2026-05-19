@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 /**
  * ╔══════════════════════════════════════════════════════════════╗
  * ║              INC NETWORK — Proof-of-Signal                  ║
- * ║              Smart Contract v1.3 (Chainlink Oracle)         ║
+ * ║              Smart Contract v1.4 (Chainlink Oracle)         ║
  * ║                                                              ║
  * ║  · Staking de ETH por providers e followers                 ║
- * ║  · Distribuição automática de taxas (1.5%) para a rede      ║
+ * ║  · Distribuição automática de taxas (3.5%) para a rede      ║
  * ║  · Registro imutável de sinais on-chain                     ║
  * ║  · Resolução automática via Chainlink Price Feeds           ║
  * ║  · Automação via Chainlink Automation (antigo Keepers)      ║

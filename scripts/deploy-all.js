@@ -115,7 +115,7 @@ async function main() {
     console.log(`  Rede     : ${result.label}`);
     console.log(`  Endereço : ${result.address}`);
     console.log(`  Tesouraria: ${INC_TREASURY}`);
-    console.log(`  Taxa INC : 1.5%`);
+    console.log(`  Taxa INC : 3.5%`);
     console.log("═".repeat(56));
     console.log("\n  PRÓXIMO PASSO — Verificar código-fonte:");
     console.log(`  npx hardhat verify --network ${result.network} ${result.address} "${INC_TREASURY}" "${result.deployer}"`);

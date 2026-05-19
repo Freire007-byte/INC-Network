@@ -24,7 +24,7 @@ const path = require("path");
 const CFG = {
   rpcUrl:      process.env.VAULT_RPC_URL      || process.env.SEPOLIA_RPC_URL,
   privateKey:  process.env.VAULT_PRIVATE_KEY,
-  contract:    process.env.VAULT_CONTRACT     || "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+  contract:    process.env.VAULT_CONTRACT     || "0x3aF7127ca9Fa313D4AB7FAcdf7062F0FA5574993",
 
   stakeEth:    process.env.VAULT_STAKE_ETH    || "0.005",  // ETH por sinal
   minProgress: parseFloat(process.env.VAULT_MIN_PROGRESS  || "45"),   // % mínimo rumo ao TP
