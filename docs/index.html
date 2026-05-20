@@ -966,6 +966,14 @@
     .chart-close-btn:hover { color: var(--text); background: #ffffff14; }
     #chart-container {
       flex: 1; min-height: 0; position: relative;
+      width: 100%; height: 100%;
+    }
+    #chart-container iframe,
+    #tv_widget,
+    #tv_widget iframe {
+      width: 100% !important;
+      height: 100% !important;
+      border: none !important;
     }
 
     /* ── TOAST NOTIFICATIONS ── */
@@ -3990,7 +3998,6 @@ function openChart(sym) {
   document.getElementById("chart-sym-name").textContent = sym + "/USDT";
   document.getElementById("chart-modal-overlay").classList.add("open");
 
-  // Mostra preço atual no header do gráfico
   const d = oraclePrices[sym];
   if (d) {
     document.getElementById("chart-live-price").textContent = fmtOraclePrice(d.price, sym);
@@ -4001,8 +4008,8 @@ function openChart(sym) {
     el.style.color = chg > 0 ? "var(--green)" : chg < 0 ? "var(--red)" : "var(--muted)";
   }
 
-  // Carrega widget TradingView
-  _loadTVWidget(sym, currentTF);
+  // Delay para garantir que o container está renderizado com tamanho correto
+  setTimeout(() => _loadTVWidget(sym, currentTF), 80);
 }
 
 function closeChart() {
@@ -4018,18 +4025,28 @@ function switchTF(btn, tf) {
   if (currentChartSym) _loadTVWidget(currentChartSym, tf);
 }
 
+let _tvResizeTimer = null;
 function _loadTVWidget(sym, interval) {
   const container = document.getElementById("chart-container");
+  if (!container) return;
   container.innerHTML = "";
+
+  // Calcula altura real disponível
+  const overlay = document.getElementById("chart-modal-overlay");
+  const header  = overlay.querySelector(".chart-modal-header");
+  const availH  = overlay.offsetHeight - (header ? header.offsetHeight : 56);
+  container.style.height = Math.max(availH, 400) + "px";
 
   const widgetDiv = document.createElement("div");
   widgetDiv.id = "tv_widget";
-  widgetDiv.style.cssText = "width:100%;height:100%;";
+  widgetDiv.style.cssText = `width:100%;height:${Math.max(availH, 400)}px;`;
   container.appendChild(widgetDiv);
 
   function _createWidget() {
+    if (!document.getElementById("tv_widget")) return;
     new TradingView.widget({
-      autosize:             true,
+      width:                "100%",
+      height:               Math.max(availH, 400),
       symbol:               TV_SYMBOLS[sym] || "BINANCE:BTCUSDT",
       interval:             interval,
       timezone:             "America/Sao_Paulo",
@@ -4054,11 +4071,19 @@ function _loadTVWidget(sym, interval) {
     _createWidget();
   } else {
     const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/tv.js";
+    script.src   = "https://s3.tradingview.com/tv.js";
+    script.async = true;
     script.onload = _createWidget;
     document.head.appendChild(script);
   }
 }
+
+// Recarrega gráfico ao redimensionar janela
+window.addEventListener("resize", () => {
+  if (!currentChartSym) return;
+  clearTimeout(_tvResizeTimer);
+  _tvResizeTimer = setTimeout(() => _loadTVWidget(currentChartSym, currentTF), 300);
+});
 
 // Fecha gráfico com ESC
 document.addEventListener("keydown", e => {
