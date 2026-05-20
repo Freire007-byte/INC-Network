@@ -184,6 +184,18 @@
       cursor: pointer; transition: all .25s; font-family: 'Space Grotesk', sans-serif;
     }
     .btn-hero-outline:hover { border-color: #7c6dff80; color: var(--primary); }
+    .btn-hero-operar {
+      background: linear-gradient(135deg, #00ffaa, #00e5ff) !important;
+      box-shadow: 0 0 40px #00ffaa40 !important;
+      color: #050608 !important;
+      font-size: 16px !important;
+      animation: operar-pulse 2.5s ease-in-out infinite;
+    }
+    .btn-hero-operar:hover { transform: translateY(-3px); box-shadow: 0 0 60px #00ffaa60 !important; }
+    @keyframes operar-pulse {
+      0%,100% { box-shadow: 0 0 40px #00ffaa40; }
+      50%      { box-shadow: 0 0 60px #00ffaa70, 0 0 100px #00e5ff30; }
+    }
 
     .hero-stats {
       display: flex; gap: 40px; margin-top: 56px;
@@ -878,6 +890,33 @@
       font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600;
     }
 
+    /* ── PROTO STATS BAR ── */
+    .proto-stats-bar {
+      display: flex; align-items: center; gap: 0;
+      background: linear-gradient(90deg, rgba(124,109,255,.06) 0%, rgba(0,229,255,.04) 100%);
+      border-bottom: 1px solid rgba(124,109,255,.15);
+      padding: 10px 28px; flex-wrap: wrap; gap: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .psb-item { display: flex; align-items: center; gap: 8px; padding: 2px 16px 2px 0; }
+    .psb-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; }
+    .psb-val { font-size: 12px; font-weight: 800; color: var(--text); margin-left: 4px; }
+    .psb-sep { color: rgba(124,109,255,.3); font-size: 14px; margin: 0 4px; user-select: none; }
+    .active-dot { width: 6px; height: 6px; border-radius: 50%; background: #00ffaa; box-shadow: 0 0 8px #00ffaa; display: inline-block; animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.7); } }
+    @media(max-width:600px){ .psb-sep { display:none; } .proto-stats-bar { gap: 8px; } }
+
+    /* ── SIG-WON-NOTE ── */
+    .sig-won-note { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); padding: 4px 10px; background: rgba(255,61,87,.06); border-radius: 6px; border: 1px solid rgba(255,61,87,.15); }
+
+    /* ── R/R CALCULATOR ── */
+    .rr-calc { background: rgba(124,109,255,.06); border: 1px solid rgba(124,109,255,.2); border-radius: 12px; padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin-top: 4px; }
+    .rr-row { display: flex; justify-content: space-between; align-items: center; }
+    .rr-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
+    .rr-val { font-size: 13px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text); }
+    .rr-green { color: var(--green) !important; }
+    .rr-red   { color: var(--red)   !important; }
+
     /* ── SIGNALS HEADER ── */
     .signals-header { padding: 20px 28px 0; }
     .market-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -1427,6 +1466,17 @@
     .wp-divider { height:1px; background:var(--border); flex-shrink:0; }
 
     /* header wallet btn */
+    #btn-operar {
+      background: linear-gradient(135deg, #7c6dff, #00e5ff);
+      border: none; color: #fff;
+      border-radius: 10px; padding: 8px 18px; font-size: 13px; font-weight: 800;
+      cursor: pointer; transition: all .25s; font-family: 'Space Grotesk', sans-serif;
+      box-shadow: 0 0 18px #7c6dff40;
+      letter-spacing: .3px;
+    }
+    #btn-operar:hover { transform: translateY(-2px); box-shadow: 0 0 28px #7c6dff70; }
+    @media(max-width:640px){ #btn-operar { display:none; } }
+
     #btn-wallet {
       background: #7c6dff14; border: 1px solid #7c6dff35; color: var(--primary);
       border-radius: 10px; padding: 8px 16px; font-size: 13px; font-weight: 700;
@@ -1827,6 +1877,7 @@
     <a href="https://instagram.com/inc_network_" target="_blank" class="hdr-social" title="Instagram @inc_network_">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
     </a>
+    <button id="btn-operar" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'});setTimeout(()=>switchTab('sinais'),300)">⚡ Operar Agora</button>
     <button id="btn-wallet" onclick="wOpenPanel()">
       <span class="wbtn-dot"></span> INC Wallet
     </button>
@@ -2329,6 +2380,7 @@
   </div>
 
   <div class="hero-actions">
+    <button class="btn-hero btn-hero-operar" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'});setTimeout(()=>switchTab('sinais'),300)">⚡ Operar Agora</button>
     <button class="btn-hero" onclick="showWalletModal()">Conectar Carteira</button>
     <a href="https://github.com/Freire007-byte/INC-Network" target="_blank">
       <button class="btn-hero-outline">Ver Código</button>
@@ -2416,6 +2468,34 @@
 
   <!-- SINAIS -->
   <div id="tab-sinais" class="section active">
+    <!-- ══ LIVE PROTOCOL STATS ══ -->
+    <div class="proto-stats-bar" id="proto-stats-bar">
+      <div class="psb-item">
+        <span class="psb-dot active-dot"></span>
+        <span class="psb-label">SINAIS ATIVOS</span>
+        <span class="psb-val" id="psb-open">—</span>
+      </div>
+      <div class="psb-sep">│</div>
+      <div class="psb-item">
+        <span class="psb-label">POOL TOTAL</span>
+        <span class="psb-val" id="psb-vol">—</span>
+      </div>
+      <div class="psb-sep">│</div>
+      <div class="psb-item">
+        <span class="psb-label">REDES ATIVAS</span>
+        <span class="psb-val" style="color:var(--green)">4</span>
+      </div>
+      <div class="psb-sep">│</div>
+      <div class="psb-item">
+        <span class="psb-label">TAXA</span>
+        <span class="psb-val" style="color:var(--yellow)">3.5%</span>
+      </div>
+      <div class="psb-sep">│</div>
+      <div class="psb-item">
+        <span class="psb-label">$INC</span>
+        <span class="psb-val" style="color:var(--green)" id="psb-price">—</span>
+      </div>
+    </div>
     <div class="signals-header">
       <!-- Barra de preços ao vivo -->
       <div class="market-bar">
@@ -2591,10 +2671,18 @@
 
         <div class="form-row">
           <label id="label-provider-stake">Stake — mínimo 0.005</label>
-          <input type="number" id="f-stake" placeholder="0.01" step="0.001" min="0.005" />
+          <input type="number" id="f-stake" placeholder="0.01" step="0.001" min="0.005" oninput="updateRRCalc()" />
         </div>
 
-        <button class="btn-submit" onclick="createSignal()">Publicar Sinal</button>
+        <!-- Risco/Retorno Calculator -->
+        <div class="rr-calc" id="rr-calc" style="display:none">
+          <div class="rr-row"><span class="rr-label">Risk/Reward</span><span class="rr-val" id="rr-ratio">—</span></div>
+          <div class="rr-row"><span class="rr-label">TP Distance</span><span class="rr-val rr-green" id="rr-tp-pct">—</span></div>
+          <div class="rr-row"><span class="rr-label">SL Distance</span><span class="rr-val rr-red" id="rr-sl-pct">—</span></div>
+          <div class="rr-row"><span class="rr-label">Pool ao publicar</span><span class="rr-val" id="rr-pool">—</span></div>
+        </div>
+
+        <button class="btn-submit" onclick="createSignal()">🚀 Publicar Sinal</button>
       </div>
     </div>
   </div>
@@ -2634,7 +2722,7 @@
           </div>
         </div>
         <div class="bc-info">
-          Recompensas de sinais <b style="color:var(--red)">LOSS</b> e stakes devolvidos de sinais <b style="color:var(--yellow)">EXPIRADOS</b> ficam disponíveis aqui.
+          Ganhos de sinais <b style="color:var(--green)">WIN</b> (providers), recompensas de sinais <b style="color:var(--red)">LOSS</b> (followers) e stakes devolvidos de sinais <b style="color:var(--yellow)">EXPIRADOS</b> ficam disponíveis aqui.
         </div>
         <button class="btn-submit" onclick="withdraw()" id="btn-withdraw" disabled>
           Sacar agora <span id="bc-withdraw-label"></span>
@@ -3371,6 +3459,14 @@ async function loadStats() {
     animCount(sigEl,  total.toNumber(), 0, "");
     animCount(volEl,  parseFloat(ethers.utils.formatEther(vol)),  3, " " + c);
     animCount(feeEl,  parseFloat(ethers.utils.formatEther(fees)), 4, " " + c);
+    // Proto stats bar
+    try {
+      const openCount = (await contract.openSignalsCount()).toNumber();
+      const psbOpen = document.getElementById("psb-open"); if (psbOpen) psbOpen.textContent = openCount;
+      const volFmt = parseFloat(ethers.utils.formatEther(vol));
+      const psbVol = document.getElementById("psb-vol");
+      if (psbVol) psbVol.textContent = (volFmt > 0 ? (volFmt < 1 ? volFmt.toFixed(4) : volFmt.toFixed(2)) : "0") + " " + c;
+    } catch {}
   } catch {}
 }
 
@@ -3388,14 +3484,15 @@ async function loadINCPrice() {
     const { sqrtPriceX96 } = await pool.slot0();
     // price = (sqrtPriceX96 / 2^96)^2 → INC per WETH
     const priceINCperETH = parseFloat(sqrtPriceX96.toString()) / Math.pow(2, 96);
-    const priceUSD = priceINCperETH * priceINCperETH * 3000;
+    const ethPx = oraclePrices["ETH"]?.price || 3000;
+    const priceUSD = priceINCperETH * priceINCperETH * ethPx;
     const priceStr = priceUSD < 0.001 ? priceUSD.toExponential(2) : "$" + priceUSD.toFixed(priceUSD < 0.01 ? 6 : 4);
     const mcap = (priceUSD * 100_000_000);
     const mcapStr = mcap >= 1_000_000 ? "$" + (mcap / 1_000_000).toFixed(2) + "M"
                   : mcap >= 1_000     ? "$" + (mcap / 1_000).toFixed(1) + "K"
                   : "$" + mcap.toFixed(0);
 
-    const ids = ["stat-inc-price", "oprice-INC", "hs-price"];
+    const ids = ["stat-inc-price", "oprice-INC", "hs-price", "psb-price"];
     ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = priceStr; });
     const mcEl = document.getElementById("hs-mcap"); if (mcEl) mcEl.textContent = mcapStr;
   } catch {}
@@ -3605,7 +3702,7 @@ function buildSignalCard(sig) {
   const isExpired  = sig.status === 3;
   const isLong     = sig.direction === 0;
   const pool       = sig.providerStake.add(sig.followersStake);
-  const expires    = new Date(sig.createdAt.toNumber()*1000 + 7*86400000);
+  const expires    = new Date(sig.createdAt.toNumber()*1000 + 30*86400000);
   const isProvider = userAddress && sig.provider.toLowerCase() === userAddress.toLowerCase();
   const dc         = isLong ? '#00e5ff' : '#ff3d8a';
   const sigId      = sig.id.toString().padStart(4,'0');
@@ -3682,6 +3779,8 @@ function buildSignalCard(sig) {
     <div class="sig-acts">
       ${isOpen && !isProvider ? `<button class="btn btn-primary" onclick="openFollowModal(${sig.id},'${sig.pair}',${sig.direction})">Seguir Sinal</button>` : ''}
       ${isOpen ? `<button class="btn btn-outline" onclick="resolveOracle(${sig.id})">Verificar Oracle</button>` : ''}
+      ${sig.status===1 && isProvider ? `<button class="btn btn-green" onclick="switchTab('sacar')">💰 Sacar Ganhos</button>` : ''}
+      ${sig.status===1 && !isProvider ? `<span class="sig-won-note">Provider venceu este sinal</span>` : ''}
       ${isLoss    ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar Recompensa</button>` : ''}
       ${isExpired ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar Stake</button>` : ''}
       <button class="btn-share" onclick="shareSignal(${sig.id})" title="Compartilhar">🔗</button>
@@ -3744,6 +3843,7 @@ function fillEntryFromOracle() {
   const d   = oraclePrices[sym];
   if (!d) return showAlert("Preço oracle não carregado ainda", "error");
   document.getElementById("f-entry").value = d.price.toFixed(2);
+  updateRRCalc();
 }
 
 function openChartFromForm() { openChart(getFormSym()); }
@@ -3754,6 +3854,7 @@ function setTP(pct) {
   if (!entry) return showAlert("Preencha o preço de entrada primeiro", "error");
   const result = dir === 0 ? entry * (1 + pct/100) : entry * (1 - pct/100);
   document.getElementById("f-tp").value = result.toFixed(2);
+  updateRRCalc();
 }
 
 function setSL(pct) {
@@ -3762,6 +3863,7 @@ function setSL(pct) {
   if (!entry) return showAlert("Preencha o preço de entrada primeiro", "error");
   const result = dir === 0 ? entry * (1 - pct/100) : entry * (1 + pct/100);
   document.getElementById("f-sl").value = result.toFixed(2);
+  updateRRCalc();
 }
 
 // ══════════════════════════════════════════════
@@ -3982,7 +4084,8 @@ function buildPositionCard(sig, pos, c) {
       <div class="sig-acts" style="padding:0">
         ${canClaim&&isLoss    ? `<button class="btn btn-green" onclick="claimReward(${sig.id})">Resgatar</button>` : ''}
         ${canClaim&&isExpired ? `<button class="btn btn-outline" onclick="claimExpired(${sig.id})">Recuperar Stake</button>` : ''}
-        ${isWin               ? `<span style="color:var(--red);font-size:12px;font-family:'JetBrains Mono',monospace">Provider ganhou</span>` : ''}
+        ${isWin && isProvider  ? `<button class="btn btn-green" onclick="switchTab('sacar')">💰 Sacar Ganhos</button>` : ''}
+        ${isWin && !isProvider ? `<span class="sig-won-note">Provider venceu · stake perdido</span>` : ''}
         ${isOpen              ? `<button class="btn btn-outline" onclick="resolveOracle(${sig.id})">Verificar Oracle</button>` : ''}
       </div>
     </div>`;
@@ -4611,6 +4714,37 @@ function scrollToToken() {
   const el = document.getElementById("token-section");
   if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
 }
+
+// ── Risk/Reward Calculator ──
+function updateRRCalc() {
+  const entry = parseFloat(document.getElementById("f-entry")?.value);
+  const tp    = parseFloat(document.getElementById("f-tp")?.value);
+  const sl    = parseFloat(document.getElementById("f-sl")?.value);
+  const stake = parseFloat(document.getElementById("f-stake")?.value);
+  const dir   = parseInt(document.getElementById("f-direction")?.value ?? 0);
+  const calc  = document.getElementById("rr-calc");
+  if (!calc) return;
+  if (!entry || !tp || !sl || entry <= 0) { calc.style.display = "none"; return; }
+  calc.style.display = "block";
+  const tpDist = dir === 0 ? (tp - entry) / entry * 100 : (entry - tp) / entry * 100;
+  const slDist = dir === 0 ? (entry - sl) / entry * 100 : (sl - entry) / entry * 100;
+  const rr = slDist > 0 ? (tpDist / slDist) : 0;
+  const rrEl = document.getElementById("rr-ratio");
+  const tpEl = document.getElementById("rr-tp-pct");
+  const slEl = document.getElementById("rr-sl-pct");
+  const poolEl = document.getElementById("rr-pool");
+  const c = currentNetwork?.currency ?? "ETH";
+  if (rrEl) { rrEl.textContent = rr > 0 ? rr.toFixed(2) + "R" : "—"; rrEl.style.color = rr >= 2 ? "var(--green)" : rr >= 1 ? "var(--yellow)" : "var(--red)"; }
+  if (tpEl) tpEl.textContent = tpDist > 0 ? "+" + tpDist.toFixed(2) + "%" : "—";
+  if (slEl) slEl.textContent = slDist > 0 ? "-" + slDist.toFixed(2) + "%" : "—";
+  if (poolEl && stake > 0) poolEl.textContent = (stake * 0.965).toFixed(4) + " " + c + " (após taxa 3.5%)";
+}
+
+// Trigger calc on form field changes
+["f-entry","f-tp","f-sl","f-direction"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", updateRRCalc);
+});
 
 // ══════════════════════════════════════════════
 // WHALE RADAR — Binance WebSocket em tempo real
