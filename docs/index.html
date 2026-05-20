@@ -221,8 +221,10 @@
     #alert.error   { background: #ff3d5710; border: 1px solid #ff3d5730; color: var(--red); }
     #alert.info    { background: #7c6dff10; border: 1px solid #7c6dff30; color: var(--primary); }
 
-    /* ── APP — sempre visível, scroll via botão Operar ── */
-    #app { display: block; position: relative; z-index: 1; }
+    /* ── APP — oculto até o usuário clicar Operar ── */
+    #app { display: none; position: relative; z-index: 1; }
+    body.app-mode #hero { display: none !important; }
+    body.app-mode #app  { display: block !important; }
 
     /* ── TABS ── */
     .tabs {
@@ -3572,22 +3574,25 @@ function updateNetworkBadge() {
   badge.className = "network-badge" + (currentNetwork.testnet ? "" : " mainnet");
 }
 
-// Botão Operar Agora — rola para a interface e inicia contrato read-only
+// Botão Operar Agora — mostra interface DApp via classe CSS + scroll ao topo
 async function openAppReadOnly() {
-  const appEl = document.getElementById("app");
-  if (!appEl) return;
-
-  // Init contrato read-only se não tiver carteira conectada
-  if (!contract) {
-    await initReadOnlyContract();
+  // Já está em modo app — só scrolla
+  if (document.body.classList.contains('app-mode')) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    switchTab("sinais");
+    return;
   }
 
+  // Init contrato read-only se não tiver carteira
+  if (!contract) await initReadOnlyContract();
+
+  // Ativa modo app: CSS esconde hero e mostra #app
+  document.body.classList.add('app-mode');
+  updateCurrencyLabels();
+  window.scrollTo({ top: 0, behavior: 'instant' });
   switchTab("sinais");
-  appEl.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  if (!signer) {
-    showToast("Modo visualização — conecte a carteira para operar", "info");
-  }
+  if (!signer) showToast("Modo visualização — conecte a carteira para operar", "info");
 }
 
 // Inicializa contrato em modo leitura (Sepolia) com fallback de RPCs
@@ -3717,6 +3722,9 @@ async function doConnect(rawProvider) {
     btn.innerHTML = `<span style="color:var(--green);font-size:9px">●</span> ${userAddress.slice(0,6)}…${userAddress.slice(-4)}`;
     btn.classList.add("connected");
 
+    // Mostra DApp, esconde landing via classe CSS
+    document.body.classList.add('app-mode');
+    window.scrollTo({ top: 0, behavior: 'instant' });
     updateNetworkBadge();
     updateCurrencyLabels();
     await loadStats();
@@ -6111,11 +6119,8 @@ initWhaleRadar();
 // ── BOOT ──
 initLiveOracle();
 
-// Auto-carrega sinais em modo leitura ao abrir a página
-(async function autoLoad() {
-  await initReadOnlyContract();
-  if (contract) loadSignals();
-})();
+// Pré-inicializa contrato read-only em background (agiliza primeiro clique em Operar)
+setTimeout(() => initReadOnlyContract(), 1500);
 </script>
 </body>
 </html>
