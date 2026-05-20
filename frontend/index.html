@@ -2716,7 +2716,7 @@
 <!-- ══════════════════════════════════════════ -->
 <!-- APP                                        -->
 <!-- ══════════════════════════════════════════ -->
-<div id="app">
+<div id="app" style="display:none">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
     <button onclick="goBack()" style="background:transparent;border:1px solid #ffffff20;color:var(--muted);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'JetBrains Mono',monospace;transition:all .2s" onmouseover="this.style.borderColor='#ffffff40';this.style.color='#fff'" onmouseout="this.style.borderColor='#ffffff20';this.style.color='var(--muted)'">← Voltar</button>
   </div>
@@ -3580,8 +3580,10 @@ function updateNetworkBadge() {
 
 // Botão Operar Agora — abre a interface DApp
 function openAppReadOnly() {
+  console.log("[INC] openAppReadOnly called");
   var appEl   = document.getElementById("app");
   var heroEl  = document.getElementById("hero");
+  console.log("[INC] appEl:", appEl, "heroEl:", heroEl);
   var whaleEl = document.getElementById("whale-flow-section");
   if (!appEl) return;
 
@@ -3608,8 +3610,8 @@ function openAppReadOnly() {
   }
 
   // Esconde landing, mostra app
-  if (heroEl) heroEl.style.display = "none";
-  appEl.style.display = "block";
+  if (heroEl) { heroEl.style.setProperty("display", "none", "important"); }
+  appEl.style.setProperty("display", "block", "important");
   window.scrollTo(0, 0);
   switchTab("sinais");
   if (!signer) showToast("Modo visualização — conecte a carteira para operar", "info");
@@ -3619,9 +3621,9 @@ function goBack() {
   var appEl  = document.getElementById("app");
   var heroEl = document.getElementById("hero");
   var whaleEl = document.getElementById("whale-flow-section");
-  if (appEl)  appEl.style.display  = "none";
+  if (appEl)  { appEl.style.removeProperty("display"); appEl.style.setProperty("display","none","important"); }
   if (heroEl) {
-    heroEl.style.display = "";
+    heroEl.style.removeProperty("display"); heroEl.style.display = "";
     // Devolve whale section para dentro do hero
     if (whaleEl && !heroEl.contains(whaleEl)) {
       var oracle = heroEl.querySelector(".oracle-strip");
