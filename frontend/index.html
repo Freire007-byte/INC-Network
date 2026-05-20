@@ -1632,33 +1632,34 @@
     </div>
 
     <div class="buy-inc-section">
-      <div class="buy-inc-title">◈ Onde Comprar $INC</div>
-      <div class="buy-inc-grid">
-        <a class="buy-inc-btn" href="https://app.uniswap.org/explore/pools/arbitrum/0x8770e3B0aE902092dE06F821ff59b48F961F098D" target="_blank">
-          <span class="buy-net-icon">⬡</span>
-          <span class="buy-net-info">
-            <span class="buy-net-name">Arbitrum</span>
-            <span class="buy-net-pair">INC / WETH · Uniswap V3</span>
-          </span>
-          <span class="buy-net-arrow">↗</span>
-        </a>
-        <a class="buy-inc-btn" href="https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1" target="_blank">
-          <span class="buy-net-icon">⬡</span>
-          <span class="buy-net-info">
-            <span class="buy-net-name">Polygon</span>
-            <span class="buy-net-pair">INC / WMATIC · Uniswap V3</span>
-          </span>
-          <span class="buy-net-arrow">↗</span>
-        </a>
-        <a class="buy-inc-btn" href="https://app.uniswap.org/explore/pools/avalanche/0xa04A83aD438866788f54b67e6e9BB96E569C3061" target="_blank">
-          <span class="buy-net-icon">⬡</span>
-          <span class="buy-net-info">
-            <span class="buy-net-name">Avalanche</span>
-            <span class="buy-net-pair">INC / WAVAX · Uniswap V3</span>
-          </span>
-          <span class="buy-net-arrow">↗</span>
-        </a>
+      <div class="buy-inc-title">◈ Comprar $INC</div>
+
+      <!-- Swap tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button onclick="setSwapNet('arbitrum')" id="swap-tab-arbitrum"
+          style="flex:1;padding:8px;border-radius:8px;border:1px solid #7c6dff60;background:#7c6dff15;color:#7c6dff;font-weight:700;font-size:12px;cursor:pointer">
+          ⬡ Arbitrum
+        </button>
+        <button onclick="setSwapNet('polygon')" id="swap-tab-polygon"
+          style="flex:1;padding:8px;border-radius:8px;border:1px solid #ffffff15;background:transparent;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer">
+          ⬡ Polygon
+        </button>
+        <button onclick="setSwapNet('avalanche')" id="swap-tab-avalanche"
+          style="flex:1;padding:8px;border-radius:8px;border:1px solid #ffffff15;background:transparent;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer">
+          ⬡ Avalanche
+        </button>
       </div>
+
+      <!-- Uniswap iframe swap widget -->
+      <div style="border-radius:12px;overflow:hidden;border:1px solid #ffffff0a">
+        <iframe id="uniswap-widget"
+          src="https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=arbitrum&theme=dark"
+          height="360"
+          style="width:100%;border:none;display:block"
+          allow="ethereum; web3"
+        ></iframe>
+      </div>
+
       <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">
         Preço inicial: <span style="color:var(--green);font-weight:700">$0.01 / INC</span>
       </div>
@@ -2580,6 +2581,30 @@ async function loadStats() {
     animCount(volEl,  parseFloat(ethers.utils.formatEther(vol)),  3, " " + c);
     animCount(feeEl,  parseFloat(ethers.utils.formatEther(fees)), 4, " " + c);
   } catch {}
+}
+
+// ── Uniswap swap widget network switcher ─────────────────────────────────────
+const SWAP_URLS = {
+  arbitrum: "https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=arbitrum&theme=dark",
+  polygon:  "https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=polygon&theme=dark",
+  avalanche:"https://app.uniswap.org/#/swap?outputCurrency=0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B&chain=avalanche&theme=dark",
+};
+function setSwapNet(net) {
+  const iframe = document.getElementById("uniswap-widget");
+  if (iframe) iframe.src = SWAP_URLS[net];
+  ["arbitrum","polygon","avalanche"].forEach(n => {
+    const btn = document.getElementById("swap-tab-" + n);
+    if (!btn) return;
+    if (n === net) {
+      btn.style.background = "#7c6dff15";
+      btn.style.borderColor = "#7c6dff60";
+      btn.style.color = "#7c6dff";
+    } else {
+      btn.style.background = "transparent";
+      btn.style.borderColor = "#ffffff15";
+      btn.style.color = "var(--muted)";
+    }
+  });
 }
 
 // Auto-refresh stats every 30s
