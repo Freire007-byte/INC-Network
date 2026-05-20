@@ -2717,6 +2717,9 @@
 <!-- APP                                        -->
 <!-- ══════════════════════════════════════════ -->
 <div id="app">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <button onclick="goBack()" style="background:transparent;border:1px solid #ffffff20;color:var(--muted);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'JetBrains Mono',monospace;transition:all .2s" onmouseover="this.style.borderColor='#ffffff40';this.style.color='#fff'" onmouseout="this.style.borderColor='#ffffff20';this.style.color='var(--muted)'">← Voltar</button>
+  </div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('sinais')">Sinais Abertos</button>
     <button class="tab" onclick="switchTab('criar')">Criar Sinal</button>
@@ -3576,9 +3579,10 @@ function updateNetworkBadge() {
 }
 
 // Botão Operar Agora — abre a interface DApp
-async function openAppReadOnly() {
-  const appEl  = document.getElementById("app");
-  const heroEl = document.getElementById("hero");
+function openAppReadOnly() {
+  var appEl   = document.getElementById("app");
+  var heroEl  = document.getElementById("hero");
+  var whaleEl = document.getElementById("whale-flow-section");
   if (!appEl) return;
 
   // App já visível — só scrolla pro topo e vai pra aba sinais
@@ -3588,16 +3592,47 @@ async function openAppReadOnly() {
     return;
   }
 
-  // Inicia contrato read-only em background (não bloqueia a UI)
-  initReadOnlyContract().catch(() => {});
+  // Move whale tracker para fora do hero (evita sumir quando hero é escondido)
+  if (whaleEl && heroEl && heroEl.contains(whaleEl)) {
+    heroEl.parentNode.insertBefore(whaleEl, heroEl.nextSibling);
+  }
 
-  // Mostra app imediatamente, esconde landing
+  // Inicializa contrato read-only (construtores são síncronos — não bloqueiam UI)
+  if (!contract) {
+    try {
+      currentNetwork = NETWORKS[11155111];
+      var roProv = new ethers.providers.JsonRpcProvider("https://1rpc.io/sepolia");
+      contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
+      updateCurrencyLabels();
+    } catch(e) { console.warn("[INC] init read-only:", e.message); }
+  }
+
+  // Esconde landing, mostra app
   if (heroEl) heroEl.style.display = "none";
   appEl.style.display = "block";
   window.scrollTo(0, 0);
   switchTab("sinais");
-
   if (!signer) showToast("Modo visualização — conecte a carteira para operar", "info");
+}
+
+function goBack() {
+  var appEl  = document.getElementById("app");
+  var heroEl = document.getElementById("hero");
+  var whaleEl = document.getElementById("whale-flow-section");
+  if (appEl)  appEl.style.display  = "none";
+  if (heroEl) {
+    heroEl.style.display = "";
+    // Devolve whale section para dentro do hero
+    if (whaleEl && !heroEl.contains(whaleEl)) {
+      var oracle = heroEl.querySelector(".oracle-strip");
+      if (oracle && oracle.nextSibling) {
+        heroEl.insertBefore(whaleEl, oracle.nextSibling);
+      } else {
+        heroEl.appendChild(whaleEl);
+      }
+    }
+  }
+  window.scrollTo(0, 0);
 }
 
 // Inicializa contrato read-only Sepolia com fallback de RPCs
@@ -3614,7 +3649,6 @@ async function initReadOnlyContract() {
       const roProv = new ethers.providers.JsonRpcProvider(rpc);
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       updateCurrencyLabels();
-      loadSignals();
       return;
     } catch(e) {
       console.warn("[INC] RPC:", rpc, e.message);
@@ -3629,7 +3663,8 @@ function switchTab(name) {
     t.classList.toggle("active", names[i] === name);
   });
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-  document.getElementById(`tab-${name}`).classList.add("active");
+  const tabEl = document.getElementById(`tab-${name}`);
+  if (tabEl) tabEl.classList.add("active");
   if (name === "sinais")   loadSignals();
   if (name === "criar")    updateFormOracle();
   if (name === "posicoes") loadPositions();
@@ -3843,13 +3878,9 @@ function showSkeletonCards(n = 4) {
 
 async function loadSignals() {
   if (!contract) {
-    // Tenta inicializar contrato read-only antes de desistir
-    await initReadOnlyContract();
-    if (!contract) {
-      document.getElementById("signals-list").innerHTML =
-        '<div class="empty"><div class="empty-icon">🔗</div><p>Conecte a carteira para carregar sinais.</p></div>';
-      return;
-    }
+    document.getElementById("signals-list").innerHTML =
+      '<div class="empty"><div class="empty-icon">🔗</div><p>Conecte a carteira para carregar sinais.</p></div>';
+    return;
   }
   showSkeletonCards(4);
   try {
@@ -4659,12 +4690,30 @@ async function fetchCoinGecko() {
   };
 }
 
+async function fetchCryptoCompare() {
+  const r = await fetch(
+    "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,SOL,BNB&tsyms=USD"
+  );
+  if (!r.ok) throw new Error("cryptocompare " + r.status);
+  const d = await r.json();
+  if (!d.RAW) throw new Error("cryptocompare no data");
+  return {
+    BTC: { price: d.RAW.BTC.USD.PRICE, change24h: d.RAW.BTC.USD.CHANGEPCT24HOUR },
+    ETH: { price: d.RAW.ETH.USD.PRICE, change24h: d.RAW.ETH.USD.CHANGEPCT24HOUR },
+    SOL: { price: d.RAW.SOL.USD.PRICE, change24h: d.RAW.SOL.USD.CHANGEPCT24HOUR },
+    BNB: { price: d.RAW.BNB.USD.PRICE, change24h: d.RAW.BNB.USD.CHANGEPCT24HOUR },
+  };
+}
+
 async function fetchAndUpdateOracle() {
   let data;
   try       { data = await fetchBinance(); }
   catch(e1) {
     try     { data = await fetchCoinGecko(); }
-    catch(e2) { console.warn("oracle fetch failed", e2); return; }
+    catch(e2) {
+      try   { data = await fetchCryptoCompare(); }
+      catch(e3) { console.warn("oracle fetch failed", e1.message, e2.message, e3.message); return; }
+    }
   }
   for (const sym of ORACLE_SYMS) {
     if (!data[sym]) continue;
@@ -6125,10 +6174,10 @@ function wrExplode(isLong, strength) {
 }
 
 // Iniciar Whale Radar automaticamente
-initWhaleRadar();
+try { initWhaleRadar(); } catch(e) { console.warn("[INC] whale radar:", e.message); }
 
 // ── BOOT ──
-initLiveOracle();
+try { initLiveOracle(); } catch(e) { console.warn("[INC] oracle:", e.message); }
 
 // Pré-inicializa RPC read-only silenciosamente (agiliza primeiro clique)
 setTimeout(() => initReadOnlyContract().catch(() => {}), 2000);
