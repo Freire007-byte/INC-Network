@@ -2013,6 +2013,65 @@
         </div>
       </div>
 
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge admin">ADMIN</span>
+          <span class="func-name">cancelEmergencyResolve()</span>
+        </div>
+        <div class="func-desc">Cancela uma proposta de emergencyResolve pendente antes de ser executada. Após o cancelamento, uma nova proposta pode ser feita do zero. Protege contra uso indevido do mecanismo de emergência.</div>
+        <div class="func-params">
+          <div class="func-param"><span>signalId</span> — ID da proposta a cancelar</div>
+          <div class="func-param">Apenas <span>owner</span> pode chamar</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge admin">ADMIN</span>
+          <span class="func-name">transferOwnership()</span>
+        </div>
+        <div class="func-desc">Inicia a transferência de ownership do protocolo. Usa o padrão Ownable2Step — o novo owner precisa chamar acceptOwnership() para confirmar. Protege contra transferências acidentais para endereços errados.</div>
+        <div class="func-params">
+          <div class="func-param"><span>newOwner</span> — endereço do novo owner</div>
+          <div class="func-param">Requer confirmação via <span>acceptOwnership()</span></div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge follower">LEITURA</span>
+          <span class="func-name">getSignal()</span>
+        </div>
+        <div class="func-desc">Retorna todos os dados de um sinal: par, direção, preço de entrada, TP, SL, pool total, status (ABERTO / WIN / LOSS / EXPIRADO), provider, e timestamps de criação e resolução.</div>
+        <div class="func-params">
+          <div class="func-param"><span>signalId</span> — ID do sinal</div>
+          <div class="func-param">Retorna: <span>tuple</span> com todos os campos</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge follower">LEITURA</span>
+          <span class="func-name">getOpenSignals()</span>
+        </div>
+        <div class="func-desc">Retorna a lista de IDs de todos os sinais atualmente abertos no protocolo. Usada pelo frontend para exibir o feed de sinais e pelo Chainlink Automation para varrer os sinais a monitorar.</div>
+        <div class="func-params">
+          <div class="func-param">Retorna: <span>uint256[]</span> IDs abertos</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge follower">LEITURA</span>
+          <span class="func-name">pendingWithdrawal()</span>
+        </div>
+        <div class="func-desc">Consulta o saldo de ETH/MATIC/AVAX disponível para saque de um endereço. Após claimReward(), o valor fica em pendingWithdrawal até o usuário chamar withdraw() explicitamente — padrão pull-payment.</div>
+        <div class="func-params">
+          <div class="func-param"><span>address</span> — carteira a consultar</div>
+          <div class="func-param">Retorna: <span>uint256</span> em wei</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
