@@ -2176,7 +2176,7 @@
         <div class="wf-gauge-side long">
           <span class="wf-gs-label">⬆ LONG LIQ.</span>
           <span class="wf-gs-pct" id="wf-long-pct">50%</span>
-          <span class="wf-gs-usd" id="wf-long-usd">/usr/bin/bash</span>
+          <span class="wf-gs-usd" id="wf-long-usd">$0</span>
         </div>
         <div class="wf-gauge-bar">
           <div class="wf-gauge-fill long" id="wf-gauge-long" style="width:50%"></div>
@@ -2185,7 +2185,7 @@
         <div class="wf-gauge-side short">
           <span class="wf-gs-label">⬇ SHORT LIQ.</span>
           <span class="wf-gs-pct" id="wf-short-pct">50%</span>
-          <span class="wf-gs-usd" id="wf-short-usd">/usr/bin/bash</span>
+          <span class="wf-gs-usd" id="wf-short-usd">$0</span>
         </div>
       </div>
 
@@ -2193,7 +2193,7 @@
         <div class="wf-canvas-wrap">
           <canvas id="wf-canvas"></canvas>
           <div class="wf-canvas-overlay">
-            <div class="wf-co-stat"><div class="wf-co-label">TOTAL LIQUIDADO</div><div class="wf-co-val" id="wf-total-usd">/usr/bin/bash</div></div>
+            <div class="wf-co-stat"><div class="wf-co-label">TOTAL LIQUIDADO</div><div class="wf-co-val" id="wf-total-usd">$0</div></div>
             <div class="wf-co-stat"><div class="wf-co-label">MAIOR</div><div class="wf-co-val" id="wf-biggest">—</div></div>
             <div class="wf-co-stat"><div class="wf-co-label">EVENTOS</div><div class="wf-co-val" id="wf-event-count">0</div></div>
           </div>
@@ -3581,29 +3581,36 @@ async function openAppReadOnly() {
     return;
   }
 
-  // Cria contrato read-only na rede Sepolia (testnet padrão)
-  // ou Arbitrum se disponível
-  try {
-    if (!contract) {
-      const roRpc = "https://1rpc.io/sepolia";
-      const roProv = new ethers.providers.JsonRpcProvider(roRpc);
-      currentNetwork = NETWORKS[11155111];
-      contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
+  // Cria contrato read-only na Sepolia com múltiplos RPC de fallback
+  if (!contract) {
+    const rpcs = [
+      "https://1rpc.io/sepolia",
+      "https://rpc.sepolia.org",
+      "https://ethereum-sepolia.publicnode.com",
+    ];
+    for (const rpc of rpcs) {
+      try {
+        const roProv = new ethers.providers.JsonRpcProvider(rpc);
+        currentNetwork = NETWORKS[11155111];
+        contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
+        break;
+      } catch(e) {
+        console.warn("[INC] RPC fallback falhou:", rpc, e.message);
+      }
     }
-  } catch(e) {}
+  }
 
   // Mostra o app, esconde hero
   if (heroEl) heroEl.style.display = "none";
   appEl.style.display = "block";
   updateCurrencyLabels();
 
-  // Scrolla para o app
+  // Scrolla e carrega sinais
   setTimeout(() => {
     appEl.scrollIntoView({ behavior: "smooth" });
     switchTab("sinais");
   }, 80);
 
-  // Avisa que está em modo leitura
   showToast("Modo visualização — conecte a carteira para operar", "info");
 }
 
@@ -3820,7 +3827,11 @@ function showSkeletonCards(n = 4) {
 }
 
 async function loadSignals() {
-  if (!contract) return;
+  if (!contract) {
+    document.getElementById("signals-list").innerHTML =
+      '<div class="empty"><div class="empty-icon">🔗</div><p>Conecte a carteira para carregar sinais.</p></div>';
+    return;
+  }
   showSkeletonCards(4);
   try {
     const total = (await contract.totalSignals()).toNumber();
@@ -5321,6 +5332,7 @@ function hlAnimateBubbles(ctx, W, H) {
 
 // Seed bubbles for visual while loading
 function hlDrawSeedBubbles(ctx, W, H) {
+  if (hlBubbleAnim) { cancelAnimationFrame(hlBubbleAnim); hlBubbleAnim = null; }
   const seeds = [
     {sym:'BTC',dir:'long',usd:4200000},{sym:'ETH',dir:'short',usd:2800000},
     {sym:'SOL',dir:'long',usd:1900000},{sym:'BNB',dir:'long',usd:1400000},
