@@ -1165,8 +1165,50 @@
     .buy-inc-title {
       font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
       text-transform: uppercase; color: var(--green);
-      margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 14px; font-family: 'JetBrains Mono', monospace;
     }
+    .buy-cards {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+      margin-bottom: 16px;
+    }
+    @media(max-width:600px) { .buy-cards { grid-template-columns: 1fr; } }
+    .buy-card {
+      display: flex; flex-direction: column; gap: 6px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px;
+      text-decoration: none; color: var(--text);
+      transition: all .25s; position: relative; overflow: hidden;
+    }
+    .buy-card::before {
+      content:''; position:absolute; inset:0; opacity:0;
+      background: linear-gradient(135deg,#7c6dff0a,#00e5ff08);
+      transition: opacity .25s;
+    }
+    .buy-card:hover { border-color:#7c6dff40; transform:translateY(-3px); box-shadow:0 8px 32px #00000060; }
+    .buy-card:hover::before { opacity:1; }
+    .buy-card-net  { font-size:12px; font-weight:800; letter-spacing:.5px; font-family:'JetBrains Mono',monospace; }
+    .buy-card-pair { font-size:18px; font-weight:800; color:var(--text); margin:4px 0; }
+    .buy-card-info { display:flex; align-items:center; justify-content:space-between; }
+    .buy-card-addr { font-size:10px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+    .buy-card-fee  { font-size:10px; background:#7c6dff10; border:1px solid #7c6dff25; color:var(--primary);
+      padding:2px 7px; border-radius:5px; font-family:'JetBrains Mono',monospace; font-weight:700; }
+    .buy-card-btn  {
+      margin-top:8px; text-align:center; font-size:12px; font-weight:700;
+      padding:8px; border-radius:9px;
+      background: linear-gradient(135deg,#7c6dff18,#00e5ff10);
+      border:1px solid #7c6dff30; color:var(--cyan);
+      transition: all .2s; letter-spacing:.3px;
+    }
+    .buy-card:hover .buy-card-btn { background:linear-gradient(135deg,#7c6dff30,#00e5ff20); border-color:#7c6dff60; }
+    .buy-steps { display:flex; flex-direction:column; gap:8px; }
+    .buy-step  { display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted); }
+    .buy-step-n {
+      width:22px; height:22px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg,#7c6dff,#00e5ff);
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:800; color:#fff;
+    }
+    .buy-step b { color:var(--text); }
     .buy-inc-grid {
       display: flex; flex-direction: column; gap: 8px;
     }
@@ -1929,32 +1971,48 @@
     </div>
 
     <div class="buy-inc-section">
-      <div class="buy-inc-title">◈ Comprar $INC</div>
+      <div class="buy-inc-title">◈ Comprar $INC no Uniswap V3</div>
 
-      <!-- Swap tabs -->
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button onclick="setSwapNet('arbitrum')" id="swap-tab-arbitrum"
-          style="flex:1;padding:8px;border-radius:8px;border:1px solid #7c6dff60;background:#7c6dff15;color:#7c6dff;font-weight:700;font-size:12px;cursor:pointer">
-          ⬡ Arbitrum
-        </button>
-        <button onclick="setSwapNet('polygon')" id="swap-tab-polygon"
-          style="flex:1;padding:8px;border-radius:8px;border:1px solid #ffffff15;background:transparent;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer">
-          ⬡ Polygon
-        </button>
-        <button onclick="setSwapNet('avalanche')" id="swap-tab-avalanche"
-          style="flex:1;padding:8px;border-radius:8px;border:1px solid #ffffff15;background:transparent;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer">
-          ⬡ Avalanche
-        </button>
+      <!-- Cards de compra por rede -->
+      <div class="buy-cards">
+
+        <a href="https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=arbitrum" target="_blank" class="buy-card">
+          <div class="buy-card-net" style="color:#7c6dff">⬡ Arbitrum</div>
+          <div class="buy-card-pair">INC / WETH</div>
+          <div class="buy-card-info">
+            <span class="buy-card-addr">0xeAa4…43d7</span>
+            <span class="buy-card-fee">Fee 1%</span>
+          </div>
+          <div class="buy-card-btn">Abrir Uniswap ↗</div>
+        </a>
+
+        <a href="https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=polygon" target="_blank" class="buy-card">
+          <div class="buy-card-net" style="color:#8247e5">⬡ Polygon</div>
+          <div class="buy-card-pair">INC / WMATIC</div>
+          <div class="buy-card-info">
+            <span class="buy-card-addr">0xeAa4…43d7</span>
+            <span class="buy-card-fee">Fee 1%</span>
+          </div>
+          <div class="buy-card-btn">Abrir Uniswap ↗</div>
+        </a>
+
+        <a href="https://app.uniswap.org/#/swap?outputCurrency=0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B&chain=avalanche" target="_blank" class="buy-card">
+          <div class="buy-card-net" style="color:#e84142">⬡ Avalanche</div>
+          <div class="buy-card-pair">INC / WAVAX</div>
+          <div class="buy-card-info">
+            <span class="buy-card-addr">0x9A48…63B</span>
+            <span class="buy-card-fee">Fee 1%</span>
+          </div>
+          <div class="buy-card-btn">Abrir Uniswap ↗</div>
+        </a>
+
       </div>
 
-      <!-- Uniswap iframe swap widget -->
-      <div style="border-radius:12px;overflow:hidden;border:1px solid #ffffff0a">
-        <iframe id="uniswap-widget"
-          src="https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=arbitrum&theme=dark"
-          height="360"
-          style="width:100%;border:none;display:block"
-          allow="ethereum; web3"
-        ></iframe>
+      <!-- Instruções -->
+      <div class="buy-steps">
+        <div class="buy-step"><span class="buy-step-n">1</span><span>Acesse <b>app.uniswap.org</b> e conecte sua carteira</span></div>
+        <div class="buy-step"><span class="buy-step-n">2</span><span>Selecione a rede (Arbitrum, Polygon ou Avalanche)</span></div>
+        <div class="buy-step"><span class="buy-step-n">3</span><span>Cole o endereço do token INC e confirme a troca</span></div>
       </div>
 
       <!-- Social links -->
@@ -3316,29 +3374,6 @@ async function loadStats() {
   } catch {}
 }
 
-// ── Uniswap swap widget network switcher ─────────────────────────────────────
-const SWAP_URLS = {
-  arbitrum: "https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=arbitrum&theme=dark",
-  polygon:  "https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=polygon&theme=dark",
-  avalanche:"https://app.uniswap.org/#/swap?outputCurrency=0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B&chain=avalanche&theme=dark",
-};
-function setSwapNet(net) {
-  const iframe = document.getElementById("uniswap-widget");
-  if (iframe) iframe.src = SWAP_URLS[net];
-  ["arbitrum","polygon","avalanche"].forEach(n => {
-    const btn = document.getElementById("swap-tab-" + n);
-    if (!btn) return;
-    if (n === net) {
-      btn.style.background = "#7c6dff15";
-      btn.style.borderColor = "#7c6dff60";
-      btn.style.color = "#7c6dff";
-    } else {
-      btn.style.background = "transparent";
-      btn.style.borderColor = "#ffffff15";
-      btn.style.color = "var(--muted)";
-    }
-  });
-}
 
 // Auto-refresh stats every 30s
 setInterval(() => { if (contract) loadStats(); }, 30000);
