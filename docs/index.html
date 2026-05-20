@@ -632,6 +632,60 @@
     .how-step:nth-child(1) .how-ico { background:#00e5ff0c; border:1px solid #00e5ff18; }
     .how-step:nth-child(3) .how-ico { background:#7c6dff0c; border:1px solid #7c6dff18; }
     .how-step:nth-child(5) .how-ico { background:#00ffaa0c; border:1px solid #00ffaa18; }
+    .how-step:nth-child(7) .how-ico { background:#ffcc000c; border:1px solid #ffcc0020; }
+    .how-section .how-docs-btn {
+      display:block; margin:22px auto 0; padding:10px 28px;
+      background:transparent; border:1px solid #ffffff15; border-radius:10px;
+      color:var(--muted); font-size:12px; font-weight:700; cursor:pointer;
+      font-family:'Space Grotesk',sans-serif; transition:all .2s; text-decoration:none;
+    }
+    .how-section .how-docs-btn:hover { border-color:#7c6dff50; color:var(--primary); }
+
+    /* ── FUNÇÕES DA REDE ── */
+    .funcs-section {
+      max-width:860px; margin:60px auto 0; padding:0 24px;
+      position:relative; z-index:1;
+    }
+    .funcs-title {
+      text-align:center; font-size:13px; font-weight:700; letter-spacing:2px;
+      text-transform:uppercase; color:var(--muted);
+      font-family:'JetBrains Mono',monospace; margin-bottom:28px;
+    }
+    .funcs-title span { color:var(--primary); }
+    .funcs-grid {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:14px;
+    }
+    .func-card {
+      background:var(--card); border:1px solid var(--border); border-radius:14px;
+      padding:20px; transition:border-color .2s, transform .2s;
+    }
+    .func-card:hover { border-color:#7c6dff30; transform:translateY(-2px); }
+    .func-card-head {
+      display:flex; align-items:center; gap:10px; margin-bottom:10px;
+    }
+    .func-badge {
+      font-size:10px; font-weight:700; letter-spacing:.8px; padding:3px 8px;
+      border-radius:6px; font-family:'JetBrains Mono',monospace;
+    }
+    .func-badge.provider { background:#00e5ff0d; border:1px solid #00e5ff20; color:var(--cyan); }
+    .func-badge.follower { background:#7c6dff0d; border:1px solid #7c6dff20; color:var(--primary); }
+    .func-badge.oracle   { background:#00ffaa0d; border:1px solid #00ffaa20; color:var(--green); }
+    .func-badge.admin    { background:#ffcc000d; border:1px solid #ffcc0020; color:var(--yellow); }
+    .func-badge.reward   { background:#ff3d8a0d; border:1px solid #ff3d8a20; color:var(--magenta); }
+    .func-name {
+      font-size:14px; font-weight:800; font-family:'JetBrains Mono',monospace;
+      color:var(--text);
+    }
+    .func-desc { font-size:12px; color:var(--muted); line-height:1.6; }
+    .func-params {
+      margin-top:10px; padding-top:10px; border-top:1px solid #ffffff07;
+      display:flex; flex-direction:column; gap:4px;
+    }
+    .func-param {
+      font-size:11px; font-family:'JetBrains Mono',monospace;
+      color:#5a6080;
+    }
+    .func-param span { color:var(--cyan); }
     .how-stitle { font-size:13px; font-weight:800; color:var(--text); margin-bottom:5px; }
     .how-sdesc  { font-size:11px; color:var(--muted); line-height:1.55; }
     .how-conn { flex-shrink:0; border-top:1px dashed #ffffff0e; width:28px; margin-top:24px; }
@@ -1801,6 +1855,164 @@
         <div class="how-stitle">Chainlink Resolve</div>
         <div class="how-sdesc">Oracle verifica TP e SL automaticamente — sem intermediários</div>
       </div>
+      <div class="how-conn"></div>
+      <div class="how-step">
+        <div class="how-ico">💰</div>
+        <div class="how-stitle">Vencedores Sacam</div>
+        <div class="how-sdesc">Pool inteiro vai para o lado vencedor via claimReward()</div>
+      </div>
+    </div>
+    <a class="how-docs-btn" href="#funcs-section" onclick="document.getElementById('funcs-section').scrollIntoView({behavior:'smooth'});return false;">
+      Ver todas as funções da rede ↓
+    </a>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- FUNÇÕES DA REDE                           -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="funcs-section" id="funcs-section">
+    <div class="funcs-title">◈ <span>Funções</span> da Rede</div>
+    <div class="funcs-grid">
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge provider">PROVIDER</span>
+          <span class="func-name">createSignal()</span>
+        </div>
+        <div class="func-desc">Publica um novo sinal de trading. O provider define o par, direção (LONG/SHORT), preço de entrada, take-profit e stop-loss. Uma taxa de 3.5% é cobrada automaticamente para a treasury.</div>
+        <div class="func-params">
+          <div class="func-param"><span>pair</span> — ex: "BTC/USDT"</div>
+          <div class="func-param"><span>direction</span> — LONG | SHORT</div>
+          <div class="func-param"><span>entryPrice</span> — validado pelo oracle ±2%</div>
+          <div class="func-param"><span>takeProfit</span> / <span>stopLoss</span> — alvos</div>
+          <div class="func-param"><span>msg.value</span> — stake mínimo em ETH/MATIC/AVAX</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge follower">FOLLOWER</span>
+          <span class="func-name">followSignal()</span>
+        </div>
+        <div class="func-desc">Permite que qualquer usuário siga um sinal aberto fazendo stake. O pool cresce a cada follower. Máximo de 500 followers por sinal.</div>
+        <div class="func-params">
+          <div class="func-param"><span>signalId</span> — ID do sinal aberto</div>
+          <div class="func-param"><span>msg.value</span> — stake do follower (mín. 0.001)</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge oracle">ORACLE</span>
+          <span class="func-name">resolveByOracle()</span>
+        </div>
+        <div class="func-desc">Resolve o sinal quando o preço Chainlink atinge o TP ou SL. Qualquer pessoa pode chamar esta função. Se TP atingido → WIN (provider + followers ganham). Se SL atingido → LOSS (followers ganham, provider perde).</div>
+        <div class="func-params">
+          <div class="func-param"><span>signalId</span> — ID do sinal a resolver</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge reward">REWARD</span>
+          <span class="func-name">claimReward()</span>
+        </div>
+        <div class="func-desc">Vencedores resgatam sua parte do pool após a resolução. O valor é proporcional ao stake de cada participante. Não pode ser chamada duas vezes.</div>
+        <div class="func-params">
+          <div class="func-param"><span>signalId</span> — ID do sinal resolvido</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge reward">REWARD</span>
+          <span class="func-name">claimExpired()</span>
+        </div>
+        <div class="func-desc">Se um sinal expirar sem resolução (timeout de 30 dias), provider e followers recuperam seus stakes integrais sem penalidade.</div>
+        <div class="func-params">
+          <div class="func-param"><span>signalId</span> — ID do sinal expirado</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge oracle">ORACLE</span>
+          <span class="func-name">checkUpkeep()</span>
+        </div>
+        <div class="func-desc">Chamada pelo Chainlink Automation a cada bloco. Verifica se algum sinal aberto atingiu TP, SL ou expirou. Retorna true quando há ação a executar.</div>
+        <div class="func-params">
+          <div class="func-param"><span>checkData</span> — batchSize de sinais a checar</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge oracle">ORACLE</span>
+          <span class="func-name">performUpkeep()</span>
+        </div>
+        <div class="func-desc">Executada automaticamente pelo Chainlink Automation quando checkUpkeep() retorna true. Resolve ou expira o sinal sem nenhuma intervenção humana.</div>
+        <div class="func-params">
+          <div class="func-param"><span>performData</span> — ID do sinal a executar</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge oracle">ORACLE</span>
+          <span class="func-name">getCurrentPrice()</span>
+        </div>
+        <div class="func-desc">Consulta o preço atual de um par via Chainlink Price Feed. Normaliza automaticamente os decimais do feed (6 ou 8) para 8 decimais internos. Rejeita preços stale &gt;1h.</div>
+        <div class="func-params">
+          <div class="func-param"><span>pair</span> — ex: "BTC/USDT"</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge admin">ADMIN</span>
+          <span class="func-name">setPriceFeed()</span>
+        </div>
+        <div class="func-desc">Registra o endereço do Chainlink Price Feed para um par de trading. Apenas o owner pode chamar. Necessário antes de criar sinais para esse par.</div>
+        <div class="func-params">
+          <div class="func-param"><span>pair</span> — ex: "ETH/USDT"</div>
+          <div class="func-param"><span>feedAddress</span> — endereço do feed Chainlink</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge admin">ADMIN</span>
+          <span class="func-name">emergencyResolve()</span>
+        </div>
+        <div class="func-desc">Resolução de emergência com timelock de 4 dias (proposta + 1 dia de espera + execução). Apenas o owner pode propor. Protege o protocolo em caso de falha do oracle.</div>
+        <div class="func-params">
+          <div class="func-param"><span>signalId</span> — sinal a resolver</div>
+          <div class="func-param"><span>outcome</span> — WIN | LOSS | EXPIRED</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge admin">ADMIN</span>
+          <span class="func-name">pause() / unpause()</span>
+        </div>
+        <div class="func-desc">Circuit breaker — o owner pode pausar o protocolo em emergências. Enquanto pausado, createSignal() e followSignal() são bloqueadas. Sinais em andamento não são afetados.</div>
+        <div class="func-params">
+          <div class="func-param">Apenas <span>owner</span> pode chamar</div>
+        </div>
+      </div>
+
+      <div class="func-card">
+        <div class="func-card-head">
+          <span class="func-badge admin">TREASURY</span>
+          <span class="func-name">withdraw() Treasury</span>
+        </div>
+        <div class="func-desc">A treasury acumula 3.5% de taxa de cada createSignal() e followSignal(). O endereço da treasury saca os fundos acumulados a qualquer momento via pull-payment — nunca bloqueia o protocolo.</div>
+        <div class="func-params">
+          <div class="func-param">Apenas <span>treasury</span> pode chamar</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
