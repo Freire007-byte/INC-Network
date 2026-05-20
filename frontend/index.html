@@ -221,8 +221,8 @@
     #alert.error   { background: #ff3d5710; border: 1px solid #ff3d5730; color: var(--red); }
     #alert.info    { background: #7c6dff10; border: 1px solid #7c6dff30; color: var(--primary); }
 
-    /* ── APP (depois de conectar) ── */
-    #app { display: none; position: relative; z-index: 1; }
+    /* ── APP — sempre visível, scroll via botão Operar ── */
+    #app { display: block; position: relative; z-index: 1; }
 
     /* ── TABS ── */
     .tabs {
@@ -2837,6 +2837,9 @@
           <div class="wrt-chip" id="wrt-maticusdt">
             <span class="wrt-sym">MATIC</span><span class="wrt-px" id="wrp-maticusdt">—</span><span class="wrt-chg flat" id="wrc-maticusdt">—</span>
           </div>
+          <div class="wrt-chip" id="wrt-inc" style="border-color:#7c6dff40;background:#7c6dff08">
+            <span class="wrt-sym" style="color:#a09bff">$INC</span><span class="wrt-px" id="wrp-inc">$0.01</span><span class="wrt-chg flat" id="wrc-inc">—</span>
+          </div>
         </div>
       </div>
       <div class="wr-feed" id="wr-feed">
@@ -3569,50 +3572,43 @@ function updateNetworkBadge() {
   badge.className = "network-badge" + (currentNetwork.testnet ? "" : " mainnet");
 }
 
-// Abre o app em modo leitura (sem carteira) — usado pelo botão Operar Agora
+// Botão Operar Agora — rola para a interface e inicia contrato read-only
 async function openAppReadOnly() {
-  const appEl  = document.getElementById("app");
-  const heroEl = document.getElementById("hero");
+  const appEl = document.getElementById("app");
   if (!appEl) return;
 
-  // Se o app já está visível (carteira conectada), só scrolla
-  if (appEl.style.display === "block") {
-    appEl.scrollIntoView({ behavior: "smooth" });
-    switchTab("sinais");
-    return;
+  // Init contrato read-only se não tiver carteira conectada
+  if (!contract) {
+    await initReadOnlyContract();
   }
 
-  // Cria contrato read-only na Sepolia com múltiplos RPC de fallback
-  if (!contract) {
-    const rpcs = [
-      "https://1rpc.io/sepolia",
-      "https://rpc.sepolia.org",
-      "https://ethereum-sepolia.publicnode.com",
-    ];
-    for (const rpc of rpcs) {
-      try {
-        const roProv = new ethers.providers.JsonRpcProvider(rpc);
-        currentNetwork = NETWORKS[11155111];
-        contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
-        break;
-      } catch(e) {
-        console.warn("[INC] RPC fallback falhou:", rpc, e.message);
-      }
+  switchTab("sinais");
+  appEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  if (!signer) {
+    showToast("Modo visualização — conecte a carteira para operar", "info");
+  }
+}
+
+// Inicializa contrato em modo leitura (Sepolia) com fallback de RPCs
+async function initReadOnlyContract() {
+  if (contract) return; // já inicializado
+  const rpcs = [
+    "https://1rpc.io/sepolia",
+    "https://rpc.sepolia.org",
+    "https://ethereum-sepolia.publicnode.com",
+  ];
+  for (const rpc of rpcs) {
+    try {
+      const roProv = new ethers.providers.JsonRpcProvider(rpc);
+      currentNetwork = NETWORKS[11155111];
+      contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
+      updateCurrencyLabels();
+      return;
+    } catch(e) {
+      console.warn("[INC] RPC fallback:", rpc, e.message);
     }
   }
-
-  // Mostra o app, esconde hero
-  if (heroEl) heroEl.style.display = "none";
-  appEl.style.display = "block";
-  updateCurrencyLabels();
-
-  // Scrolla e carrega sinais
-  setTimeout(() => {
-    appEl.scrollIntoView({ behavior: "smooth" });
-    switchTab("sinais");
-  }, 80);
-
-  showToast("Modo visualização — conecte a carteira para operar", "info");
 }
 
 function switchTab(name) {
@@ -3721,9 +3717,6 @@ async function doConnect(rawProvider) {
     btn.innerHTML = `<span style="color:var(--green);font-size:9px">●</span> ${userAddress.slice(0,6)}…${userAddress.slice(-4)}`;
     btn.classList.add("connected");
 
-    document.getElementById("hero").style.display = "none";
-    document.getElementById("app").style.display  = "block";
-
     updateNetworkBadge();
     updateCurrencyLabels();
     await loadStats();
@@ -3799,6 +3792,8 @@ async function loadINCPrice() {
     const ids = ["stat-inc-price", "oprice-INC", "hs-price", "psb-price"];
     ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = priceStr; });
     const mcEl = document.getElementById("hs-mcap"); if (mcEl) mcEl.textContent = mcapStr;
+    // Atualiza chip $INC no Whale Radar
+    const incPx = document.getElementById("wrp-inc"); if (incPx) incPx.textContent = priceStr;
   } catch {}
 }
 loadINCPrice();
@@ -3829,9 +3824,13 @@ function showSkeletonCards(n = 4) {
 
 async function loadSignals() {
   if (!contract) {
-    document.getElementById("signals-list").innerHTML =
-      '<div class="empty"><div class="empty-icon">🔗</div><p>Conecte a carteira para carregar sinais.</p></div>';
-    return;
+    // Tenta inicializar contrato read-only antes de desistir
+    await initReadOnlyContract();
+    if (!contract) {
+      document.getElementById("signals-list").innerHTML =
+        '<div class="empty"><div class="empty-icon">🔗</div><p>Conecte a carteira para carregar sinais.</p></div>';
+      return;
+    }
   }
   showSkeletonCards(4);
   try {
@@ -6111,6 +6110,12 @@ initWhaleRadar();
 
 // ── BOOT ──
 initLiveOracle();
+
+// Auto-carrega sinais em modo leitura ao abrir a página
+(async function autoLoad() {
+  await initReadOnlyContract();
+  if (contract) loadSignals();
+})();
 </script>
 </body>
 </html>
