@@ -1,10 +1,10 @@
-# CoinGecko — Formulário de Submissão $INC
+﻿# CoinGecko â€” FormulÃ¡rio de SubmissÃ£o $INC
 
 Submeter em: https://www.coingecko.com/en/coins/add_form
 
 ---
 
-## Informações do Token
+## InformaÃ§Ãµes do Token
 
 **Token Name:** INC Network Token
 **Token Symbol:** INC
@@ -20,13 +20,13 @@ Submeter em: https://www.coingecko.com/en/coins/add_form
 | Polygon   | `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` |
 | Avalanche | `0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B` |
 
-## Descrição (inglês — copiar no formulário)
+## DescriÃ§Ã£o (inglÃªs â€” copiar no formulÃ¡rio)
 
 ```
 INC Network is a Proof-of-Signal protocol where traders publish on-chain trading signals
 backed by real stake. Providers define entry price, take-profit and stop-loss targets
 validated by Chainlink Price Feeds. Followers stake on signals they believe in, and
-Chainlink Automation resolves outcomes automatically — no human intervention needed.
+Chainlink Automation resolves outcomes automatically â€” no human intervention needed.
 
 The $INC token provides fee discounts, on-chain governance rights, and participates
 in deflationary burn mechanics. Available on Uniswap V3 across Arbitrum, Polygon,
@@ -36,7 +36,7 @@ and Avalanche.
 ## Redes Sociais
 
 - **Twitter/X:** https://twitter.com/incnetwork
-- **Instagram:** https://instagram.com/incnetwork
+- **Instagram:** https://instagram.com/inc_network_
 - **GitHub:** https://github.com/Freire007-byte/INC-Network
 
 ## Exchanges (DEX)
@@ -52,7 +52,7 @@ Arquivo: `assets/logo.png` (256x256 PNG)
 
 ---
 
-# CoinMarketCap — Formulário de Submissão $INC
+# CoinMarketCap â€” FormulÃ¡rio de SubmissÃ£o $INC
 
 Submeter em: https://coinmarketcap.com/request/
 
@@ -70,14 +70,14 @@ Submeter em: https://coinmarketcap.com/request/
 **Launch Date:** 2026-05-19
 **Launch Price:** $0.01
 
-## Project Description (copiar no formulário)
+## Project Description (copiar no formulÃ¡rio)
 
 ```
 INC Network (INC) is a Proof-of-Signal DeFi protocol built on multiple EVM chains.
 Traders (Providers) publish trading signals with real ETH/MATIC/AVAX stake as commitment.
 Other users (Followers) stake on signals they support. Chainlink Oracle automatically
 resolves outcomes when take-profit or stop-loss levels are hit. The winning side claims
-the entire pool — no intermediaries, no manipulation.
+the entire pool â€” no intermediaries, no manipulation.
 
 $INC token provides: fee discounts on protocol transactions, on-chain governance voting,
 deflationary burn mechanics, and multichain staking rewards.
@@ -101,3 +101,4 @@ deflationary burn mechanics, and multichain staking rewards.
 - Whitepaper: https://github.com/Freire007-byte/INC-Network/blob/master/README.md
 - Arbiscan: https://arbiscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7
 - Polygonscan: https://polygonscan.com/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7
+

@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "INC Network Token",
   "website": "https://freire007-byte.github.io/INC-Network",
   "description": "INC Network is a Proof-of-Signal protocol where providers stake real ETH to publish trading signals validated by Chainlink Oracle. Followers stake on signals and winners receive the full pool.",
@@ -10,6 +10,7 @@
   "links": [
     { "name": "github",   "url": "https://github.com/Freire007-byte/INC-Network" },
     { "name": "twitter",  "url": "https://twitter.com/incnetwork" },
-    { "name": "instagram","url": "https://instagram.com/incnetwork" }
+    { "name": "instagram","url": "https://instagram.com/inc_network_" }
   ]
 }
+
