@@ -221,10 +221,8 @@
     #alert.error   { background: #ff3d5710; border: 1px solid #ff3d5730; color: var(--red); }
     #alert.info    { background: #7c6dff10; border: 1px solid #7c6dff30; color: var(--primary); }
 
-    /* ── APP — oculto até o usuário clicar Operar ── */
+    /* ── APP — oculto por padrão, JS controla via inline style ── */
     #app { display: none; position: relative; z-index: 1; }
-    body.app-mode #hero { display: none !important; }
-    body.app-mode #app  { display: block !important; }
 
     /* ── TABS ── */
     .tabs {
@@ -3556,10 +3554,13 @@ function shareSignal(id) {
 }
 
 function updateCurrencyLabels() {
-  const c = currentNetwork?.currency ?? "ETH";
-  document.getElementById("label-provider-stake").textContent = `Stake (${c}) — mínimo 0.005`;
-  document.getElementById("label-follower-stake").textContent  = `Stake (${c}) — mínimo 0.001`;
-  document.getElementById("btn-withdraw-currency").textContent = c;
+  const c  = currentNetwork?.currency ?? "ETH";
+  const lp = document.getElementById("label-provider-stake");
+  const lf = document.getElementById("label-follower-stake");
+  const bw = document.getElementById("btn-withdraw-currency");
+  if (lp) lp.textContent = `Stake (${c}) — mínimo 0.005`;
+  if (lf) lf.textContent = `Stake (${c}) — mínimo 0.001`;
+  if (bw) bw.textContent = c;
   const wl = document.getElementById("bc-withdraw-label"); if (wl) wl.textContent = c;
   const nn = document.getElementById("bc-network-label");
   if (nn) { nn.textContent = currentNetwork?.testnet ? "TESTNET" : "MAINNET"; nn.style.color = currentNetwork?.testnet ? "var(--yellow)" : "var(--green)"; }
@@ -3574,30 +3575,34 @@ function updateNetworkBadge() {
   badge.className = "network-badge" + (currentNetwork.testnet ? "" : " mainnet");
 }
 
-// Botão Operar Agora — mostra interface DApp via classe CSS + scroll ao topo
+// Botão Operar Agora — abre a interface DApp
 async function openAppReadOnly() {
-  // Já está em modo app — só scrolla
-  if (document.body.classList.contains('app-mode')) {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const appEl  = document.getElementById("app");
+  const heroEl = document.getElementById("hero");
+  if (!appEl) return;
+
+  // App já visível — só scrolla pro topo e vai pra aba sinais
+  if (appEl.style.display === "block") {
+    window.scrollTo(0, 0);
     switchTab("sinais");
     return;
   }
 
-  // Init contrato read-only se não tiver carteira
-  if (!contract) await initReadOnlyContract();
+  // Inicia contrato read-only em background (não bloqueia a UI)
+  initReadOnlyContract().catch(() => {});
 
-  // Ativa modo app: CSS esconde hero e mostra #app
-  document.body.classList.add('app-mode');
-  updateCurrencyLabels();
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  // Mostra app imediatamente, esconde landing
+  if (heroEl) heroEl.style.display = "none";
+  appEl.style.display = "block";
+  window.scrollTo(0, 0);
   switchTab("sinais");
 
   if (!signer) showToast("Modo visualização — conecte a carteira para operar", "info");
 }
 
-// Inicializa contrato em modo leitura (Sepolia) com fallback de RPCs
+// Inicializa contrato read-only Sepolia com fallback de RPCs
 async function initReadOnlyContract() {
-  if (contract) return; // já inicializado
+  if (contract) return;
   const rpcs = [
     "https://1rpc.io/sepolia",
     "https://rpc.sepolia.org",
@@ -3605,13 +3610,15 @@ async function initReadOnlyContract() {
   ];
   for (const rpc of rpcs) {
     try {
-      const roProv = new ethers.providers.JsonRpcProvider(rpc);
       currentNetwork = NETWORKS[11155111];
+      const roProv = new ethers.providers.JsonRpcProvider(rpc);
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       updateCurrencyLabels();
+      loadSignals();
       return;
     } catch(e) {
-      console.warn("[INC] RPC fallback:", rpc, e.message);
+      console.warn("[INC] RPC:", rpc, e.message);
+      contract = null;
     }
   }
 }
@@ -3722,9 +3729,12 @@ async function doConnect(rawProvider) {
     btn.innerHTML = `<span style="color:var(--green);font-size:9px">●</span> ${userAddress.slice(0,6)}…${userAddress.slice(-4)}`;
     btn.classList.add("connected");
 
-    // Mostra DApp, esconde landing via classe CSS
-    document.body.classList.add('app-mode');
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    // Mostra DApp, esconde landing
+    const heroEl2 = document.getElementById("hero");
+    const appEl2  = document.getElementById("app");
+    if (heroEl2) heroEl2.style.display = "none";
+    if (appEl2)  appEl2.style.display  = "block";
+    window.scrollTo(0, 0);
     updateNetworkBadge();
     updateCurrencyLabels();
     await loadStats();
@@ -3755,6 +3765,7 @@ function animCount(el, endVal, decimals, suffix) {
 }
 
 async function loadStats() {
+  if (!contract) return;
   try {
     const [total, vol, fees] = await contract.networkStats();
     const c = currentNetwork?.currency ?? "ETH";
@@ -6119,8 +6130,8 @@ initWhaleRadar();
 // ── BOOT ──
 initLiveOracle();
 
-// Pré-inicializa contrato read-only em background (agiliza primeiro clique em Operar)
-setTimeout(() => initReadOnlyContract(), 1500);
+// Pré-inicializa RPC read-only silenciosamente (agiliza primeiro clique)
+setTimeout(() => initReadOnlyContract().catch(() => {}), 2000);
 </script>
 </body>
 </html>
