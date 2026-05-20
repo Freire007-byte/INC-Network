@@ -1877,7 +1877,7 @@
     <a href="https://instagram.com/inc_network_" target="_blank" class="hdr-social" title="Instagram @inc_network_">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
     </a>
-    <button id="btn-operar" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'});setTimeout(()=>switchTab('sinais'),300)">⚡ Operar Agora</button>
+    <button id="btn-operar" onclick="openAppReadOnly()">⚡ Operar Agora</button>
     <button id="btn-wallet" onclick="wOpenPanel()">
       <span class="wbtn-dot"></span> INC Wallet
     </button>
@@ -2380,7 +2380,7 @@
   </div>
 
   <div class="hero-actions">
-    <button class="btn-hero btn-hero-operar" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'});setTimeout(()=>switchTab('sinais'),300)">⚡ Operar Agora</button>
+    <button class="btn-hero btn-hero-operar" onclick="openAppReadOnly()">⚡ Operar Agora</button>
     <button class="btn-hero" onclick="showWalletModal()">Conectar Carteira</button>
     <a href="https://github.com/Freire007-byte/INC-Network" target="_blank">
       <button class="btn-hero-outline">Ver Código</button>
@@ -3309,6 +3309,45 @@ function updateNetworkBadge() {
   if (!currentNetwork) { badge.textContent = "—"; return; }
   badge.textContent = currentNetwork.name;
   badge.className = "network-badge" + (currentNetwork.testnet ? "" : " mainnet");
+}
+
+// Abre o app em modo leitura (sem carteira) — usado pelo botão Operar Agora
+async function openAppReadOnly() {
+  const appEl  = document.getElementById("app");
+  const heroEl = document.getElementById("hero");
+  if (!appEl) return;
+
+  // Se o app já está visível (carteira conectada), só scrolla
+  if (appEl.style.display === "block") {
+    appEl.scrollIntoView({ behavior: "smooth" });
+    switchTab("sinais");
+    return;
+  }
+
+  // Cria contrato read-only na rede Sepolia (testnet padrão)
+  // ou Arbitrum se disponível
+  try {
+    if (!contract) {
+      const roRpc = "https://1rpc.io/sepolia";
+      const roProv = new ethers.providers.JsonRpcProvider(roRpc);
+      currentNetwork = NETWORKS[11155111];
+      contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
+    }
+  } catch(e) {}
+
+  // Mostra o app, esconde hero
+  if (heroEl) heroEl.style.display = "none";
+  appEl.style.display = "block";
+  updateCurrencyLabels();
+
+  // Scrolla para o app
+  setTimeout(() => {
+    appEl.scrollIntoView({ behavior: "smooth" });
+    switchTab("sinais");
+  }, 80);
+
+  // Avisa que está em modo leitura
+  showToast("Modo visualização — conecte a carteira para operar", "info");
 }
 
 function switchTab(name) {
