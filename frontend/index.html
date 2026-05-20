@@ -1601,7 +1601,20 @@
       letter-spacing: .3px;
     }
     #btn-operar:hover { transform: translateY(-2px); box-shadow: 0 0 28px #7c6dff70; }
-    @media(max-width:640px){ #btn-operar { display:none; } }
+    @media(max-width:640px){ #btn-operar { padding: 7px 12px; font-size: 11px; } }
+
+    /* Botão flutuante fixo — visível em qualquer tela */
+    #fab-operar {
+      position: fixed; bottom: 24px; right: 20px; z-index: 9999;
+      background: linear-gradient(135deg, #7c6dff, #00e5ff);
+      color: #fff; border: none; border-radius: 50px;
+      padding: 14px 22px; font-size: 14px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 4px 24px #7c6dff60;
+      font-family: 'Space Grotesk', sans-serif;
+      transition: all .2s; letter-spacing: .3px;
+    }
+    #fab-operar:hover { transform: translateY(-3px); box-shadow: 0 8px 32px #7c6dff80; }
+    #fab-operar.hidden { display: none; }
 
     #btn-wallet {
       background: #7c6dff14; border: 1px solid #7c6dff35; color: var(--primary);
@@ -1961,6 +1974,9 @@
 <body>
 
 <canvas id="neural-canvas"></canvas>
+
+<!-- Botão flutuante fixo — sempre visível para abrir o DApp -->
+<button id="fab-operar" onclick="openAppReadOnly()">⚡ Operar Agora</button>
 
 <!-- ── PRICE TICKER ── -->
 <div id="price-ticker">
@@ -3612,6 +3628,8 @@ function openAppReadOnly() {
   // Esconde landing, mostra app
   if (heroEl) { heroEl.style.setProperty("display", "none", "important"); }
   appEl.style.setProperty("display", "block", "important");
+  var fab = document.getElementById("fab-operar");
+  if (fab) fab.classList.add("hidden");
   window.scrollTo(0, 0);
   switchTab("sinais");
   if (!signer) showToast("Modo visualização — conecte a carteira para operar", "info");
@@ -3634,6 +3652,8 @@ function goBack() {
       }
     }
   }
+  var fab = document.getElementById("fab-operar");
+  if (fab) fab.classList.remove("hidden");
   window.scrollTo(0, 0);
 }
 
@@ -3771,6 +3791,8 @@ async function doConnect(rawProvider) {
     const appEl2  = document.getElementById("app");
     if (heroEl2) heroEl2.style.display = "none";
     if (appEl2)  appEl2.style.display  = "block";
+    var fab2 = document.getElementById("fab-operar");
+    if (fab2) fab2.classList.add("hidden");
     window.scrollTo(0, 0);
     updateNetworkBadge();
     updateCurrencyLabels();
