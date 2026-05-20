@@ -1549,6 +1549,114 @@
       100% { top: 100%; opacity: 0; }
     }
 
+    /* ══ WHALE RADAR ══════════════════════════════ */
+    #whale-radar {
+      margin: 0 28px 20px;
+      background: linear-gradient(135deg, #06081200, var(--card));
+      border: 1px solid #ffffff0d;
+      border-radius: 18px; overflow: hidden;
+    }
+    .wr-header {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 12px 16px; border-bottom: 1px solid #ffffff08;
+      background: linear-gradient(90deg,#080c1e,#06080f);
+    }
+    .wr-title-wrap { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .wr-icon { font-size: 18px; }
+    .wr-title { font-size: 12px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
+      color: var(--text); }
+    .wr-live-badge {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 9px; font-weight: 700; letter-spacing: 1px;
+      padding: 3px 8px; border-radius: 10px;
+      background: #00ffaa0d; border: 1px solid #00ffaa25; color: var(--green);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .wr-live-dot { width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 5px var(--green);
+      animation: pulse 1.2s infinite; }
+    .wr-tickers { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; justify-content: flex-end; }
+    .wrt-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: #ffffff05; border: 1px solid #ffffff0a;
+      border-radius: 10px; padding: 5px 11px; cursor: pointer; transition: all .2s;
+    }
+    .wrt-chip:hover { border-color: #ffffff20; background: #ffffff08; transform: translateY(-1px); }
+    .wrt-sym { font-size: 11px; font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+    .wrt-px  { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+    .wrt-chg { font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-width: 44px; text-align: right; }
+    .wrt-chg.up { color: var(--green); } .wrt-chg.dn { color: var(--red); } .wrt-chg.flat { color: var(--muted); }
+    .wrt-chip.flash-up   { animation: chip-flash-up   .4s ease; }
+    .wrt-chip.flash-down { animation: chip-flash-down .4s ease; }
+    @keyframes chip-flash-up   { 0%,100%{background:#ffffff05} 50%{background:#00ffaa14;border-color:#00ffaa40} }
+    @keyframes chip-flash-down { 0%,100%{background:#ffffff05} 50%{background:#ff3d5714;border-color:#ff3d5740} }
+
+    .wr-feed {
+      min-height: 56px; max-height: 260px; overflow-y: auto;
+      padding: 8px 10px; display: flex; flex-direction: column; gap: 6px;
+      scrollbar-width: thin; scrollbar-color: #ffffff0a transparent;
+    }
+    .wr-feed::-webkit-scrollbar { width: 4px; }
+    .wr-feed::-webkit-scrollbar-thumb { background: #ffffff10; border-radius: 4px; }
+    .wr-empty {
+      text-align: center; padding: 18px;
+      font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+      animation: pulse 2s infinite;
+    }
+    .wr-alert {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 17px;
+      border-radius: 12px; border: 1px solid; position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(-8px) scale(.97);
+      transition: opacity .3s, transform .3s;
+    }
+    .wr-alert.in { opacity: 1; transform: translateY(0) scale(1); }
+    .wr-alert.long  { background: #00ffaa07; border-color: #00ffaa1a; }
+    .wr-alert.short { background: #ff3d5707; border-color: #ff3d571a; }
+    .wr-alert::before {
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:12px 0 0 12px;
+    }
+    .wr-alert.long::before  { background:var(--green);   box-shadow:0 0 10px #00ffaa70; }
+    .wr-alert.short::before { background:var(--red);     box-shadow:0 0 10px #ff3d5770; }
+    .wra-ico  { font-size: 18px; flex-shrink: 0; }
+    .wra-body { flex: 1; min-width: 0; }
+    .wra-row1 { display: flex; align-items: center; gap: 8px; }
+    .wra-pair { font-size: 13px; font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+    .wra-dir  { font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; padding: 1px 7px; border-radius: 5px; }
+    .wra-dir.long  { background:#00ffaa10; color:var(--green); }
+    .wra-dir.short { background:#ff3d5710; color:var(--red); }
+    .wra-row2 { display: flex; align-items: center; gap: 10px; margin-top: 3px; }
+    .wra-price { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--text); }
+    .wra-chg   { font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .wra-vol   { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .wra-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+    .wra-str { font-size:9px; font-weight:800; letter-spacing:1px; padding:2px 8px; border-radius:6px; }
+    .wra-str.s1 { background:#7c6dff10; border:1px solid #7c6dff25; color:var(--primary); }
+    .wra-str.s2 { background:#ffcc0010; border:1px solid #ffcc0030; color:var(--yellow); }
+    .wra-str.s3 { background:#ff3d8a10; border:1px solid #ff3d8a30; color:var(--magenta);
+      animation: glow-pulse .6s ease infinite; }
+    .wra-time { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+    @keyframes glow-pulse {
+      0%,100% { box-shadow:0 0 4px #ff3d8a30; } 50% { box-shadow:0 0 12px #ff3d8a90; }
+    }
+    /* Explosion particles */
+    .xp-particle {
+      position:fixed; border-radius:50%; pointer-events:none; z-index:9999;
+      animation: xp-fly 1.1s cubic-bezier(.2,.8,.4,1) forwards;
+    }
+    @keyframes xp-fly {
+      0%   { transform:translate(0,0) scale(1.2); opacity:1; }
+      100% { transform:translate(var(--xdx),var(--xdy)) scale(0); opacity:0; }
+    }
+    .xp-ring {
+      position:fixed; border-radius:50%; pointer-events:none; z-index:9998;
+      animation: xp-ring .8s ease-out forwards;
+    }
+    @keyframes xp-ring {
+      0%   { transform:translate(-50%,-50%) scale(0); opacity:.8; }
+      100% { transform:translate(-50%,-50%) scale(4); opacity:0; }
+    }
+
     /* ── SITE FOOTER ── */
     #site-footer {
       position: relative; z-index: 1;
@@ -2298,6 +2406,40 @@
         </select>
       </div>
     </div>
+    <!-- ══ WHALE RADAR ══ -->
+    <div id="whale-radar">
+      <div class="wr-header">
+        <div class="wr-title-wrap">
+          <span class="wr-icon">🐋</span>
+          <span class="wr-title">Whale Radar</span>
+          <div class="wr-live-badge"><span class="wr-live-dot"></span>LIVE</div>
+        </div>
+        <div class="wr-tickers" id="wr-tickers">
+          <div class="wrt-chip" id="wrt-btcusdt" onclick="openChart('BTC')">
+            <span class="wrt-sym">BTC</span><span class="wrt-px" id="wrp-btcusdt">—</span><span class="wrt-chg flat" id="wrc-btcusdt">—</span>
+          </div>
+          <div class="wrt-chip" id="wrt-ethusdt" onclick="openChart('ETH')">
+            <span class="wrt-sym">ETH</span><span class="wrt-px" id="wrp-ethusdt">—</span><span class="wrt-chg flat" id="wrc-ethusdt">—</span>
+          </div>
+          <div class="wrt-chip" id="wrt-solusdt" onclick="openChart('SOL')">
+            <span class="wrt-sym">SOL</span><span class="wrt-px" id="wrp-solusdt">—</span><span class="wrt-chg flat" id="wrc-solusdt">—</span>
+          </div>
+          <div class="wrt-chip" id="wrt-bnbusdt" onclick="openChart('BNB')">
+            <span class="wrt-sym">BNB</span><span class="wrt-px" id="wrp-bnbusdt">—</span><span class="wrt-chg flat" id="wrc-bnbusdt">—</span>
+          </div>
+          <div class="wrt-chip" id="wrt-avaxusdt">
+            <span class="wrt-sym">AVAX</span><span class="wrt-px" id="wrp-avaxusdt">—</span><span class="wrt-chg flat" id="wrc-avaxusdt">—</span>
+          </div>
+          <div class="wrt-chip" id="wrt-maticusdt">
+            <span class="wrt-sym">MATIC</span><span class="wrt-px" id="wrp-maticusdt">—</span><span class="wrt-chg flat" id="wrc-maticusdt">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="wr-feed" id="wr-feed">
+        <div class="wr-empty">🔍 Conectando ao feed de baleias em tempo real…</div>
+      </div>
+    </div>
+
     <div id="signals-list" class="grid">
       <div class="loading"><div class="spinner"></div></div>
     </div>
@@ -3930,7 +4072,7 @@ document.addEventListener("keydown", e => {
 (function initNeural() {
   const canvas = document.getElementById("neural-canvas");
   const ctx    = canvas.getContext("2d");
-  const N = 75, MAX_DIST = 140;
+  const N = 130, MAX_DIST = 190;
   let W, H, pts;
 
   function resize() {
@@ -3941,9 +4083,10 @@ document.addEventListener("keydown", e => {
   function mkPts() {
     pts = Array.from({length: N}, () => ({
       x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
-      r: Math.random() * 1.4 + .4,
-      hue: Math.random() < .5 ? 250 : 185,
+      vx: (Math.random() - .5) * .55, vy: (Math.random() - .5) * .55,
+      r: Math.random() * 2.2 + .7,
+      hue: Math.random() < .55 ? 250 : 185,
+      pulse: Math.random() * Math.PI * 2,
     }));
   }
 
@@ -3951,11 +4094,15 @@ document.addEventListener("keydown", e => {
     ctx.clearRect(0, 0, W, H);
     for (const p of pts) {
       p.x += p.vx; p.y += p.vy;
+      p.pulse += 0.025;
       if (p.x < 0) p.x = W; else if (p.x > W) p.x = 0;
       if (p.y < 0) p.y = H; else if (p.y > H) p.y = 0;
+      const glow = .65 + Math.sin(p.pulse) * .25;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.hue === 250 ? "rgba(124,109,255,.55)" : "rgba(0,229,255,.45)";
+      ctx.fillStyle = p.hue === 250
+        ? `rgba(124,109,255,${glow})`
+        : `rgba(0,229,255,${glow * .85})`;
       ctx.fill();
     }
     for (let i = 0; i < pts.length; i++) {
@@ -3963,14 +4110,14 @@ document.addEventListener("keydown", e => {
         const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
         const d  = Math.sqrt(dx * dx + dy * dy);
         if (d < MAX_DIST) {
-          const a = (1 - d / MAX_DIST) * .12;
+          const a = (1 - d / MAX_DIST) * .28;
           const g = ctx.createLinearGradient(pts[i].x, pts[i].y, pts[j].x, pts[j].y);
           g.addColorStop(0, `rgba(124,109,255,${a})`);
           g.addColorStop(1, `rgba(0,229,255,${a})`);
           ctx.beginPath();
           ctx.moveTo(pts[i].x, pts[i].y);
           ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.strokeStyle = g; ctx.lineWidth = .5; ctx.stroke();
+          ctx.strokeStyle = g; ctx.lineWidth = .9; ctx.stroke();
         }
       }
     }
@@ -4404,6 +4551,167 @@ function scrollToToken() {
   const el = document.getElementById("token-section");
   if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
 }
+
+// ══════════════════════════════════════════════
+// WHALE RADAR — Binance WebSocket em tempo real
+// ══════════════════════════════════════════════
+const WR_SYMS = ['btcusdt','ethusdt','solusdt','bnbusdt','avaxusdt','maticusdt'];
+const WR_LABELS = { btcusdt:'BTC/USDT', ethusdt:'ETH/USDT', solusdt:'SOL/USDT',
+                    bnbusdt:'BNB/USDT', avaxusdt:'AVAX/USDT', maticusdt:'MATIC/USDT' };
+let wrPrev = {}, wrWs = null, wrAlertCount = 0;
+
+function initWhaleRadar() {
+  const streams = WR_SYMS.map(s => s + '@ticker').join('/');
+  try {
+    wrWs = new WebSocket('wss://stream.binance.com:9443/ws/' + streams);
+  } catch(e) { return; }
+
+  wrWs.onopen = () => {
+    const el = document.getElementById('wr-feed');
+    if (el) el.innerHTML = '';
+  };
+
+  wrWs.onmessage = (e) => {
+    const d = JSON.parse(e.data);
+    const sym = d.s.toLowerCase();
+    if (!WR_SYMS.includes(sym)) return;
+    const price  = parseFloat(d.c);
+    const chg24  = parseFloat(d.P);
+    const vol    = parseFloat(d.q);
+    const prev   = wrPrev[sym];
+    const tickMv = prev ? ((price - prev.price) / prev.price) * 100 : 0;
+
+    wrUpdateTicker(sym, price, chg24, tickMv);
+
+    // Detectar movimento de baleia
+    const absChg = Math.abs(chg24);
+    const absTick = Math.abs(tickMv);
+    const firstLoad = !prev;
+
+    if (!firstLoad && absTick > 0.12) {
+      const dir = tickMv > 0 ? 'LONG' : 'SHORT';
+      const strength = absChg > 5 ? 3 : absChg > 2.5 ? 2 : 1;
+      wrFireAlert(sym, price, chg24, tickMv, dir, strength, vol);
+    } else if (firstLoad && absChg > 1.5) {
+      const dir = chg24 > 0 ? 'LONG' : 'SHORT';
+      const strength = absChg > 5 ? 3 : absChg > 2.5 ? 2 : 1;
+      wrFireAlert(sym, price, chg24, 0, dir, strength, vol);
+    }
+
+    wrPrev[sym] = { price, chg24, vol };
+  };
+
+  wrWs.onclose = () => { setTimeout(initWhaleRadar, 5000); };
+  wrWs.onerror = () => { try { wrWs.close(); } catch(e){} };
+}
+
+function wrFmtPx(p, sym) {
+  if (sym.startsWith('btc')) return '$' + Math.round(p).toLocaleString();
+  if (p > 1000) return '$' + Math.round(p).toLocaleString();
+  if (p > 10)   return '$' + p.toFixed(2);
+  return '$' + p.toFixed(4);
+}
+
+function wrUpdateTicker(sym, price, chg, tick) {
+  const chip = document.getElementById('wrt-' + sym);
+  const px   = document.getElementById('wrp-' + sym);
+  const chgEl= document.getElementById('wrc-' + sym);
+  if (!px || !chgEl || !chip) return;
+  px.textContent  = wrFmtPx(price, sym);
+  chgEl.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
+  chgEl.className = 'wrt-chg ' + (chg > 0.05 ? 'up' : chg < -0.05 ? 'dn' : 'flat');
+  if (Math.abs(tick) > 0.08) {
+    chip.classList.remove('flash-up','flash-down');
+    void chip.offsetWidth;
+    chip.classList.add(tick > 0 ? 'flash-up' : 'flash-down');
+  }
+}
+
+function wrFireAlert(sym, price, chg24, tick, dir, strength, vol) {
+  const feed = document.getElementById('wr-feed');
+  if (!feed) return;
+  // Remove placeholder
+  const empty = feed.querySelector('.wr-empty');
+  if (empty) empty.remove();
+
+  const isLong = dir === 'LONG';
+  const pxStr  = wrFmtPx(price, sym);
+  const chgStr = (chg24 >= 0 ? '+' : '') + chg24.toFixed(2) + '%';
+  const tickStr= tick !== 0 ? ' (' + (tick >= 0 ? '+' : '') + tick.toFixed(2) + '% tick)' : '';
+  const volStr = vol > 1e9 ? (vol/1e9).toFixed(1)+'B' : (vol/1e6).toFixed(0)+'M';
+  const now    = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const strTxt = strength === 3 ? '🔥 EXPLOSÃO' : strength === 2 ? '⚡ FORTE' : '📡 SINAL';
+  const strCls = 's' + strength;
+  const ico    = isLong ? '🟢' : '🔴';
+
+  const card = document.createElement('div');
+  card.className = 'wr-alert ' + (isLong ? 'long' : 'short');
+  card.innerHTML = `
+    <div class="wra-ico">${ico}</div>
+    <div class="wra-body">
+      <div class="wra-row1">
+        <span class="wra-pair">${WR_LABELS[sym]}</span>
+        <span class="wra-dir ${isLong ? 'long' : 'short'}">${isLong ? '↑ LONG' : '↓ SHORT'}</span>
+      </div>
+      <div class="wra-row2">
+        <span class="wra-price">${pxStr}</span>
+        <span class="wra-chg" style="color:${isLong ? 'var(--green)' : 'var(--red)'}">${chgStr}${tickStr}</span>
+        <span class="wra-vol">Vol $${volStr}</span>
+      </div>
+    </div>
+    <div class="wra-right">
+      <span class="wra-str ${strCls}">${strTxt}</span>
+      <span class="wra-time">${now}</span>
+    </div>`;
+
+  feed.insertBefore(card, feed.firstChild);
+  while (feed.children.length > 10) feed.removeChild(feed.lastChild);
+  requestAnimationFrame(() => card.classList.add('in'));
+
+  // Explosão visual para sinais fortes
+  if (strength >= 2) wrExplode(isLong, strength);
+  wrAlertCount++;
+}
+
+function wrExplode(isLong, strength) {
+  const colors = isLong
+    ? ['#00ffaa','#00e5ff','#7c6dff','#00ffcc']
+    : ['#ff3d57','#ff3d8a','#ffcc00','#ff6b35'];
+
+  const cx = window.innerWidth  * (.3 + Math.random() * .4);
+  const cy = window.innerHeight * (.2 + Math.random() * .4);
+  const count = strength === 3 ? 28 : 16;
+
+  // Ring
+  const ring = document.createElement('div');
+  ring.className = 'xp-ring';
+  const ringColor = colors[0];
+  ring.style.cssText = `left:${cx}px;top:${cy}px;width:40px;height:40px;
+    border:2px solid ${ringColor};opacity:.7;box-shadow:0 0 20px ${ringColor}`;
+  document.body.appendChild(ring);
+  setTimeout(() => ring.remove(), 900);
+
+  // Particles
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'xp-particle';
+    const angle = (i / count) * Math.PI * 2 + Math.random() * .3;
+    const dist  = 80 + Math.random() * (strength === 3 ? 160 : 100);
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    const color = colors[i % colors.length];
+    const size  = 4 + Math.random() * (strength === 3 ? 10 : 6);
+    p.style.cssText = `left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;
+      background:${color};--xdx:${dx}px;--xdy:${dy}px;
+      box-shadow:0 0 ${size * 2}px ${color};
+      animation-duration:${.8 + Math.random() * .5}s`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1400);
+  }
+}
+
+// Iniciar Whale Radar automaticamente
+initWhaleRadar();
 
 // ── BOOT ──
 initLiveOracle();
