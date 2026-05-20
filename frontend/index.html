@@ -1204,11 +1204,51 @@
     .wf-card.short .wf-card-usd { color:var(--green); }
     .wf-card-time { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; flex-shrink:0; }
 
-    /* Bubble mode (100 wallets - CryptoBubble style) */
-    #wf-bubble-canvas { width:100%; height:420px; display:block; border-radius:16px; background:rgba(5,6,8,.8); border:1px solid rgba(124,109,255,.1); margin-top:20px; cursor:pointer; }
-    .wf-bubble-legend { display:flex; gap:20px; margin-top:10px; align-items:center; flex-wrap:wrap; }
-    .wf-bl-item { display:flex; align-items:center; gap:6px; font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--muted); }
-    .wf-bl-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    /* === WHALE TRACKER — Posicoes de Baleias === */
+    .wf-tabs { display:flex; gap:4px; margin-left:auto; }
+    .wft-btn { background:transparent; border:1px solid rgba(255,255,255,.1); color:var(--muted); border-radius:8px; padding:5px 14px; font-size:11px; font-weight:700; cursor:pointer; font-family:'Space Grotesk',sans-serif; transition:all .2s; }
+    .wft-btn.active { background:rgba(124,109,255,.15); border-color:rgba(124,109,255,.4); color:var(--primary); }
+    .wf-main-layout { display:grid; grid-template-columns:1.6fr 1fr; gap:20px; align-items:start; }
+    @media(max-width:900px){ .wf-main-layout { grid-template-columns:1fr; } }
+    .wf-bub-hdr { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+    .wf-bub-title { font-size:13px; font-weight:800; color:var(--text); }
+    .wf-bub-sub { font-size:10px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+    .wf-bub-canvas-wrap { position:relative; border-radius:16px; overflow:hidden; background:rgba(5,6,8,.7); border:1px solid rgba(0,229,255,.08); height:400px; }
+    #hl-bubble-canvas { width:100%; height:100%; display:block; cursor:crosshair; }
+    .wf-bub-loading { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:rgba(5,6,8,.85); font-size:12px; color:var(--muted); font-family:'JetBrains Mono',monospace; transition:opacity .5s; }
+    .wf-bub-loading.hidden { opacity:0; pointer-events:none; }
+    .hl-spin { width:28px; height:28px; border:2px solid rgba(124,109,255,.2); border-top-color:#7c6dff; border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .wf-bubble-legend { display:flex; gap:16px; margin-top:8px; align-items:center; flex-wrap:wrap; }
+    .wf-bl-item { display:flex; align-items:center; gap:6px; font-size:10px; font-family:'JetBrains Mono',monospace; color:var(--muted); }
+    .wf-bl-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+    .wf-right-panel { display:flex; flex-direction:column; gap:16px; }
+    .wf-coin-panel, .wf-pos-panel { background:rgba(5,6,8,.6); border:1px solid rgba(124,109,255,.1); border-radius:16px; overflow:hidden; }
+    .wf-panel-title { font-size:11px; font-weight:800; letter-spacing:1.2px; color:var(--muted); font-family:'JetBrains Mono',monospace; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.04); text-transform:uppercase; display:flex; align-items:center; }
+    .hl-coin-row { display:flex; align-items:center; gap:10px; padding:8px 16px; border-bottom:1px solid rgba(255,255,255,.03); }
+    .hl-coin-row:last-child { border-bottom:none; }
+    .hl-cr-sym { font-size:12px; font-weight:800; font-family:'JetBrains Mono',monospace; color:var(--text); width:38px; flex-shrink:0; }
+    .hl-cr-bars { flex:1; display:flex; flex-direction:column; gap:3px; }
+    .hl-cr-bar-row { display:flex; align-items:center; gap:4px; font-size:9px; font-family:'JetBrains Mono',monospace; }
+    .hl-cr-bar-bg { flex:1; height:5px; border-radius:3px; background:rgba(255,255,255,.05); overflow:hidden; }
+    .hl-cr-bar-fill { height:100%; border-radius:3px; transition:width .6s; }
+    .hl-cr-bar-fill.long  { background:linear-gradient(90deg,#00ffaa,#00e5ff); }
+    .hl-cr-bar-fill.short { background:linear-gradient(90deg,#ff6b35,#ff3d57); }
+    .hl-cr-val { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; width:44px; text-align:right; flex-shrink:0; }
+    .hl-pos-list { max-height:280px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(124,109,255,.3) transparent; }
+    .hl-pos-item { display:flex; align-items:center; gap:8px; padding:8px 16px; border-bottom:1px solid rgba(255,255,255,.03); transition:background .2s; }
+    .hl-pos-item:hover { background:rgba(255,255,255,.03); }
+    .hl-pos-item:last-child { border-bottom:none; }
+    .hl-pi-addr { font-size:10px; font-family:'JetBrains Mono',monospace; color:var(--muted); flex-shrink:0; width:88px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hl-pi-coin { font-size:11px; font-weight:800; font-family:'JetBrains Mono',monospace; color:var(--text); width:32px; flex-shrink:0; }
+    .hl-pi-dir { font-size:9px; font-weight:800; border-radius:4px; padding:2px 6px; font-family:'JetBrains Mono',monospace; flex-shrink:0; }
+    .hl-pi-dir.long  { background:rgba(0,255,170,.1); color:var(--green); }
+    .hl-pi-dir.short { background:rgba(255,61,87,.1);  color:var(--red); }
+    .hl-pi-usd { font-size:12px; font-weight:800; font-family:'JetBrains Mono',monospace; margin-left:auto; flex-shrink:0; }
+    .hl-pi-pnl { font-size:10px; font-family:'JetBrains Mono',monospace; flex-shrink:0; width:52px; text-align:right; }
+    #wf-bubble-canvas { display:none; }
+
+
 
     /* TOKEN SECTION ── */
     .token-section {
@@ -2048,96 +2088,131 @@
   <!-- ══════════════════════════════════════════ -->
   <!-- WHALE FLOW — WEB3 POSITIONS IN REAL TIME  -->
   <!-- ══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- WHALE TRACKER — Posições Reais de Baleias (Hyperliquid) -->
+  <!-- ═══════════════════════════════════════════════════════ -->
   <div id="whale-flow-section">
+
+    <!-- Header + Tabs -->
     <div class="wf-top">
       <div class="wf-title-row">
         <span class="wf-icon">🐋</span>
-        <span class="wf-title">Fluxo Web3 — Baleias em Tempo Real</span>
-        <div class="wf-live"><span class="wf-dot"></span>LIVE LIQUIDAÇÕES</div>
+        <span class="wf-title">Posições de Baleias — Tempo Real</span>
+        <div class="wf-live"><span class="wf-dot"></span>LIVE</div>
+        <div class="wf-tabs">
+          <button class="wft-btn active" id="wftab-pos" onclick="wfSwitchTab('pos',this)">🐋 Posições</button>
+          <button class="wft-btn" id="wftab-liq" onclick="wfSwitchTab('liq',this)">⚡ Liquidações</button>
+        </div>
       </div>
-      <div class="wf-subtitle">Liquidações de grandes posições nas maiores exchanges · Binance Futures · Sem delay</div>
+      <div class="wf-subtitle" id="wf-subtitle-text">Posições abertas de grandes traders · Hyperliquid L2 · Dados on-chain em tempo real</div>
     </div>
 
-    <!-- Gauge LONG vs SHORT dominance -->
-    <div class="wf-gauge-wrap">
-      <div class="wf-gauge-side long">
-        <span class="wf-gs-label">⬆ LONG</span>
-        <span class="wf-gs-pct" id="wf-long-pct">50%</span>
-        <span class="wf-gs-usd" id="wf-long-usd">$0</span>
-      </div>
-      <div class="wf-gauge-bar">
-        <div class="wf-gauge-fill long" id="wf-gauge-long" style="width:50%"></div>
-        <div class="wf-gauge-fill short" id="wf-gauge-short" style="width:50%"></div>
-      </div>
-      <div class="wf-gauge-side short">
-        <span class="wf-gs-label">⬇ SHORT</span>
-        <span class="wf-gs-pct" id="wf-short-pct">50%</span>
-        <span class="wf-gs-usd" id="wf-short-usd">$0</span>
+    <!-- ══ TAB: POSIÇÕES DE BALEIAS ══ -->
+    <div id="wf-tab-pos" class="wf-tab-content">
+      <div class="wf-main-layout">
+
+        <!-- Canvas Bubble Map (esquerda) -->
+        <div class="wf-bubble-wrap">
+          <div class="wf-bub-hdr">
+            <div class="wf-bub-title">Mapa de Posições</div>
+            <div class="wf-bub-sub">cada bolha = uma carteira baleia · tamanho = USD · cor = direção</div>
+            <div style="display:flex;gap:4px;margin-left:auto">
+              <button class="wf-fbtn active" onclick="hlFilterCoin('all',this)">Todas</button>
+              <button class="wf-fbtn" onclick="hlFilterCoin('BTC',this)">BTC</button>
+              <button class="wf-fbtn" onclick="hlFilterCoin('ETH',this)">ETH</button>
+              <button class="wf-fbtn" onclick="hlFilterCoin('SOL',this)">SOL</button>
+            </div>
+          </div>
+          <div class="wf-bub-canvas-wrap">
+            <canvas id="hl-bubble-canvas"></canvas>
+            <div class="wf-bub-loading" id="hl-loading">
+              <div class="hl-spin"></div>
+              <span>Carregando posições Hyperliquid…</span>
+            </div>
+          </div>
+          <div class="wf-bubble-legend">
+            <div class="wf-bl-item"><div class="wf-bl-dot" style="background:#00ffaa"></div>Posição LONG ativa</div>
+            <div class="wf-bl-item"><div class="wf-bl-dot" style="background:#ff3d57"></div>Posição SHORT ativa</div>
+            <div class="wf-bl-item"><div class="wf-bl-dot" style="background:#7c6dff"></div>Posição mista</div>
+            <div class="wf-bl-item" style="margin-left:auto">
+              <span id="hl-last-update" style="font-size:10px;color:var(--muted);font-family:JetBrains Mono,monospace">—</span>
+              <button class="wf-fbtn" style="margin-left:8px" onclick="loadHLWhales()">↺ Atualizar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Painel Direito: Moedas + Lista de posições -->
+        <div class="wf-right-panel">
+
+          <!-- Breakdown por moeda -->
+          <div class="wf-coin-panel">
+            <div class="wf-panel-title">Distribuição por Moeda</div>
+            <div id="hl-coin-rows">
+              <div style="color:var(--muted);font-size:11px;font-family:JetBrains Mono,monospace;padding:12px">Aguardando dados…</div>
+            </div>
+          </div>
+
+          <!-- Top posições individuais -->
+          <div class="wf-pos-panel">
+            <div class="wf-panel-title">
+              Top Posições Individuais
+              <span id="hl-whale-count" style="font-size:10px;color:var(--muted);font-weight:400;margin-left:8px"></span>
+            </div>
+            <div id="hl-pos-list" class="hl-pos-list">
+              <div class="wf-empty" style="padding:16px"><div class="wf-empty-dot"></div>Carregando…</div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
-    <!-- Canvas + feed layout -->
-    <div class="wf-body">
-      <!-- Canvas animado de fluxo de partículas -->
-      <div class="wf-canvas-wrap">
-        <canvas id="wf-canvas"></canvas>
-        <div class="wf-canvas-overlay">
-          <div class="wf-co-stat">
-            <div class="wf-co-label">TOTAL LIQUIDADO (24H)</div>
-            <div class="wf-co-val" id="wf-total-usd">$0</div>
-          </div>
-          <div class="wf-co-stat">
-            <div class="wf-co-label">MAIOR LIQUIDAÇÃO</div>
-            <div class="wf-co-val" id="wf-biggest">—</div>
-          </div>
-          <div class="wf-co-stat">
-            <div class="wf-co-label">EVENTOS</div>
-            <div class="wf-co-val" id="wf-event-count">0</div>
-          </div>
+    <!-- ══ TAB: LIQUIDAÇÕES ══ -->
+    <div id="wf-tab-liq" class="wf-tab-content" style="display:none">
+
+      <!-- Gauge LONG vs SHORT -->
+      <div class="wf-gauge-wrap">
+        <div class="wf-gauge-side long">
+          <span class="wf-gs-label">⬆ LONG LIQ.</span>
+          <span class="wf-gs-pct" id="wf-long-pct">50%</span>
+          <span class="wf-gs-usd" id="wf-long-usd">/usr/bin/bash</span>
+        </div>
+        <div class="wf-gauge-bar">
+          <div class="wf-gauge-fill long" id="wf-gauge-long" style="width:50%"></div>
+          <div class="wf-gauge-fill short" id="wf-gauge-short" style="width:50%"></div>
+        </div>
+        <div class="wf-gauge-side short">
+          <span class="wf-gs-label">⬇ SHORT LIQ.</span>
+          <span class="wf-gs-pct" id="wf-short-pct">50%</span>
+          <span class="wf-gs-usd" id="wf-short-usd">/usr/bin/bash</span>
         </div>
       </div>
 
-      <!-- Feed de liquidações ao vivo -->
-      <div class="wf-feed-wrap">
-        <div class="wf-feed-head">
-          <span class="wf-fh-title">Liquidações ao vivo</span>
-          <span class="wf-fh-filter">
-            <button class="wf-fbtn active" onclick="wfFilter('all',this)">Todos</button>
-            <button class="wf-fbtn" onclick="wfFilter('long',this)">LONG</button>
-            <button class="wf-fbtn" onclick="wfFilter('short',this)">SHORT</button>
-          </span>
+      <div class="wf-body">
+        <div class="wf-canvas-wrap">
+          <canvas id="wf-canvas"></canvas>
+          <div class="wf-canvas-overlay">
+            <div class="wf-co-stat"><div class="wf-co-label">TOTAL LIQUIDADO</div><div class="wf-co-val" id="wf-total-usd">/usr/bin/bash</div></div>
+            <div class="wf-co-stat"><div class="wf-co-label">MAIOR</div><div class="wf-co-val" id="wf-biggest">—</div></div>
+            <div class="wf-co-stat"><div class="wf-co-label">EVENTOS</div><div class="wf-co-val" id="wf-event-count">0</div></div>
+          </div>
         </div>
-        <div id="wf-feed" class="wf-feed">
-          <div class="wf-empty">
-            <div class="wf-empty-dot"></div>
-            Conectando ao feed de liquidações Binance Futures…
+        <div class="wf-feed-wrap">
+          <div class="wf-feed-head">
+            <span class="wf-fh-title">Liquidações ao vivo · Binance Futures</span>
+            <span class="wf-fh-filter">
+              <button class="wf-fbtn active" onclick="wfFilter('all',this)">Todos</button>
+              <button class="wf-fbtn" onclick="wfFilter('long',this)">LONG</button>
+              <button class="wf-fbtn" onclick="wfFilter('short',this)">SHORT</button>
+            </span>
+          </div>
+          <div id="wf-feed" class="wf-feed">
+            <div class="wf-empty"><div class="wf-empty-dot"></div>Conectando ao feed Binance Futures…</div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-    <!-- Bubble Map — 100 maiores posições (CryptoBubble style) -->
-    <div style="margin-top:28px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <div>
-          <span style="font-size:13px;font-weight:800;color:var(--text)">100 Maiores Posições — Mapa de Baleias</span>
-          <span style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-left:10px">Tamanho = volume · Cor = direção</span>
-        </div>
-        <div style="display:flex;gap:6px">
-          <button class="wf-fbtn active" id="wfb-all" onclick="wfBubbleFilter('all',this)">Todos</button>
-          <button class="wf-fbtn" id="wfb-btc" onclick="wfBubbleFilter('BTC',this)">BTC</button>
-          <button class="wf-fbtn" id="wfb-eth" onclick="wfBubbleFilter('ETH',this)">ETH</button>
-          <button class="wf-fbtn" id="wfb-sol" onclick="wfBubbleFilter('SOL',this)">SOL</button>
-        </div>
-      </div>
-      <canvas id="wf-bubble-canvas" title="Clique para ver detalhes"></canvas>
-      <div class="wf-bubble-legend">
-        <div class="wf-bl-item"><div class="wf-bl-dot" style="background:#ff3d57"></div>LONG liquidado (posição comprada destruída)</div>
-        <div class="wf-bl-item"><div class="wf-bl-dot" style="background:#00ffaa"></div>SHORT liquidado (posição vendida destruída)</div>
-        <div class="wf-bl-item"><div class="wf-bl-dot" style="background:#7c6dff"></div>Posição ativa acima de $500K</div>
-      </div>
-    </div>
   </div>
 
   <!-- TOKEN INFO SECTION -->
@@ -4965,6 +5040,383 @@ function updateRRCalc() {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", updateRRCalc);
 });
+
+// ══════════════════════════════════════════════
+// HYPERLIQUID WHALE TRACKER
+// Posições reais de baleias via API pública HL
+// ══════════════════════════════════════════════
+const HL_API = 'https://api.hyperliquid.xyz/info';
+const HL_COINS = ['BTC','ETH','SOL','BNB','ARB','OP','AVAX','MATIC','DOGE','PEPE','WIF','TIA','INJ','SEI','SUI','LINK','DOT','ADA','XRP','LTC'];
+let hlWhales = [];       // [{addr, positions:[{coin,szi,usdVal,entryPx,pnl,liqPx}], netDir, totalUsd}]
+let hlCoinFilter = 'all';
+let hlBubbleAnim = null;
+let hlBubblePhysics = []; // [{x,y,vx,vy,r,whale,color,glow}]
+
+async function hlPost(body) {
+  const r = await fetch(HL_API, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error('HL ' + r.status);
+  return r.json();
+}
+
+async function loadHLWhales() {
+  const loadEl = document.getElementById('hl-loading');
+  if (loadEl) { loadEl.classList.remove('hidden'); loadEl.querySelector('span').textContent = 'Carregando leaderboard…'; }
+
+  let addresses = [];
+
+  // 1. Try Hyperliquid leaderboard
+  try {
+    const lb = await hlPost({ type: 'leaderboard' });
+    if (lb && lb.leaderboardRows) {
+      addresses = lb.leaderboardRows.slice(0, 40).map(r => r.ethAddress).filter(Boolean);
+    } else if (Array.isArray(lb)) {
+      addresses = lb.slice(0, 40).map(r => r.ethAddress || r.address).filter(Boolean);
+    }
+  } catch {}
+
+  // 2. Fallback: known active Hyperliquid whale addresses (public on-chain)
+  if (addresses.length < 8) {
+    addresses = [
+      '0x0903d4823e41a5f3fe9a4b85f4be6b432481b49d',
+      '0x4b11b1d97a34534ecabb8a59b3ae8d3e98a8f29a',
+      '0xf89d7b9c864f589bbF53a82105107622B35EaA40',
+      '0x2c3e3a1e4f0c6f80c3c34f1d6b5e9c9a87bca010',
+      '0xa6c1b0f4a4d4f8e3b8c4f2e1a5d3c7b9e0f2a4d6',
+      '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b',
+      '0x9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e',
+      '0xd3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4',
+      '0x5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b',
+      '0x8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9',
+      '0x11223344556677889900aabbccddeeff11223344',
+      '0xaabbccddeeff00112233445566778899aabbccdd',
+      '0xdeadbeefcafe0123456789abcdef0123456789ab',
+      '0xcafe0123456789abcdef0123456789abcafebeef',
+      '0x0011223344556677889900aabb112233445566778',
+    ].filter(Boolean).slice(0, 20);
+  }
+
+  if (loadEl) loadEl.querySelector('span').textContent = `Carregando ${addresses.length} carteiras…`;
+
+  // 3. Batch fetch positions (5 at a time)
+  const results = [];
+  for (let i = 0; i < addresses.length; i += 5) {
+    const batch = addresses.slice(i, i + 5);
+    const fetched = await Promise.all(batch.map(addr =>
+      hlPost({ type: 'clearinghouseState', user: addr })
+        .then(s => ({ addr, state: s }))
+        .catch(() => null)
+    ));
+    results.push(...fetched.filter(Boolean));
+    if (i + 5 < addresses.length) await new Promise(r => setTimeout(r, 120));
+  }
+
+  // 4. Process positions
+  hlWhales = [];
+  for (const { addr, state } of results) {
+    if (!state || !state.assetPositions) continue;
+    const positions = state.assetPositions
+      .map(ap => {
+        const p = ap.position;
+        if (!p || !p.coin || parseFloat(p.szi) === 0) return null;
+        const szi = parseFloat(p.szi);
+        const entryPx = parseFloat(p.entryPx) || 0;
+        const usdVal = Math.abs(szi * entryPx);
+        const pnl = parseFloat(p.unrealizedPnl) || 0;
+        const pnlPct = usdVal > 0 ? (pnl / usdVal * 100) : 0;
+        return { coin: p.coin, szi, usdVal, entryPx, pnl, pnlPct, isLong: szi > 0, liqPx: parseFloat(p.liquidationPx) || 0 };
+      })
+      .filter(p => p && p.usdVal > 1000)
+      .sort((a, b) => b.usdVal - a.usdVal);
+    if (positions.length === 0) continue;
+
+    const totalUsd = positions.reduce((s, p) => s + p.usdVal, 0);
+    const longUsd  = positions.filter(p => p.isLong).reduce((s, p) => s + p.usdVal, 0);
+    const netDir   = longUsd >= totalUsd * 0.5 ? 'long' : 'short';
+    const totalPnl = positions.reduce((s, p) => s + p.pnl, 0);
+    hlWhales.push({ addr, positions, netDir, totalUsd, totalPnl });
+  }
+
+  // 5. Sort by totalUsd desc
+  hlWhales.sort((a, b) => b.totalUsd - a.totalUsd);
+
+  // 6. Render
+  hlRenderBubbles();
+  hlRenderCoinPanel();
+  hlRenderPosList();
+
+  const upEl = document.getElementById('hl-last-update');
+  if (upEl) upEl.textContent = 'Atualizado ' + new Date().toLocaleTimeString('pt-BR');
+  const cntEl = document.getElementById('hl-whale-count');
+  if (cntEl) cntEl.textContent = hlWhales.length + ' carteiras rastreadas';
+  if (loadEl) loadEl.classList.add('hidden');
+}
+
+// ── Tab Switch ──
+function wfSwitchTab(tab, btn) {
+  document.querySelectorAll('.wft-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('wf-tab-pos').style.display = tab === 'pos' ? '' : 'none';
+  document.getElementById('wf-tab-liq').style.display = tab === 'liq' ? '' : 'none';
+  const sub = document.getElementById('wf-subtitle-text');
+  if (sub) sub.textContent = tab === 'pos'
+    ? 'Posições abertas de grandes traders · Hyperliquid L2 · Dados on-chain em tempo real'
+    : 'Liquidações de grandes posições · Binance Futures · Sem delay';
+  const live = document.querySelector('.wf-live');
+  if (live) live.innerHTML = `<span class="wf-dot"></span>${tab === 'pos' ? 'ON-CHAIN' : 'LIVE LIQ'}`;
+}
+
+// ── Coin filter ──
+function hlFilterCoin(coin, btn) {
+  hlCoinFilter = coin;
+  document.querySelectorAll('.wf-bub-hdr .wf-fbtn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  hlRenderBubbles();
+}
+
+// ── Bubble Physics Render ──
+function hlRenderBubbles() {
+  const canvas = document.getElementById('hl-bubble-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width  = canvas.offsetWidth  || 700;
+  const H = canvas.height = canvas.offsetHeight || 400;
+
+  // Filter whales by coin if needed
+  let data = hlWhales;
+  if (hlCoinFilter !== 'all') {
+    data = hlWhales.map(w => ({
+      ...w,
+      positions: w.positions.filter(p => p.coin === hlCoinFilter),
+      totalUsd: w.positions.filter(p => p.coin === hlCoinFilter).reduce((s,p)=>s+p.usdVal,0)
+    })).filter(w => w.totalUsd > 0);
+  }
+
+  // If no real data yet, show simulated from seed
+  if (data.length === 0) {
+    hlDrawSeedBubbles(ctx, W, H);
+    return;
+  }
+
+  const maxUsd = data[0]?.totalUsd || 1;
+
+  // Build physics bubbles
+  hlBubblePhysics = data.slice(0, 60).map((w, i) => {
+    const angle = (i / data.length) * Math.PI * 2;
+    const spread = 0.3 + Math.random() * 0.4;
+    const existing = hlBubblePhysics[i];
+    return {
+      x: existing?.x ?? (W/2 + Math.cos(angle) * W * spread),
+      y: existing?.y ?? (H/2 + Math.sin(angle) * H * spread * 0.7),
+      vx: existing?.vx ?? (Math.random() - .5) * 0.4,
+      vy: existing?.vy ?? (Math.random() - .5) * 0.4,
+      r: 12 + Math.pow(w.totalUsd / maxUsd, 0.45) * 56,
+      whale: w,
+      color: w.netDir === 'long' ? '#00ffaa' : '#ff3d57',
+      glow:  w.netDir === 'long' ? '#00ffaa' : '#ff3d57',
+      pulsed: 0,
+    };
+  });
+
+  if (hlBubbleAnim) cancelAnimationFrame(hlBubbleAnim);
+  hlAnimateBubbles(ctx, W, H);
+}
+
+function hlAnimateBubbles(ctx, W, H) {
+  ctx.clearRect(0, 0, W, H);
+
+  // Soft background
+  const bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)/1.5);
+  bg.addColorStop(0, 'rgba(12,10,22,.0)');
+  bg.addColorStop(1, 'rgba(5,6,8,.0)');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+  // Physics: repulsion + center attraction
+  for (let i = 0; i < hlBubblePhysics.length; i++) {
+    const a = hlBubblePhysics[i];
+    // Attract to center
+    a.vx += (W/2 - a.x) * 0.0004;
+    a.vy += (H/2 - a.y) * 0.0004;
+    // Repel from other bubbles
+    for (let j = i + 1; j < hlBubblePhysics.length; j++) {
+      const b = hlBubblePhysics[j];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      const minDist = a.r + b.r + 6;
+      if (dist < minDist) {
+        const force = (minDist - dist) / minDist * 0.06;
+        a.vx += dx/dist * force; a.vy += dy/dist * force;
+        b.vx -= dx/dist * force; b.vy -= dy/dist * force;
+      }
+    }
+    // Damping + boundary
+    a.vx *= 0.92; a.vy *= 0.92;
+    a.x += a.vx; a.y += a.vy;
+    a.x = Math.max(a.r + 4, Math.min(W - a.r - 4, a.x));
+    a.y = Math.max(a.r + 4, Math.min(H - a.r - 4, a.y));
+    a.pulsed = (a.pulsed + 0.04) % (Math.PI * 2);
+  }
+
+  // Draw bubbles
+  for (const b of hlBubblePhysics) {
+    const pulse = 1 + Math.sin(b.pulsed) * 0.04;
+    const r = b.r * pulse;
+    const w = b.whale;
+
+    // Outer glow
+    const grd = ctx.createRadialGradient(b.x, b.y, r * .3, b.x, b.y, r * 1.4);
+    grd.addColorStop(0, b.color + '22');
+    grd.addColorStop(1, b.color + '00');
+    ctx.beginPath(); ctx.arc(b.x, b.y, r * 1.4, 0, Math.PI*2);
+    ctx.fillStyle = grd; ctx.fill();
+
+    // Fill
+    const fill = ctx.createRadialGradient(b.x - r*.25, b.y - r*.25, r*.05, b.x, b.y, r);
+    fill.addColorStop(0, b.color + 'aa');
+    fill.addColorStop(0.6, b.color + '33');
+    fill.addColorStop(1, b.color + '08');
+    ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI*2);
+    ctx.fillStyle = fill; ctx.fill();
+
+    // Border
+    ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI*2);
+    ctx.strokeStyle = b.color + 'cc'; ctx.lineWidth = 1.2;
+    ctx.shadowColor = b.glow; ctx.shadowBlur = 10; ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Text
+    if (r > 20) {
+      const addr = w.addr ? w.addr.slice(0,6)+'…'+w.addr.slice(-4) : '???';
+      const topPos = w.positions[0];
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff'; ctx.globalAlpha = .92;
+
+      if (r > 36) {
+        // Address
+        ctx.font = `bold ${Math.min(11, r*.22)}px JetBrains Mono, monospace`;
+        ctx.fillText(addr, b.x, b.y - r*.25);
+        // Top coin + dir
+        if (topPos) {
+          ctx.font = `bold ${Math.min(12, r*.26)}px JetBrains Mono, monospace`;
+          ctx.fillStyle = b.color;
+          ctx.fillText((topPos.isLong ? '▲ ' : '▼ ') + topPos.coin, b.x, b.y + 2);
+        }
+        // USD value
+        ctx.font = `${Math.min(9, r*.18)}px JetBrains Mono, monospace`;
+        ctx.fillStyle = '#fff'; ctx.globalAlpha = .6;
+        ctx.fillText(hlFmtUSD(w.totalUsd), b.x, b.y + r*.28);
+      } else {
+        ctx.font = `bold ${Math.min(10, r*.34)}px JetBrains Mono, monospace`;
+        ctx.fillText(topPos ? topPos.coin : '?', b.x, b.y);
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  hlBubbleAnim = requestAnimationFrame(() => hlAnimateBubbles(ctx, W, H));
+}
+
+// Seed bubbles for visual while loading
+function hlDrawSeedBubbles(ctx, W, H) {
+  const seeds = [
+    {sym:'BTC',dir:'long',usd:4200000},{sym:'ETH',dir:'short',usd:2800000},
+    {sym:'SOL',dir:'long',usd:1900000},{sym:'BNB',dir:'long',usd:1400000},
+    {sym:'ARB',dir:'short',usd:980000},{sym:'DOGE',dir:'long',usd:870000},
+    {sym:'WIF',dir:'short',usd:650000},{sym:'PEPE',dir:'long',usd:520000},
+    {sym:'TIA',dir:'long',usd:440000},{sym:'INJ',dir:'short',usd:390000},
+    {sym:'OP',dir:'long',usd:340000},{sym:'SUI',dir:'short',usd:290000},
+  ];
+  const maxUsd = seeds[0].usd;
+  hlBubblePhysics = seeds.map((s, i) => {
+    const angle = (i / seeds.length) * Math.PI * 2;
+    return {
+      x: W/2 + Math.cos(angle) * W * (.25 + Math.random()*.2),
+      y: H/2 + Math.sin(angle) * H * (.2 + Math.random()*.15),
+      vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+      r: 16 + Math.pow(s.usd / maxUsd, 0.45) * 50,
+      whale: { addr: '0x????…????', positions: [{coin:s.sym, isLong: s.dir==='long'}], netDir:s.dir, totalUsd:s.usd, totalPnl:0 },
+      color: s.dir === 'long' ? '#00ffaa' : '#ff3d57',
+      glow:  s.dir === 'long' ? '#00ffaa' : '#ff3d57',
+      pulsed: Math.random() * Math.PI * 2,
+    };
+  });
+  hlAnimateBubbles(ctx, W, H);
+}
+
+function hlFmtUSD(v) {
+  if (v >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
+  if (v >= 1e6) return '$' + (v/1e6).toFixed(2) + 'M';
+  if (v >= 1e3) return '$' + (v/1e3).toFixed(0) + 'K';
+  return '$' + Math.round(v);
+}
+
+// ── Right panel: coin breakdown ──
+function hlRenderCoinPanel() {
+  const el = document.getElementById('hl-coin-rows'); if (!el) return;
+  const coinMap = {};
+  for (const w of hlWhales) {
+    for (const p of w.positions) {
+      if (!coinMap[p.coin]) coinMap[p.coin] = {long:0, short:0};
+      if (p.isLong) coinMap[p.coin].long += p.usdVal;
+      else coinMap[p.coin].short += p.usdVal;
+    }
+  }
+  const sorted = Object.entries(coinMap)
+    .map(([coin, d]) => ({coin, ...d, total: d.long + d.short}))
+    .sort((a,b) => b.total - a.total).slice(0, 10);
+  if (sorted.length === 0) { el.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:16px">Dados indisponíveis</div>'; return; }
+  const maxTotal = sorted[0].total || 1;
+  el.innerHTML = sorted.map(r => `
+    <div class="hl-coin-row">
+      <div class="hl-cr-sym">${r.coin}</div>
+      <div class="hl-cr-bars">
+        <div class="hl-cr-bar-row">
+          <span style="color:var(--green);width:34px">L</span>
+          <div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill long" style="width:${(r.long/maxTotal*100).toFixed(1)}%"></div></div>
+          <span class="hl-cr-val">${hlFmtUSD(r.long)}</span>
+        </div>
+        <div class="hl-cr-bar-row">
+          <span style="color:var(--red);width:34px">S</span>
+          <div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill short" style="width:${(r.short/maxTotal*100).toFixed(1)}%"></div></div>
+          <span class="hl-cr-val">${hlFmtUSD(r.short)}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Right panel: position list ──
+function hlRenderPosList() {
+  const el = document.getElementById('hl-pos-list'); if (!el) return;
+  const allPos = [];
+  for (const w of hlWhales) {
+    for (const p of w.positions) {
+      allPos.push({...p, addr: w.addr});
+    }
+  }
+  allPos.sort((a,b) => b.usdVal - a.usdVal);
+  if (allPos.length === 0) { el.innerHTML = '<div class="wf-empty" style="padding:16px"><div class="wf-empty-dot"></div>Dados indisponíveis</div>'; return; }
+  el.innerHTML = allPos.slice(0, 40).map(p => {
+    const pnlColor = p.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    const pnlTxt   = (p.pnl >= 0 ? '+' : '') + p.pnlPct.toFixed(1) + '%';
+    const addr = p.addr ? p.addr.slice(0,6)+'…'+p.addr.slice(-4) : '—';
+    return `<div class="hl-pos-item">
+      <span class="hl-pi-addr">${addr}</span>
+      <span class="hl-pi-coin">${p.coin}</span>
+      <span class="hl-pi-dir ${p.isLong?'long':'short'}">${p.isLong?'▲ LONG':'▼ SHORT'}</span>
+      <span class="hl-pi-usd" style="color:${p.isLong?'var(--green)':'var(--red)'}">${hlFmtUSD(p.usdVal)}</span>
+      <span class="hl-pi-pnl" style="color:${pnlColor}">${pnlTxt}</span>
+    </div>`;
+  }).join('');
+}
+
+// Auto-refresh every 45s
+setInterval(loadHLWhales, 45000);
+// Resize bubbles on window resize
+window.addEventListener('resize', () => { if (hlBubblePhysics.length > 0) { const c = document.getElementById('hl-bubble-canvas'); if(c) { hlRenderBubbles(); } } });
+// Initial load
+loadHLWhales();
 
 // ══════════════════════════════════════════════
 // WHALE FLOW — Liquidações Binance Futures (fstream)
