@@ -2116,7 +2116,8 @@
           <div class="wf-bub-hdr">
             <div class="wf-bub-title">Mapa de Posições</div>
             <div class="wf-bub-sub">cada bolha = uma carteira baleia · tamanho = USD · cor = direção</div>
-            <div style="display:flex;gap:4px;margin-left:auto">
+            <div style="display:flex;gap:4px;margin-left:auto;align-items:center">
+              <span id="hl-ws-badge" style="font-size:9px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:8px;background:rgba(255,170,0,.1);border:1px solid rgba(255,170,0,.3);color:#ffaa00">CONECTANDO</span>
               <button class="wf-fbtn active" onclick="hlFilterCoin('all',this)">Todas</button>
               <button class="wf-fbtn" onclick="hlFilterCoin('BTC',this)">BTC</button>
               <button class="wf-fbtn" onclick="hlFilterCoin('ETH',this)">ETH</button>
@@ -5411,12 +5412,198 @@ function hlRenderPosList() {
   }).join('');
 }
 
-// Auto-refresh every 45s
-setInterval(loadHLWhales, 45000);
-// Resize bubbles on window resize
-window.addEventListener('resize', () => { if (hlBubblePhysics.length > 0) { const c = document.getElementById('hl-bubble-canvas'); if(c) { hlRenderBubbles(); } } });
-// Initial load
-loadHLWhales();
+// ── Resize ──
+window.addEventListener('resize', () => {
+  if (hlBubblePhysics.length > 0) {
+    const c = document.getElementById('hl-bubble-canvas');
+    if (c) { const ctx = c.getContext('2d'); c.width = c.offsetWidth; c.height = c.offsetHeight; }
+  }
+});
+
+// ══════════════════════════════════════════════
+// HYPERLIQUID REAL-TIME WEBSOCKET ENGINE
+// Detecta baleias pelos trades ao vivo e busca
+// posições reais via clearinghouseState
+// ══════════════════════════════════════════════
+const HL_WS_URL   = 'wss://api.hyperliquid.xyz/ws';
+const HL_TRACK_COINS = ['BTC','ETH','SOL','BNB','ARB','OP','AVAX','DOGE','WIF','PEPE'];
+const HL_MIN_TRADE_USD = 80000;   // detecta trade >= $80K
+const HL_FETCH_COOLDOWN = 60000;  // não re-busca o mesmo addr por 60s
+const hlAddrCache   = {};         // addr → timestamp da última busca
+const hlAddrQueue   = [];         // fila de endereços pra buscar
+let   hlWs          = null;
+let   hlMids        = {};         // preços mid ao vivo do HL
+let   hlFetchTimer  = null;
+let   hlTotalDetected = 0;
+let   hlWsStatus    = 'connecting';
+
+function hlSetStatus(txt, color) {
+  const el = document.getElementById('hl-last-update');
+  if (el) el.textContent = txt;
+  const dot = document.querySelector('.wf-dot');
+  if (dot && color) dot.style.background = color;
+}
+
+function initHLWebSocket() {
+  hlSetStatus('Conectando ao Hyperliquid…', '#ffaa00');
+  try {
+    hlWs = new WebSocket(HL_WS_URL);
+  } catch(e) {
+    hlSetStatus('WebSocket indisponível', '#ff3d57');
+    // fallback to REST poll
+    loadHLWhales();
+    setInterval(loadHLWhales, 60000);
+    return;
+  }
+
+  hlWs.onopen = () => {
+    hlWsStatus = 'connected';
+    hlSetStatus('Monitorando trades ao vivo…', '#00ffaa');
+    const badge = document.getElementById('hl-ws-badge');
+    if (badge) { badge.textContent = 'LIVE'; badge.style.cssText = 'font-size:9px;font-family:JetBrains Mono,monospace;padding:2px 8px;border-radius:8px;background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.3);color:#00ffaa'; }
+
+    // 1. Subscribe to allMids (real-time prices from HL)
+    hlWs.send(JSON.stringify({ method:'subscribe', subscription:{ type:'allMids' } }));
+
+    // 2. Subscribe to trades for each tracked coin
+    HL_TRACK_COINS.forEach(coin => {
+      hlWs.send(JSON.stringify({ method:'subscribe', subscription:{ type:'trades', coin } }));
+    });
+  };
+
+  hlWs.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+
+      // Update mid prices
+      if (msg.channel === 'allMids' && msg.data?.mids) {
+        Object.assign(hlMids, msg.data.mids);
+        return;
+      }
+
+      // Process trades
+      if (msg.channel === 'trades' && Array.isArray(msg.data)) {
+        for (const trade of msg.data) {
+          hlProcessTrade(trade);
+        }
+      }
+    } catch {}
+  };
+
+  hlWs.onclose = () => {
+    hlWsStatus = 'disconnected';
+    hlSetStatus('Reconectando…', '#ffaa00');
+    setTimeout(initHLWebSocket, 4000);
+  };
+  hlWs.onerror = () => { try { hlWs.close(); } catch(e){} };
+}
+
+function hlProcessTrade(trade) {
+  // trade: {coin, side, px, sz, time, hash, users:[addr,...]}
+  const coin  = trade.coin;
+  const px    = parseFloat(trade.px) || hlMids[coin] || oraclePrices[coin]?.price || 0;
+  const sz    = parseFloat(trade.sz) || 0;
+  if (!px || !sz) return;
+
+  const usd = Math.abs(sz * px);
+  if (usd < HL_MIN_TRADE_USD) return;
+
+  // This is a whale trade — track the addresses
+  const users = Array.isArray(trade.users) ? trade.users : [];
+  for (const addr of users) {
+    if (!addr || addr.length < 10) continue;
+    const now = Date.now();
+    if (hlAddrCache[addr] && now - hlAddrCache[addr] < HL_FETCH_COOLDOWN) continue;
+    hlAddrCache[addr] = now;
+    if (!hlAddrQueue.includes(addr)) hlAddrQueue.push(addr);
+    hlTotalDetected++;
+  }
+
+  // Update status
+  if (hlTotalDetected > 0) {
+    hlSetStatus(`${hlTotalDetected} baleias detectadas · ${new Date().toLocaleTimeString('pt-BR')}`, '#00ffaa');
+  }
+
+  // Drain fetch queue
+  if (!hlFetchTimer) hlDrainQueue();
+}
+
+async function hlDrainQueue() {
+  if (hlAddrQueue.length === 0) { hlFetchTimer = null; return; }
+
+  // Fetch next 3 addresses in parallel
+  const batch = hlAddrQueue.splice(0, 3);
+  const results = await Promise.all(batch.map(addr =>
+    hlPost({ type:'clearinghouseState', user: addr })
+      .then(s => ({ addr, state: s }))
+      .catch(() => null)
+  ));
+
+  for (const res of results) {
+    if (!res || !res.state?.assetPositions) continue;
+    const { addr, state } = res;
+
+    const positions = state.assetPositions
+      .map(ap => {
+        const p = ap.position;
+        if (!p || parseFloat(p.szi) === 0) return null;
+        const szi    = parseFloat(p.szi);
+        const entryPx = parseFloat(p.entryPx) || 0;
+        const usdVal = Math.abs(szi * entryPx);
+        const pnl    = parseFloat(p.unrealizedPnl) || 0;
+        const pnlPct = usdVal > 0 ? pnl / usdVal * 100 : 0;
+        return { coin:p.coin, szi, usdVal, entryPx, pnl, pnlPct, isLong:szi>0, liqPx:parseFloat(p.liquidationPx)||0 };
+      })
+      .filter(p => p && p.usdVal > 2000)
+      .sort((a,b) => b.usdVal - a.usdVal);
+
+    if (positions.length === 0) continue;
+
+    const totalUsd = positions.reduce((s,p)=>s+p.usdVal, 0);
+    const longUsd  = positions.filter(p=>p.isLong).reduce((s,p)=>s+p.usdVal, 0);
+    const netDir   = longUsd >= totalUsd * 0.5 ? 'long' : 'short';
+    const totalPnl = positions.reduce((s,p)=>s+p.pnl, 0);
+
+    // Upsert: update existing or push new
+    const idx = hlWhales.findIndex(w => w.addr === addr);
+    const entry = { addr, positions, netDir, totalUsd, totalPnl };
+    if (idx >= 0) hlWhales[idx] = entry;
+    else hlWhales.push(entry);
+
+    // Keep top 80 by USD
+    hlWhales.sort((a,b) => b.totalUsd - a.totalUsd);
+    if (hlWhales.length > 80) hlWhales.length = 80;
+
+    // Live update UI
+    hlRenderBubbles();
+    hlRenderCoinPanel();
+    hlRenderPosList();
+
+    const cntEl = document.getElementById('hl-whale-count');
+    if (cntEl) cntEl.textContent = `${hlWhales.length} carteiras · ${hlTotalDetected} trades detectados`;
+
+    // Flash notification for large positions
+    if (totalUsd > 1000000) {
+      showToast(`🐋 Baleia detectada: ${netDir.toUpperCase()} ${hlFmtUSD(totalUsd)} em ${positions[0].coin}`, 'info');
+    }
+  }
+
+  // Schedule next drain
+  hlFetchTimer = setTimeout(hlDrainQueue, 300);
+}
+
+// ── Seed display while WS connects ──
+(function hlSeedDisplay() {
+  const canvas = document.getElementById('hl-bubble-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width  = canvas.offsetWidth  || 700;
+  const H = canvas.height = canvas.offsetHeight || 400;
+  hlDrawSeedBubbles(ctx, W, H);
+})();
+
+// ── Start ──
+initHLWebSocket();
 
 // ══════════════════════════════════════════════
 // WHALE FLOW — Liquidações Binance Futures (fstream)
