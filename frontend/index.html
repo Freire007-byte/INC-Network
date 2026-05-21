@@ -6290,8 +6290,17 @@ try { initWhaleRadar(); } catch(e) { console.warn("[INC] whale radar:", e.messag
 // ── BOOT ──
 try { initLiveOracle(); } catch(e) { console.warn("[INC] oracle:", e.message); }
 
-// Pré-inicializa RPC read-only silenciosamente (agiliza primeiro clique)
-setTimeout(() => initReadOnlyContract().catch(() => {}), 2000);
+// Pré-inicializa RPC read-only e carrega stats na landing page
+setTimeout(async () => {
+  try {
+    await initReadOnlyContract();
+    await loadStats();
+    // Refresca stats a cada 15s mesmo na landing
+    setInterval(async () => {
+      try { await loadStats(); } catch {}
+    }, 15000);
+  } catch {}
+}, 1500);
 </script>
 </body>
 </html>
