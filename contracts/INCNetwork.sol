@@ -30,7 +30,7 @@ interface AggregatorV3Interface {
 // Chainlink Automation: execução automática de upkeep
 interface AutomationCompatibleInterface {
     function checkUpkeep(bytes calldata checkData)
-        external returns (bool upkeepNeeded, bytes memory performData);
+        external view returns (bool upkeepNeeded, bytes memory performData);
     function performUpkeep(bytes calldata performData) external;
 }
 
@@ -499,6 +499,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
      */
     function checkUpkeep(bytes calldata checkData)
         external
+        view
         override
         returns (bool upkeepNeeded, bytes memory performData)
     {

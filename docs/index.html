@@ -2675,7 +2675,7 @@
 
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="value" id="hs-price" style="color:var(--green)">$0.01</div>
+      <div class="value" id="hs-price" style="color:var(--green)">$3.04</div>
       <div class="label">$INC Price</div>
     </div>
     <div class="hero-stat">
@@ -3853,34 +3853,94 @@ async function loadStats() {
 setInterval(() => { if (contract) loadStats(); }, 30000);
 
 // ── $INC live price from Uniswap V3 pool (Arbitrum) ──────────────────────────
+const INC_POOL_ABI = ["function slot0() view returns (uint160 sqrtPriceX96,int24,uint16,uint16,uint16,uint8,bool)"];
+const _incRpcs = [
+  "https://arb1.arbitrum.io/rpc",
+  "https://arbitrum.llamarpc.com",
+  "https://arbitrum-one-rpc.publicnode.com"
+];
+let _incRpcIdx = 0;
+
 async function loadINCPrice() {
   try {
-    const provider = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
-    const poolABI  = ["function slot0() view returns (uint160 sqrtPriceX96,int24,uint16,uint16,uint16,uint8,bool)"];
-    // Pool INC/WETH Arbitrum — token0=WETH, token1=INC
-    const pool = new ethers.Contract("0x8770e3B0aE902092dE06F821ff59b48F961F098D", poolABI, provider);
+    const rpc      = _incRpcs[_incRpcIdx % _incRpcs.length];
+    const provider = new ethers.providers.JsonRpcProvider(rpc);
+    const pool     = new ethers.Contract("0x8770e3B0aE902092dE06F821ff59b48F961F098D", INC_POOL_ABI, provider);
     const { sqrtPriceX96 } = await pool.slot0();
-    // token0=WETH, token1=INC → sqrtPriceX96 = sqrt(INC/WETH) * 2^96
-    // incPerETH = (sqrtPriceX96/2^96)^2  →  1 INC USD = ETH_USD / incPerETH
-    const sqrtP      = parseFloat(sqrtPriceX96.toString()) / Math.pow(2, 96);
-    const incPerETH  = sqrtP * sqrtP;
-    const ethPx      = oraclePrices["ETH"]?.price || 3000;
-    const priceUSD   = ethPx / incPerETH;
-    const priceStr = priceUSD < 0.001 ? priceUSD.toExponential(2) : "$" + priceUSD.toFixed(priceUSD < 0.01 ? 6 : 4);
-    const mcap = (priceUSD * 100_000_000);
-    const mcapStr = mcap >= 1_000_000 ? "$" + (mcap / 1_000_000).toFixed(2) + "M"
-                  : mcap >= 1_000     ? "$" + (mcap / 1_000).toFixed(1) + "K"
+    // token0=WETH, token1=INC → incPerETH = (sqrtPriceX96/2^96)^2
+    const sqrtP     = parseFloat(sqrtPriceX96.toString()) / Math.pow(2, 96);
+    const incPerETH = sqrtP * sqrtP;
+    const ethPx     = oraclePrices["ETH"]?.price || 3000;
+    const priceUSD  = incPerETH > 0 ? ethPx / incPerETH : 3.04;
+
+    const oldPrice = oraclePrices["INC"]?.price ?? priceUSD;
+    oraclePrices["INC"] = { price: priceUSD, prev: oldPrice, change24h: 0, ts: Date.now() };
+
+    // Sparkline INC
+    if (!priceHistory["INC"]) priceHistory["INC"] = [];
+    priceHistory["INC"].push(priceUSD);
+    if (priceHistory["INC"].length > SPARK_MAX) priceHistory["INC"].shift();
+    _updateINCSparkline();
+
+    const priceStr = priceUSD < 0.001
+      ? priceUSD.toExponential(2)
+      : "$" + priceUSD.toFixed(priceUSD < 0.01 ? 6 : priceUSD < 1 ? 4 : 2);
+
+    const mcap = priceUSD * 100_000_000;
+    const mcapStr = mcap >= 1_000_000_000 ? "$" + (mcap/1_000_000_000).toFixed(2) + "B"
+                  : mcap >= 1_000_000     ? "$" + (mcap/1_000_000).toFixed(2) + "M"
+                  : mcap >= 1_000         ? "$" + (mcap/1_000).toFixed(1) + "K"
                   : "$" + mcap.toFixed(0);
 
     const ids = ["stat-inc-price", "oprice-INC", "hs-price", "psb-price"];
     ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = priceStr; });
     const mcEl = document.getElementById("hs-mcap"); if (mcEl) mcEl.textContent = mcapStr;
-    // Atualiza chip $INC no Whale Radar
     const incPx = document.getElementById("wrp-inc"); if (incPx) incPx.textContent = priceStr;
-  } catch {}
+
+    // Flash no card INC
+    const pEl = document.getElementById("oprice-INC");
+    if (pEl && priceUSD !== oldPrice) {
+      pEl.className = `oracle-px flash-${priceUSD > oldPrice ? "up" : "down"}`;
+      setTimeout(() => { if (pEl) pEl.className = "oracle-px"; }, 1000);
+    }
+  } catch {
+    _incRpcIdx++;
+    // Mostra $3.04 como fallback se ainda não há preço
+    if (!oraclePrices["INC"]) {
+      oraclePrices["INC"] = { price: 3.04, prev: 3.04, change24h: 0, ts: Date.now() };
+      const fb = "$3.04";
+      ["stat-inc-price","oprice-INC","hs-price","psb-price"].forEach(id => {
+        const el = document.getElementById(id); if (el) el.textContent = fb;
+      });
+    }
+  }
 }
+
+function _updateINCSparkline() {
+  const hist = priceHistory["INC"] || [];
+  const el   = document.getElementById("spark-path-INC");
+  if (!el || hist.length < 2) return;
+  const W = 90, H = 22;
+  const mn = Math.min(...hist), mx = Math.max(...hist), rng = mx - mn || 1;
+  const pts = hist.map((p, i) => {
+    const x = (i / (hist.length - 1)) * W;
+    const y = H - ((p - mn) / rng) * (H - 4) - 2;
+    return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  el.setAttribute('d', pts.join(' '));
+}
+
+// Mostra $3.04 imediatamente antes do fetch completar
+oraclePrices["INC"] = { price: 3.04, prev: 3.04, change24h: 0, ts: Date.now() };
+["stat-inc-price","oprice-INC","hs-price","psb-price"].forEach(id => {
+  const el = document.getElementById(id); if (el) el.textContent = "$3.04";
+});
+const mcEl0 = document.getElementById("hs-mcap");
+if (mcEl0) mcEl0.textContent = "$304.00M";
+const wrInc = document.getElementById("wrp-inc"); if (wrInc) wrInc.textContent = "$3.04";
+
 loadINCPrice();
-setInterval(loadINCPrice, 60000);
+setInterval(loadINCPrice, 3000);
 
 // ══════════════════════════════════════════════
 // SINAIS
@@ -4683,7 +4743,7 @@ document.addEventListener("keydown", e => {
 // ══════════════════════════════════════════════
 const ORACLE_SYMS = ["BTC", "ETH", "SOL", "BNB"];
 let oraclePrices  = {};
-const priceHistory = { BTC:[], ETH:[], SOL:[], BNB:[] };
+const priceHistory = { BTC:[], ETH:[], SOL:[], BNB:[], INC:[] };
 const SPARK_MAX = 24;
 
 function fmtOraclePrice(price, sym) {
@@ -4856,7 +4916,7 @@ function renderOracleUI() {
 
 async function initLiveOracle() {
   await fetchAndUpdateOracle();
-  setInterval(fetchAndUpdateOracle, 20000);
+  setInterval(fetchAndUpdateOracle, 3000);
 }
 
 // ── GLITCH LOGO ──

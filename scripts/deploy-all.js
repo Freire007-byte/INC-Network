@@ -94,7 +94,9 @@ async function deployToNetwork() {
       console.log(`    ✔ ${pair} => ${feedAddr}`);
     }
   } else {
-    console.log(`\n  ⚠ Nenhum feed mapeado para "${net}" — configure via setPriceFeed() manualmente.`);
+    console.log(`\n  ⚠ Nenhum feed Chainlink mapeado para "${net}".`);
+    console.log(`     Consulte https://docs.chain.link/data-feeds/price-feeds/addresses`);
+    console.log(`     e configure via: contract.setPriceFeed("BTC/USDT", feedAddress)`);
   }
 
   return { network: net, label: info.label, address, explorer: info.explorer, deployer: deployer.address };

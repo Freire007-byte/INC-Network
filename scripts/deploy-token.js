@@ -34,6 +34,15 @@ async function main() {
   const bal = await hre.ethers.provider.getBalance(deployer.address);
   console.log(`Saldo:     ${hre.ethers.formatEther(bal)} ETH\n`);
 
+  // Guarda mainnet: rejeita deploy se wallets não estiverem definidas
+  const MAINNETS = [1, 137, 42161, 56, 10, 43114, 30];
+  if (MAINNETS.includes(Number(network.chainId))) {
+    const missing = ["INC_ECOSYSTEM_WALLET","INC_TEAM_WALLET","INC_LIQUIDITY_WALLET","INC_TREASURY_WALLET","INC_IDO_WALLET"]
+      .filter(k => !process.env[k]);
+    if (missing.length > 0)
+      throw new Error(`MAINNET — preencha no .env antes de deployar:\n  ${missing.join("\n  ")}`);
+  }
+
   // Wallets de alocação (fallback: deployer em testnet)
   const ecosystemWallet  = process.env.INC_ECOSYSTEM_WALLET  || deployer.address;
   const teamWallet       = process.env.INC_TEAM_WALLET       || deployer.address;
