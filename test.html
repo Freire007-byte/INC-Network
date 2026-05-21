@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Teste INC</title>
+<style>body{background:#03040a;color:#fff;font-family:sans-serif;padding:40px;text-align:center}</style>
+</head>
+<body>
+<h1 id="s1">1. HTML carregou ✓</h1>
+<h2 id="s2">2. Aguardando JS...</h2>
+<h2 id="s3">3. —</h2>
+<h2 id="s4">4. —</h2>
+<script src="ethers-5.7.umd.min.js"></script>
+<script>
+document.getElementById('s2').textContent = '2. ethers.js carregou ✓ — versão: ' + (typeof ethers !== 'undefined' ? 'OK' : 'FALHOU');
+document.getElementById('s3').textContent = '3. ethers.providers: ' + (typeof ethers !== 'undefined' && ethers.providers ? 'OK ✓' : 'FALHOU ✗');
+// Testa fetch Binance
+fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
+  .then(r => r.json())
+  .then(d => { document.getElementById('s4').textContent = '4. Binance API OK ✓ — BTC: $' + parseFloat(d.price).toFixed(0); })
+  .catch(e => { document.getElementById('s4').textContent = '4. Binance FALHOU: ' + e.message; });
+</script>
+</body>
+</html>
