@@ -14,8 +14,6 @@
   <meta name="twitter:description" content="Proof-of-Signal Protocol · Arbitrum · Polygon · Avalanche"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
     :root {
       --bg:       #03040a;
@@ -3407,6 +3405,10 @@
 
 <!-- ── TOAST CONTAINER ── -->
 <div id="toast-container"></div>
+
+<!-- Libs carregadas no final do body — página renderiza antes de baixar os scripts -->
+<script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
 <script>
 // ══════════════════════════════════════════════
