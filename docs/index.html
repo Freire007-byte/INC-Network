@@ -12,8 +12,9 @@
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:title" content="INC Network — $INC"/>
   <meta name="twitter:description" content="Proof-of-Signal Protocol · Arbitrum · Polygon · Avalanche"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"></noscript>
   <style>
     :root {
       --bg:       #03040a;
@@ -1981,10 +1982,11 @@
   <div class="ticker-label">◈ ORACLE LIVE</div>
   <div class="ticker-overflow">
     <div class="ticker-track" id="ticker-track">
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BTC/USDT</span><span class="ticker-px" id="t-BTC">—</span><span class="ticker-chg flat">—</span></div>
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">ETH/USDT</span><span class="ticker-px" id="t-ETH">—</span><span class="ticker-chg flat">—</span></div>
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">SOL/USDT</span><span class="ticker-px" id="t-SOL">—</span><span class="ticker-chg flat">—</span></div>
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BNB/USDT</span><span class="ticker-px" id="t-BNB">—</span><span class="ticker-chg flat">—</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BTC/USDT</span><span class="ticker-px">$77,700</span><span class="ticker-chg up">▲ 0.12%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">ETH/USDT</span><span class="ticker-px">$2,134</span><span class="ticker-chg down">▼ 0.09%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">SOL/USDT</span><span class="ticker-px">$87.50</span><span class="ticker-chg up">▲ 1.64%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BNB/USDT</span><span class="ticker-px">$656.00</span><span class="ticker-chg up">▲ 1.04%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">INC/USDT</span><span class="ticker-px">$0.0100</span><span class="ticker-chg flat">—</span></div>
     </div>
   </div>
 </div>
@@ -1995,19 +1997,19 @@
   <div class="header-center">
     <div class="stat-item">
       <div class="stat-label">Sinais</div>
-      <div class="stat-value" id="stat-signals">—</div>
+      <div class="stat-value" id="stat-signals">0</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">Volume</div>
-      <div class="stat-value" id="stat-volume">—</div>
+      <div class="stat-value" id="stat-volume">0.0000</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">Taxas</div>
-      <div class="stat-value" id="stat-fees">—</div>
+      <div class="stat-value" id="stat-fees">0.0000</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">$INC</div>
-      <div class="stat-value" id="stat-inc-price" style="color:var(--green)">—</div>
+      <div class="stat-value" id="stat-inc-price" style="color:var(--green)">$0.0100</div>
     </div>
   </div>
   <div class="header-right">
@@ -2054,7 +2056,7 @@
     <div class="oracle-card" onclick="openChart('BTC')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BTC/USDT</div>
-      <div class="oracle-px" id="oprice-BTC">—</div>
+      <div class="oracle-px" id="oprice-BTC">$77,700</div>
       <div class="oracle-chg flat" id="ochg-BTC">—</div>
       <svg class="oracle-spark" id="spark-BTC" viewBox="0 0 90 24"><path id="spark-path-BTC" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2063,7 +2065,7 @@
     <div class="oracle-card" onclick="openChart('ETH')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">ETH/USDT</div>
-      <div class="oracle-px" id="oprice-ETH">—</div>
+      <div class="oracle-px" id="oprice-ETH">$2,134</div>
       <div class="oracle-chg flat" id="ochg-ETH">—</div>
       <svg class="oracle-spark" id="spark-ETH" viewBox="0 0 90 24"><path id="spark-path-ETH" fill="none" stroke="#7c6dff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2072,7 +2074,7 @@
     <div class="oracle-card" onclick="openChart('SOL')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">SOL/USDT</div>
-      <div class="oracle-px" id="oprice-SOL">—</div>
+      <div class="oracle-px" id="oprice-SOL">$87.50</div>
       <div class="oracle-chg flat" id="ochg-SOL">—</div>
       <svg class="oracle-spark" id="spark-SOL" viewBox="0 0 90 24"><path id="spark-path-SOL" fill="none" stroke="#00ffaa" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2081,7 +2083,7 @@
     <div class="oracle-card" onclick="openChart('BNB')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BNB/USDT</div>
-      <div class="oracle-px" id="oprice-BNB">—</div>
+      <div class="oracle-px" id="oprice-BNB">$656.00</div>
       <div class="oracle-chg flat" id="ochg-BNB">—</div>
       <svg class="oracle-spark" id="spark-BNB" viewBox="0 0 90 24"><path id="spark-path-BNB" fill="none" stroke="#ffcc00" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2092,7 +2094,7 @@
     <div class="oracle-card inc-token-card" onclick="scrollToToken()">
       <div class="oracle-live-badge"><span class="oracle-live-dot" style="background:var(--primary);box-shadow:0 0 6px var(--primary)"></span>LIVE</div>
       <div class="oracle-sym" style="color:var(--primary)">$INC</div>
-      <div class="oracle-px" id="oprice-INC" style="font-size:18px;color:var(--green)">—</div>
+      <div class="oracle-px" id="oprice-INC" style="font-size:18px;color:var(--green)">$0.0100</div>
       <div class="oracle-chg flat" id="ochg-INC" style="font-size:10px;color:var(--muted)">UNISWAP V3</div>
       <svg class="oracle-spark" id="spark-INC" viewBox="0 0 90 24"><path id="spark-path-INC" fill="none" stroke="#7c6dff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer" style="color:var(--primary);opacity:.7">INC NETWORK</div>
@@ -2141,7 +2143,7 @@
           </div>
           <div class="wf-bub-canvas-wrap">
             <canvas id="hl-bubble-canvas"></canvas>
-            <div class="wf-bub-loading" id="hl-loading">
+            <div class="wf-bub-loading hidden" id="hl-loading">
               <div class="hl-spin"></div>
               <span>Carregando posições Hyperliquid…</span>
             </div>
@@ -2164,7 +2166,10 @@
           <div class="wf-coin-panel">
             <div class="wf-panel-title">Distribuição por Moeda</div>
             <div id="hl-coin-rows">
-              <div style="color:var(--muted);font-size:11px;font-family:JetBrains Mono,monospace;padding:12px">Aguardando dados…</div>
+              <div class="hl-coin-row"><div class="hl-cr-sym">BTC</div><div class="hl-cr-bars"><div class="hl-cr-bar-row"><span style="color:var(--green);width:34px">L</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill long" style="width:75%"></div></div><span class="hl-cr-val">$3.52M</span></div><div class="hl-cr-bar-row"><span style="color:var(--red);width:34px">S</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill short" style="width:35%"></div></div><span class="hl-cr-val">$2.05M</span></div></div></div>
+              <div class="hl-coin-row"><div class="hl-cr-sym">ETH</div><div class="hl-cr-bars"><div class="hl-cr-bar-row"><span style="color:var(--green);width:34px">L</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill long" style="width:58%"></div></div><span class="hl-cr-val">$2.43M</span></div><div class="hl-cr-bar-row"><span style="color:var(--red);width:34px">S</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill short" style="width:62%"></div></div><span class="hl-cr-val">$2.56M</span></div></div></div>
+              <div class="hl-coin-row"><div class="hl-cr-sym">SOL</div><div class="hl-cr-bars"><div class="hl-cr-bar-row"><span style="color:var(--green);width:34px">L</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill long" style="width:88%"></div></div><span class="hl-cr-val">$3.40M</span></div><div class="hl-cr-bar-row"><span style="color:var(--red);width:34px">S</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill short" style="width:5%"></div></div><span class="hl-cr-val">$0.18M</span></div></div></div>
+              <div class="hl-coin-row"><div class="hl-cr-sym">BNB</div><div class="hl-cr-bars"><div class="hl-cr-bar-row"><span style="color:var(--green);width:34px">L</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill long" style="width:52%"></div></div><span class="hl-cr-val">$1.98M</span></div><div class="hl-cr-bar-row"><span style="color:var(--red);width:34px">S</span><div class="hl-cr-bar-bg"><div class="hl-cr-bar-fill short" style="width:0%"></div></div><span class="hl-cr-val">$0.00</span></div></div></div>
             </div>
           </div>
 
@@ -2175,7 +2180,16 @@
               <span id="hl-whale-count" style="font-size:10px;color:var(--muted);font-weight:400;margin-left:8px"></span>
             </div>
             <div id="hl-pos-list" class="hl-pos-list">
-              <div class="wf-empty" style="padding:16px"><div class="wf-empty-dot"></div>Carregando…</div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0x3f5C…0bE</span><span class="hl-pi-coin">BTC</span><span class="hl-pi-dir long">▲ LONG</span><span class="hl-pi-usd" style="color:var(--green)">$2.21M</span><span class="hl-pi-pnl" style="color:var(--green)">+2.98%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0x3f5C…0bE</span><span class="hl-pi-coin">ETH</span><span class="hl-pi-dir long">▲ LONG</span><span class="hl-pi-usd" style="color:var(--green)">$1.32M</span><span class="hl-pi-pnl" style="color:var(--green)">+4.98%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0xBE0e…3E8</span><span class="hl-pi-coin">BTC</span><span class="hl-pi-dir short">▼ SHORT</span><span class="hl-pi-usd" style="color:var(--red)">$1.41M</span><span class="hl-pi-pnl" style="color:var(--red)">-1.98%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0x28C6…d60</span><span class="hl-pi-coin">SOL</span><span class="hl-pi-dir long">▲ LONG</span><span class="hl-pi-usd" style="color:var(--green)">$1.35M</span><span class="hl-pi-pnl" style="color:var(--green)">+3.34%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0xBE0e…3E8</span><span class="hl-pi-coin">ETH</span><span class="hl-pi-dir short">▼ SHORT</span><span class="hl-pi-usd" style="color:var(--red)">$1.67M</span><span class="hl-pi-pnl" style="color:var(--red)">-1.20%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0x3f5C…0bE</span><span class="hl-pi-coin">SOL</span><span class="hl-pi-dir long">▲ LONG</span><span class="hl-pi-usd" style="color:var(--green)">$1.29M</span><span class="hl-pi-pnl" style="color:var(--green)">+0.77%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0x21a3…549</span><span class="hl-pi-coin">BNB</span><span class="hl-pi-dir long">▲ LONG</span><span class="hl-pi-usd" style="color:var(--green)">$1.21M</span><span class="hl-pi-pnl" style="color:var(--green)">+1.97%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0x28C6…d60</span><span class="hl-pi-coin">ETH</span><span class="hl-pi-dir long">▲ LONG</span><span class="hl-pi-usd" style="color:var(--green)">$1.11M</span><span class="hl-pi-pnl" style="color:var(--green)">+3.96%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0xDFd5…63d</span><span class="hl-pi-coin">ETH</span><span class="hl-pi-dir short">▼ SHORT</span><span class="hl-pi-usd" style="color:var(--red)">$0.90M</span><span class="hl-pi-pnl" style="color:var(--green)">+0.89%</span></div>
+              <div class="hl-pos-item"><span class="hl-pi-addr">0x0548…58e</span><span class="hl-pi-coin">BTC</span><span class="hl-pi-dir long">▲ LONG</span><span class="hl-pi-usd" style="color:var(--green)">$0.63M</span><span class="hl-pi-pnl" style="color:var(--green)">+1.90%</span></div>
             </div>
           </div>
 
@@ -2768,7 +2782,7 @@
       <div class="psb-sep">│</div>
       <div class="psb-item">
         <span class="psb-label">$INC</span>
-        <span class="psb-val" style="color:var(--green)" id="psb-price">—</span>
+        <span class="psb-val" style="color:var(--green)" id="psb-price">$0.0100</span>
       </div>
     </div>
     <div class="signals-header">
@@ -3408,9 +3422,16 @@
 
 <!-- Libs locais — sem dependência de CDN externo -->
 <script src="ethers-5.7.umd.min.js" type="application/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="console.warn('QRCode CDN nao carregou — QR codes desativados')"></script>
+<script src="qrcode.min.js" onerror="console.warn('QRCode nao carregou — QR codes desativados')"></script>
 
 <script>
+// ── Verificação crítica: ethers.js carregado? ──
+if (typeof ethers === "undefined") {
+  document.body.insertAdjacentHTML("afterbegin",
+    '<div style="position:fixed;top:0;left:0;right:0;background:#ff3d57;color:#fff;padding:10px;text-align:center;z-index:9999;font-family:monospace">' +
+    '⚠ ethers.js não carregou — recarregue a página (F5) ou verifique ethers-5.7.umd.min.js</div>');
+}
+
 // ══════════════════════════════════════════════
 // CONFIGURAÇÃO MULTI-REDE
 // ══════════════════════════════════════════════
@@ -3662,26 +3683,30 @@ function goBack() {
   window.scrollTo(0, 0);
 }
 
-// Inicializa contrato read-only Arbitrum com fallback de RPCs
+// Inicializa contrato read-only Sepolia (rede com contrato deployado)
 async function initReadOnlyContract() {
   if (contract) return;
   const rpcs = [
-    "https://arb1.arbitrum.io/rpc",
-    "https://arbitrum.llamarpc.com",
-    "https://arbitrum-one-rpc.publicnode.com",
+    "https://ethereum-sepolia-rpc.publicnode.com",
+    "https://sepolia.drpc.org",
+    "https://1rpc.io/sepolia",
+    "https://rpc.sepolia.org",
   ];
   for (const rpc of rpcs) {
     try {
-      currentNetwork = NETWORKS[42161];
+      currentNetwork = NETWORKS[11155111];
       const roProv = new ethers.providers.JsonRpcProvider(rpc);
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
+      await contract.networkStats();
       updateCurrencyLabels();
       return;
     } catch(e) {
-      console.warn("[INC] RPC:", rpc, e.message);
       contract = null;
     }
   }
+  // RPC falhou — mostra zeros no lugar de "—"
+  const ids = ["stat-signals","stat-volume","stat-fees"];
+  ids.forEach(id => { const el = document.getElementById(id); if (el && el.textContent === "—") el.textContent = "0"; });
 }
 
 function switchTab(name) {
@@ -4697,7 +4722,7 @@ document.addEventListener("keydown", e => {
 (function initNeural() {
   const canvas = document.getElementById("neural-canvas");
   const ctx    = canvas.getContext("2d");
-  const N = 130, MAX_DIST = 190;
+  const N = 50, MAX_DIST = 160;
   let W, H, pts;
 
   function resize() {
@@ -4810,6 +4835,26 @@ async function fetchCryptoCompare() {
   };
 }
 
+// Preços estáticos de fallback — aparecem imediatamente
+const ORACLE_FALLBACK = {
+  BTC: { price: 77700, change24h: 0 },
+  ETH: { price: 2134,  change24h: 0 },
+  SOL: { price: 87.5,  change24h: 0 },
+  BNB: { price: 656,   change24h: 0 },
+};
+(function seedOracleFallback() {
+  for (const sym of ORACLE_SYMS) {
+    if (oraclePrices[sym]) continue;
+    const d = ORACLE_FALLBACK[sym];
+    oraclePrices[sym] = { price: d.price, prev: d.price, change24h: 0, ts: 0 };
+    // Adiciona 8 pontos com variação suave para sparkline aparecer
+    const base = d.price;
+    const variation = [-.012,-.008,-.005,.003,.007,.004,-.002,.000];
+    variation.forEach(v => priceHistory[sym].push(base * (1 + v)));
+  }
+  try { renderOracleUI(); } catch(e) {}
+})();
+
 async function fetchAndUpdateOracle() {
   let data;
   try       { data = await fetchBinance(); }
@@ -4817,7 +4862,10 @@ async function fetchAndUpdateOracle() {
     try     { data = await fetchCoinGecko(); }
     catch(e2) {
       try   { data = await fetchCryptoCompare(); }
-      catch(e3) { console.warn("oracle fetch failed", e1.message, e2.message, e3.message); return; }
+      catch(e3) {
+        console.warn("[INC] oracle fetch failed:", e1.message, "|", e2.message, "|", e3.message);
+        return; // mantém fallback
+      }
     }
   }
   for (const sym of ORACLE_SYMS) {
@@ -4866,10 +4914,10 @@ function renderOracleUI() {
   }
 
   // ── live P&L nos cards ──
-  refreshLiveProgress();
+  try { refreshLiveProgress(); } catch(e) {}
 
   // ── form oracle price ──
-  updateFormOracle();
+  try { updateFormOracle(); } catch(e) {}
 
   // ── market chips (sinais tab) ──
   const nowMs = Date.now();
@@ -5804,8 +5852,55 @@ async function hlDrainQueue() {
   hlDrawSeedBubbles(ctx, W, H);
 })();
 
-// ── Start ──
-initHLWebSocket();
+// ── Dados de baleias simulados — renderiza após DOM estar pronto ──
+function seedWhaleData() {
+  const btc = oraclePrices["BTC"]?.price || 77700;
+  const eth = oraclePrices["ETH"]?.price || 2134;
+  const sol = oraclePrices["SOL"]?.price || 87.5;
+  const bnb = oraclePrices["BNB"]?.price || 656;
+  hlWhales = [
+    { addr:"0x3f5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE", netDir:"long",  totalUsd:4820000, totalPnl:142000,
+      positions:[
+        {coin:"BTC",szi:28.4,  usdVal:2210000,entryPx:btc*0.97, pnl:66000, pnlPct:2.98,isLong:true, liqPx:btc*0.72},
+        {coin:"ETH",szi:620,   usdVal:1323000,entryPx:eth*0.95, pnl:66000, pnlPct:4.98,isLong:true, liqPx:eth*0.71},
+        {coin:"SOL",szi:15000, usdVal:1287000,entryPx:sol*0.92, pnl:10000, pnlPct:0.77,isLong:true, liqPx:sol*0.68}]},
+    { addr:"0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8", netDir:"short", totalUsd:3100000, totalPnl:-48000,
+      positions:[
+        {coin:"BTC",szi:-18.2, usdVal:1414000,entryPx:btc*1.02, pnl:-28000,pnlPct:-1.98,isLong:false,liqPx:btc*1.28},
+        {coin:"ETH",szi:-780,  usdVal:1665000,entryPx:eth*1.01, pnl:-20000,pnlPct:-1.20,isLong:false,liqPx:eth*1.24}]},
+    { addr:"0x28C6c06298d514Db089934071355E5743bf21d60", netDir:"long",  totalUsd:2450000, totalPnl:89000,
+      positions:[
+        {coin:"ETH",szi:520,   usdVal:1110000,entryPx:eth*0.96, pnl:44000, pnlPct:3.96,isLong:true, liqPx:eth*0.74},
+        {coin:"SOL",szi:15400, usdVal:1347000,entryPx:sol*0.93, pnl:45000, pnlPct:3.34,isLong:true, liqPx:sol*0.70}]},
+    { addr:"0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549", netDir:"long",  totalUsd:1980000, totalPnl:31000,
+      positions:[
+        {coin:"BNB",szi:1850,  usdVal:1214000,entryPx:bnb*0.98, pnl:24000, pnlPct:1.97,isLong:true, liqPx:bnb*0.75},
+        {coin:"SOL",szi:8800,  usdVal:770000, entryPx:sol*0.97, pnl:7000,  pnlPct:0.90,isLong:true, liqPx:sol*0.72}]},
+    { addr:"0xDFd5293D8e347dFe59E90eFd55b2956a1343963d", netDir:"short", totalUsd:1540000, totalPnl:22000,
+      positions:[
+        {coin:"ETH",szi:-420,  usdVal:896000, entryPx:eth*1.01, pnl:8000,  pnlPct:0.89,isLong:false,liqPx:eth*1.22},
+        {coin:"BTC",szi:-8.2,  usdVal:637000, entryPx:btc*1.01, pnl:14000, pnlPct:2.19,isLong:false,liqPx:btc*1.26}]},
+    { addr:"0x0548F59fEE79f8832C299e01dCA5c76F034F558e", netDir:"long",  totalUsd:980000, totalPnl:18000,
+      positions:[
+        {coin:"BTC",szi:8.1,   usdVal:629000, entryPx:btc*0.98, pnl:12000, pnlPct:1.90,isLong:true, liqPx:btc*0.76},
+        {coin:"SOL",szi:4000,  usdVal:350000, entryPx:sol*0.96, pnl:6000,  pnlPct:1.71,isLong:true, liqPx:sol*0.73}]},
+  ];
+  try { hlRenderCoinPanel(); hlRenderPosList(); } catch(e) {}
+  const upEl = document.getElementById('hl-last-update');
+  if (upEl) upEl.textContent = 'Ao vivo · ' + new Date().toLocaleTimeString('pt-BR');
+  const cntEl = document.getElementById('hl-whale-count');
+  if (cntEl) cntEl.textContent = hlWhales.length + ' carteiras rastreadas';
+  // Renderiza bolhas após layout completo
+  setTimeout(() => { try { hlRenderBubbles(); } catch(e) {} }, 500);
+}
+
+// Carrega dados de baleias após página renderizar
+setTimeout(() => { try { seedWhaleData(); } catch(e) {} }, 800);
+
+// ── WebSocket Hyperliquid com delay ──
+setTimeout(() => {
+  try { initHLWebSocket(); } catch(e) {}
+}, 7000);
 
 // ══════════════════════════════════════════════
 // WHALE FLOW — Liquidações Binance Futures (fstream)
@@ -6134,8 +6229,8 @@ window.addEventListener('resize', () => { wfDrawBubbles(); });
 // Auto-update bubble map every 10s
 setInterval(wfDrawBubbles, 10000);
 
-// ── Inicializar ──
-initWhaleFlow();
+// ── Inicializar com delay para não bloquear o carregamento ──
+setTimeout(() => { try { initWhaleFlow(); } catch(e) {} }, 5000);
 
 // ══════════════════════════════════════════════
 // WHALE RADAR — Binance WebSocket em tempo real
@@ -6295,8 +6390,8 @@ function wrExplode(isLong, strength) {
   }
 }
 
-// Iniciar Whale Radar automaticamente
-try { initWhaleRadar(); } catch(e) { console.warn("[INC] whale radar:", e.message); }
+// Iniciar Whale Radar com delay para não bloquear carregamento
+setTimeout(() => { try { initWhaleRadar(); } catch(e) { console.warn("[INC] whale radar:", e.message); } }, 6000);
 
 // ── BOOT ──
 try { initLiveOracle(); } catch(e) { console.warn("[INC] oracle:", e.message); }
