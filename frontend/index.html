@@ -3615,15 +3615,18 @@ function openAppReadOnly() {
     heroEl.parentNode.insertBefore(whaleEl, heroEl.nextSibling);
   }
 
-  // Inicializa contrato read-only (construtores são síncronos — não bloqueiam UI)
+  // Inicializa contrato read-only (Arbitrum mainnet por padrão — tem sinais reais)
   if (!contract) {
     try {
-      currentNetwork = NETWORKS[11155111];
-      var roProv = new ethers.providers.JsonRpcProvider("https://1rpc.io/sepolia");
+      currentNetwork = NETWORKS[42161];
+      var roProv = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       updateCurrencyLabels();
     } catch(e) { console.warn("[INC] init read-only:", e.message); }
   }
+
+  // Garante preços atualizados ao abrir o app
+  if (typeof fetchAndUpdateOracle === "function") fetchAndUpdateOracle();
 
   // Esconde landing, mostra app
   if (heroEl) { heroEl.style.setProperty("display", "none", "important"); }
@@ -3657,17 +3660,17 @@ function goBack() {
   window.scrollTo(0, 0);
 }
 
-// Inicializa contrato read-only Sepolia com fallback de RPCs
+// Inicializa contrato read-only Arbitrum com fallback de RPCs
 async function initReadOnlyContract() {
   if (contract) return;
   const rpcs = [
-    "https://1rpc.io/sepolia",
-    "https://rpc.sepolia.org",
-    "https://ethereum-sepolia.publicnode.com",
+    "https://arb1.arbitrum.io/rpc",
+    "https://arbitrum.llamarpc.com",
+    "https://arbitrum-one-rpc.publicnode.com",
   ];
   for (const rpc of rpcs) {
     try {
-      currentNetwork = NETWORKS[11155111];
+      currentNetwork = NETWORKS[42161];
       const roProv = new ethers.providers.JsonRpcProvider(rpc);
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       updateCurrencyLabels();
@@ -3857,10 +3860,12 @@ async function loadINCPrice() {
     // Pool INC/WETH Arbitrum — token0=WETH, token1=INC
     const pool = new ethers.Contract("0x8770e3B0aE902092dE06F821ff59b48F961F098D", poolABI, provider);
     const { sqrtPriceX96 } = await pool.slot0();
-    // price = (sqrtPriceX96 / 2^96)^2 → INC per WETH
-    const priceINCperETH = parseFloat(sqrtPriceX96.toString()) / Math.pow(2, 96);
-    const ethPx = oraclePrices["ETH"]?.price || 3000;
-    const priceUSD = priceINCperETH * priceINCperETH * ethPx;
+    // token0=WETH, token1=INC → sqrtPriceX96 = sqrt(INC/WETH) * 2^96
+    // incPerETH = (sqrtPriceX96/2^96)^2  →  1 INC USD = ETH_USD / incPerETH
+    const sqrtP      = parseFloat(sqrtPriceX96.toString()) / Math.pow(2, 96);
+    const incPerETH  = sqrtP * sqrtP;
+    const ethPx      = oraclePrices["ETH"]?.price || 3000;
+    const priceUSD   = ethPx / incPerETH;
     const priceStr = priceUSD < 0.001 ? priceUSD.toExponential(2) : "$" + priceUSD.toFixed(priceUSD < 0.01 ? 6 : 4);
     const mcap = (priceUSD * 100_000_000);
     const mcapStr = mcap >= 1_000_000 ? "$" + (mcap / 1_000_000).toFixed(2) + "M"
@@ -4806,6 +4811,28 @@ function renderOracleUI() {
     if (tEl && d.ts) {
       const sec = Math.floor((nowMs - d.ts) / 1000);
       tEl.textContent = sec < 60 ? `${sec}s atrás` : `${Math.floor(sec/60)}m atrás`;
+    }
+  }
+
+  // ── whale radar tickers ──
+  const WR_MAP = { BTC: "btcusdt", ETH: "ethusdt", SOL: "solusdt", BNB: "bnbusdt" };
+  for (const [sym, slug] of Object.entries(WR_MAP)) {
+    const d = oraclePrices[sym]; if (!d) continue;
+    const pEl = document.getElementById(`wrp-${slug}`);
+    const cEl = document.getElementById(`wrc-${slug}`);
+    const chip = document.getElementById(`wrt-${slug}`);
+    if (!pEl) continue;
+    const chg = d.change24h ?? 0;
+    const prevPx = pEl.textContent;
+    pEl.textContent = fmtOraclePrice(d.price, sym);
+    if (cEl) {
+      const sign = chg > 0 ? "▲" : chg < 0 ? "▼" : "—";
+      cEl.textContent = chg === 0 ? "—" : `${sign} ${Math.abs(chg).toFixed(2)}%`;
+      cEl.className   = `wrt-chg ${chg > 0 ? "up" : chg < 0 ? "dn" : "flat"}`;
+    }
+    if (chip && prevPx !== pEl.textContent) {
+      chip.classList.add(d.price > d.prev ? "flash-up" : "flash-down");
+      setTimeout(() => chip.classList.remove("flash-up","flash-down"), 500);
     }
   }
 
