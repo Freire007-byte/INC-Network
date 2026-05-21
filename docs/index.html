@@ -4731,7 +4731,7 @@ document.addEventListener("keydown", e => {
 (function initNeural() {
   const canvas = document.getElementById("neural-canvas");
   const ctx    = canvas.getContext("2d");
-  const N = 50, MAX_DIST = 160;
+  const N = 80, MAX_DIST = 180;
   let W, H, pts;
 
   function resize() {
@@ -4742,8 +4742,8 @@ document.addEventListener("keydown", e => {
   function mkPts() {
     pts = Array.from({length: N}, () => ({
       x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - .5) * .55, vy: (Math.random() - .5) * .55,
-      r: Math.random() * 2.2 + .7,
+      vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5,
+      r: Math.random() * 2.5 + 1,
       hue: Math.random() < .55 ? 250 : 185,
       pulse: Math.random() * Math.PI * 2,
     }));
@@ -4753,15 +4753,22 @@ document.addEventListener("keydown", e => {
     ctx.clearRect(0, 0, W, H);
     for (const p of pts) {
       p.x += p.vx; p.y += p.vy;
-      p.pulse += 0.025;
+      p.pulse += 0.022;
       if (p.x < 0) p.x = W; else if (p.x > W) p.x = 0;
       if (p.y < 0) p.y = H; else if (p.y > H) p.y = 0;
-      const glow = .65 + Math.sin(p.pulse) * .25;
+      const glow = .75 + Math.sin(p.pulse) * .25;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fillStyle = p.hue === 250
         ? `rgba(124,109,255,${glow})`
-        : `rgba(0,229,255,${glow * .85})`;
+        : `rgba(0,229,255,${glow})`;
+      ctx.fill();
+      // halo
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = p.hue === 250
+        ? `rgba(124,109,255,${glow * .08})`
+        : `rgba(0,229,255,${glow * .08})`;
       ctx.fill();
     }
     for (let i = 0; i < pts.length; i++) {
@@ -4769,14 +4776,14 @@ document.addEventListener("keydown", e => {
         const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
         const d  = Math.sqrt(dx * dx + dy * dy);
         if (d < MAX_DIST) {
-          const a = (1 - d / MAX_DIST) * .28;
+          const a = (1 - d / MAX_DIST) * .45;
           const g = ctx.createLinearGradient(pts[i].x, pts[i].y, pts[j].x, pts[j].y);
           g.addColorStop(0, `rgba(124,109,255,${a})`);
           g.addColorStop(1, `rgba(0,229,255,${a})`);
           ctx.beginPath();
           ctx.moveTo(pts[i].x, pts[i].y);
           ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.strokeStyle = g; ctx.lineWidth = .9; ctx.stroke();
+          ctx.strokeStyle = g; ctx.lineWidth = 1; ctx.stroke();
         }
       }
     }
@@ -4998,10 +5005,10 @@ async function initLiveOracle() {
   if (!el) return;
   function doGlitch() {
     el.classList.add("glitching");
-    setTimeout(() => el.classList.remove("glitching"), 350);
-    setTimeout(doGlitch, 7000 + Math.random() * 6000);
+    setTimeout(() => el.classList.remove("glitching"), 400);
+    setTimeout(doGlitch, 4000 + Math.random() * 4000);
   }
-  setTimeout(doGlitch, 3000 + Math.random() * 4000);
+  setTimeout(doGlitch, 1000);
 })();
 
 // ══════════════════════════════════════════════
