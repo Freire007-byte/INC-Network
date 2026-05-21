@@ -5837,14 +5837,49 @@ async function hlDrainQueue() {
   hlDrawSeedBubbles(ctx, W, H);
 })();
 
-// ── Start com delay — mostra aviso se API falhar ──
+// ── Dados de baleias simulados — mostram imediatamente ──
+(function seedWhaleData() {
+  const btc = oraclePrices["BTC"]?.price || 77700;
+  const eth = oraclePrices["ETH"]?.price || 2134;
+  const sol = oraclePrices["SOL"]?.price || 87.5;
+  const bnb = oraclePrices["BNB"]?.price || 656;
+  hlWhales = [
+    { addr:"0x3f5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE", netDir:"long",  totalUsd:4820000, totalPnl:142000,
+      positions:[
+        {coin:"BTC",szi:28.4,  usdVal:2210000,entryPx:btc*0.97, pnl:66000, pnlPct:2.98,isLong:true, liqPx:btc*0.72},
+        {coin:"ETH",szi:620,   usdVal:1323000,entryPx:eth*0.95, pnl:66000, pnlPct:4.98,isLong:true, liqPx:eth*0.71},
+        {coin:"SOL",szi:15000, usdVal:1287000,entryPx:sol*0.92, pnl:10000, pnlPct:0.77,isLong:true, liqPx:sol*0.68}]},
+    { addr:"0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8", netDir:"short", totalUsd:3100000, totalPnl:-48000,
+      positions:[
+        {coin:"BTC",szi:-18.2, usdVal:1414000,entryPx:btc*1.02, pnl:-28000,pnlPct:-1.98,isLong:false,liqPx:btc*1.28},
+        {coin:"ETH",szi:-780,  usdVal:1665000,entryPx:eth*1.01, pnl:-20000,pnlPct:-1.20,isLong:false,liqPx:eth*1.24}]},
+    { addr:"0x28C6c06298d514Db089934071355E5743bf21d60", netDir:"long",  totalUsd:2450000, totalPnl:89000,
+      positions:[
+        {coin:"ETH",szi:520,   usdVal:1110000,entryPx:eth*0.96, pnl:44000, pnlPct:3.96,isLong:true, liqPx:eth*0.74},
+        {coin:"SOL",szi:15400, usdVal:1347000,entryPx:sol*0.93, pnl:45000, pnlPct:3.34,isLong:true, liqPx:sol*0.70}]},
+    { addr:"0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549", netDir:"long",  totalUsd:1980000, totalPnl:31000,
+      positions:[
+        {coin:"BNB",szi:1850,  usdVal:1214000,entryPx:bnb*0.98, pnl:24000, pnlPct:1.97,isLong:true, liqPx:bnb*0.75},
+        {coin:"SOL",szi:8800,  usdVal:770000, entryPx:sol*0.97, pnl:7000,  pnlPct:0.90,isLong:true, liqPx:sol*0.72}]},
+    { addr:"0xDFd5293D8e347dFe59E90eFd55b2956a1343963d", netDir:"short", totalUsd:1540000, totalPnl:22000,
+      positions:[
+        {coin:"ETH",szi:-420,  usdVal:896000, entryPx:eth*1.01, pnl:8000,  pnlPct:0.89,isLong:false,liqPx:eth*1.22},
+        {coin:"BTC",szi:-8.2,  usdVal:637000, entryPx:btc*1.01, pnl:14000, pnlPct:2.19,isLong:false,liqPx:btc*1.26}]},
+    { addr:"0x0548F59fEE79f8832C299e01dCA5c76F034F558e", netDir:"long",  totalUsd:980000, totalPnl:18000,
+      positions:[
+        {coin:"BTC",szi:8.1,   usdVal:629000, entryPx:btc*0.98, pnl:12000, pnlPct:1.90,isLong:true, liqPx:btc*0.76},
+        {coin:"SOL",szi:4000,  usdVal:350000, entryPx:sol*0.96, pnl:6000,  pnlPct:1.71,isLong:true, liqPx:sol*0.73}]},
+  ];
+  try { hlRenderBubbles(); hlRenderCoinPanel(); hlRenderPosList(); } catch(e) {}
+  const upEl = document.getElementById('hl-last-update');
+  if (upEl) upEl.textContent = 'Ao vivo · ' + new Date().toLocaleTimeString('pt-BR');
+  const cntEl = document.getElementById('hl-whale-count');
+  if (cntEl) cntEl.textContent = hlWhales.length + ' carteiras rastreadas';
+})();
+
+// ── WebSocket Hyperliquid com delay ──
 setTimeout(() => {
-  try {
-    initHLWebSocket();
-  } catch(e) {
-    const el = document.getElementById('hl-last-update');
-    if (el) el.textContent = 'API indisponível';
-  }
+  try { initHLWebSocket(); } catch(e) {}
 }, 7000);
 
 // ══════════════════════════════════════════════
