@@ -3406,9 +3406,9 @@
 <!-- ── TOAST CONTAINER ── -->
 <div id="toast-container"></div>
 
-<!-- Libs carregadas no final do body — página renderiza antes de baixar os scripts -->
-<script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<!-- Libs locais — sem dependência de CDN externo -->
+<script src="ethers-5.7.umd.min.js" type="application/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="console.warn('QRCode CDN nao carregou — QR codes desativados')"></script>
 
 <script>
 // ══════════════════════════════════════════════
