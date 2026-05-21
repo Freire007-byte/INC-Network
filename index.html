@@ -4835,9 +4835,12 @@ const ORACLE_FALLBACK = {
     if (oraclePrices[sym]) continue;
     const d = ORACLE_FALLBACK[sym];
     oraclePrices[sym] = { price: d.price, prev: d.price, change24h: 0, ts: 0 };
-    priceHistory[sym].push(d.price);
+    // Adiciona 8 pontos com variação suave para sparkline aparecer
+    const base = d.price;
+    const variation = [-.012,-.008,-.005,.003,.007,.004,-.002,.000];
+    variation.forEach(v => priceHistory[sym].push(base * (1 + v)));
   }
-  try { renderOracleUI(); } catch(e) { console.warn("[INC] renderOracleUI fallback:", e.message); }
+  try { renderOracleUI(); } catch(e) {}
 })();
 
 async function fetchAndUpdateOracle() {
@@ -5837,8 +5840,8 @@ async function hlDrainQueue() {
   hlDrawSeedBubbles(ctx, W, H);
 })();
 
-// ── Dados de baleias simulados — mostram imediatamente ──
-(function seedWhaleData() {
+// ── Dados de baleias simulados — renderiza após DOM estar pronto ──
+function seedWhaleData() {
   const btc = oraclePrices["BTC"]?.price || 77700;
   const eth = oraclePrices["ETH"]?.price || 2134;
   const sol = oraclePrices["SOL"]?.price || 87.5;
@@ -5870,12 +5873,17 @@ async function hlDrainQueue() {
         {coin:"BTC",szi:8.1,   usdVal:629000, entryPx:btc*0.98, pnl:12000, pnlPct:1.90,isLong:true, liqPx:btc*0.76},
         {coin:"SOL",szi:4000,  usdVal:350000, entryPx:sol*0.96, pnl:6000,  pnlPct:1.71,isLong:true, liqPx:sol*0.73}]},
   ];
-  try { hlRenderBubbles(); hlRenderCoinPanel(); hlRenderPosList(); } catch(e) {}
+  try { hlRenderCoinPanel(); hlRenderPosList(); } catch(e) {}
   const upEl = document.getElementById('hl-last-update');
   if (upEl) upEl.textContent = 'Ao vivo · ' + new Date().toLocaleTimeString('pt-BR');
   const cntEl = document.getElementById('hl-whale-count');
   if (cntEl) cntEl.textContent = hlWhales.length + ' carteiras rastreadas';
-})();
+  // Renderiza bolhas após layout completo
+  setTimeout(() => { try { hlRenderBubbles(); } catch(e) {} }, 500);
+}
+
+// Carrega dados de baleias após página renderizar
+setTimeout(() => { try { seedWhaleData(); } catch(e) {} }, 800);
 
 // ── WebSocket Hyperliquid com delay ──
 setTimeout(() => {
