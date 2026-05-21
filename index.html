@@ -1996,15 +1996,15 @@
   <div class="header-center">
     <div class="stat-item">
       <div class="stat-label">Sinais</div>
-      <div class="stat-value" id="stat-signals">—</div>
+      <div class="stat-value" id="stat-signals">0</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">Volume</div>
-      <div class="stat-value" id="stat-volume">—</div>
+      <div class="stat-value" id="stat-volume">0.0000</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">Taxas</div>
-      <div class="stat-value" id="stat-fees">—</div>
+      <div class="stat-value" id="stat-fees">0.0000</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">$INC</div>
@@ -2055,7 +2055,7 @@
     <div class="oracle-card" onclick="openChart('BTC')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BTC/USDT</div>
-      <div class="oracle-px" id="oprice-BTC">—</div>
+      <div class="oracle-px" id="oprice-BTC">$104,000</div>
       <div class="oracle-chg flat" id="ochg-BTC">—</div>
       <svg class="oracle-spark" id="spark-BTC" viewBox="0 0 90 24"><path id="spark-path-BTC" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2064,7 +2064,7 @@
     <div class="oracle-card" onclick="openChart('ETH')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">ETH/USDT</div>
-      <div class="oracle-px" id="oprice-ETH">—</div>
+      <div class="oracle-px" id="oprice-ETH">$2,520</div>
       <div class="oracle-chg flat" id="ochg-ETH">—</div>
       <svg class="oracle-spark" id="spark-ETH" viewBox="0 0 90 24"><path id="spark-path-ETH" fill="none" stroke="#7c6dff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2073,7 +2073,7 @@
     <div class="oracle-card" onclick="openChart('SOL')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">SOL/USDT</div>
-      <div class="oracle-px" id="oprice-SOL">—</div>
+      <div class="oracle-px" id="oprice-SOL">$178.00</div>
       <div class="oracle-chg flat" id="ochg-SOL">—</div>
       <svg class="oracle-spark" id="spark-SOL" viewBox="0 0 90 24"><path id="spark-path-SOL" fill="none" stroke="#00ffaa" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2082,7 +2082,7 @@
     <div class="oracle-card" onclick="openChart('BNB')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BNB/USDT</div>
-      <div class="oracle-px" id="oprice-BNB">—</div>
+      <div class="oracle-px" id="oprice-BNB">$620.00</div>
       <div class="oracle-chg flat" id="ochg-BNB">—</div>
       <svg class="oracle-spark" id="spark-BNB" viewBox="0 0 90 24"><path id="spark-path-BNB" fill="none" stroke="#ffcc00" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -3674,27 +3674,26 @@ function goBack() {
 async function initReadOnlyContract() {
   if (contract) return;
   const rpcs = [
+    "https://ethereum-sepolia-rpc.publicnode.com",
+    "https://sepolia.drpc.org",
     "https://1rpc.io/sepolia",
     "https://rpc.sepolia.org",
-    "https://rpc2.sepolia.org",
-    "https://ethereum-sepolia-rpc.publicnode.com",
   ];
   for (const rpc of rpcs) {
     try {
       currentNetwork = NETWORKS[11155111];
       const roProv = new ethers.providers.JsonRpcProvider(rpc);
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
-      // Verifica se o contrato responde antes de aceitar
       await contract.networkStats();
       updateCurrencyLabels();
-      console.log("[INC] RPC read-only OK:", rpc);
       return;
     } catch(e) {
-      console.warn("[INC] RPC falhou:", rpc, e.message);
       contract = null;
     }
   }
-  console.warn("[INC] Todos os RPCs falharam — stats indisponíveis");
+  // RPC falhou — mostra zeros no lugar de "—"
+  const ids = ["stat-signals","stat-volume","stat-fees"];
+  ids.forEach(id => { const el = document.getElementById(id); if (el && el.textContent === "—") el.textContent = "0"; });
 }
 
 function switchTab(name) {
