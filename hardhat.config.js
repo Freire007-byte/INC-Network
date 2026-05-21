@@ -15,7 +15,7 @@ module.exports = {
       },
       chainId: 31337,
     },
-    ethereum:  { url: "https://ethereum-rpc.publicnode.com",           chainId: 1,      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
+    mainnet:   { url: "https://ethereum-rpc.publicnode.com",           chainId: 1,      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     arbitrum:  { url: "https://arb1.arbitrum.io/rpc",                  chainId: 42161,  accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     polygon:   { url: process.env.POLYGON_RPC_URL || "https://polygon-bor-rpc.publicnode.com",  chainId: 137,    accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     bnb:       { url: "https://bsc-dataseed.binance.org",              chainId: 56,     accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
@@ -29,12 +29,39 @@ module.exports = {
       mainnet:            process.env.ETHERSCAN_KEY   || "",
       sepolia:            process.env.ETHERSCAN_KEY   || "",
       arbitrumOne:        process.env.ARBISCAN_KEY    || "",
+      arbitrum:           process.env.ARBISCAN_KEY    || "",
       polygon:            process.env.POLYGONSCAN_KEY || "",
       bsc:                process.env.BSCSCAN_KEY     || "",
+      bnb:                process.env.BSCSCAN_KEY     || "",
       optimisticEthereum: process.env.OPTIMISM_KEY    || "",
+      optimism:           process.env.OPTIMISM_KEY    || "",
       avalanche:          process.env.SNOWSCAN_KEY    || "",
     },
     customChains: [
+      {
+        network: "arbitrum",
+        chainId: 42161,
+        urls: {
+          apiURL: "https://api.arbiscan.io/api",
+          browserURL: "https://arbiscan.io",
+        },
+      },
+      {
+        network: "bnb",
+        chainId: 56,
+        urls: {
+          apiURL: "https://api.bscscan.com/api",
+          browserURL: "https://bscscan.com",
+        },
+      },
+      {
+        network: "optimism",
+        chainId: 10,
+        urls: {
+          apiURL: "https://api-optimistic.etherscan.io/api",
+          browserURL: "https://optimistic.etherscan.io",
+        },
+      },
       {
         network: "sepolia",
         chainId: 11155111,

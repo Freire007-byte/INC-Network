@@ -2,12 +2,31 @@
 const { ethers } = require("hardhat");
 
 // Endereços dos Chainlink Price Feeds por rede
+// IMPORTANTE: verifique todos os endereços em docs.chain.link antes do deploy em produção
 const FEEDS = {
   mainnet: {
     "BTC/USDT": "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88b",
     "ETH/USDT": "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
     "SOL/USDT": "0x4ffC43a60e009B551865A93d232E33Fce9f01507",
     "BNB/USDT": "0x14e613AC84a31f709eadbEF2dD6360A0f0FC3Af6",
+  },
+  arbitrum: {
+    "BTC/USDT": "0x6ce185539ad4fdaBDFDa9d6e7f0cbE8E1438eF6D",
+    "ETH/USDT": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+  },
+  bnb: {
+    "BTC/USDT": "0x264990fbd0A4796A3E3d8E37C4d5F87a3aCa5Ebf",
+    "ETH/USDT": "0x9ef1B8c0E4F7dc8bF5719Ea496883DC6401d5b2e",
+    "BNB/USDT": "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
+  },
+  optimism: {
+    "BTC/USDT": "0xD702DD976Fb76Fffc2D3963D037dfDae5b04E593",
+    "ETH/USDT": "0x13e3Ee699D1909E989722E753853AE30b17e08c5",
+  },
+  avalanche: {
+    "BTC/USDT": "0x2779D32d5166BAaa2B2b658333bA7e6Ec0C65743",
+    "ETH/USDT": "0x976B3D034E162d8bD72D6b9C989d545b839003b0",
+    "AVAX/USDT": "0x0A77230d17318075983913bC2145DB16C7366156",
   },
   polygon: {
     "BTC/USDT": "0xc907E116054Ad103354f2D350FD2514433D57F6f",
