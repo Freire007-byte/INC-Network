@@ -654,8 +654,11 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         if (won) {
             pendingWithdrawal[sig.provider] += sig.totalPoolAtResolution;
             providerWins[sig.provider]++;
+        } else if (sig.followersStake == 0) {
+            // Sem followers: devolve stake ao provider — não há ninguém para receber o pool
+            pendingWithdrawal[sig.provider] += sig.providerStake;
         }
-        // LOSS: followers chamam claimReward() individualmente — sem loop
+        // LOSS com followers: cada follower chama claimReward() individualmente — sem loop
 
         _removeFromOpen(signalId);
 

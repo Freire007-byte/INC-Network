@@ -25,7 +25,15 @@ module.exports = {
     sepolia:   { url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.eth.gateway.fm", chainId: 11155111, accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_KEY || "",
+    apiKey: {
+      mainnet:            process.env.ETHERSCAN_KEY   || "",
+      sepolia:            process.env.ETHERSCAN_KEY   || "",
+      arbitrumOne:        process.env.ARBISCAN_KEY    || "",
+      polygon:            process.env.POLYGONSCAN_KEY || "",
+      bsc:                process.env.BSCSCAN_KEY     || "",
+      optimisticEthereum: process.env.OPTIMISM_KEY    || "",
+      avalanche:          process.env.SNOWSCAN_KEY    || "",
+    },
     customChains: [
       {
         network: "sepolia",
@@ -41,6 +49,14 @@ module.exports = {
         urls: {
           apiURL: "https://api.polygonscan.com/api",
           browserURL: "https://polygonscan.com",
+        },
+      },
+      {
+        network: "avalanche",
+        chainId: 43114,
+        urls: {
+          apiURL: "https://api.snowscan.xyz/api",
+          browserURL: "https://snowscan.xyz",
         },
       },
     ],

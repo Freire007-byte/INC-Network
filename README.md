@@ -80,7 +80,7 @@ Smart contract de staking de sinais on-chain com resolução automática via Cha
 npm install
 ```
 
-## Testes (68/68 passando)
+## Testes (73/73 passando)
 
 ```bash
 npx hardhat test
@@ -148,6 +148,7 @@ npx hardhat test
 - Provider recupera stake após sinal expirado
 - Não pode chamar claimExpired duas vezes
 - Não pode chamar claimExpired em sinal não expirado
+- followSignal rejeitado após prazo de expiração
 - Follower saca ETH após claimExpired
 
 **pause() / unpause()**
@@ -163,6 +164,12 @@ npx hardhat test
 - Não pode cancelar proposta inexistente
 - Não pode executar após cancelamento
 
+**LOSS sem followers — stake devolvido ao provider**
+- Provider recupera stake quando LOSS sem followers via oracle
+- Provider saca ETH após LOSS sem followers
+- Provider recupera stake após executeEmergencyResolve com won=false sem followers
+- LOSS com followers NÃO devolve stake ao provider
+
 **Treasury withdraw()**
 - Treasury acumula taxas de createSignal e followSignal
 - Treasury saca ETH acumulado
@@ -177,7 +184,14 @@ PRIVATE_KEY=sua_chave_privada
 INC_TREASURY=endereco_da_treasury
 INC_OWNER=endereco_do_owner
 SEPOLIA_RPC_URL=https://1rpc.io/sepolia
-ETHERSCAN_KEY=sua_api_key
+
+# API keys por explorer — cada rede exige a sua própria
+ETHERSCAN_KEY=sua_api_key_etherscan      # ethereum + sepolia
+ARBISCAN_KEY=sua_api_key_arbiscan        # arbitrum
+POLYGONSCAN_KEY=sua_api_key_polygonscan  # polygon
+BSCSCAN_KEY=sua_api_key_bscscan         # bnb chain
+OPTIMISM_KEY=sua_api_key_optimism        # optimism
+SNOWSCAN_KEY=sua_api_key_snowscan        # avalanche
 ```
 
 ```bash
@@ -249,6 +263,7 @@ npx hardhat run scripts/register-upkeep.js --network optimism  # após deploy
 - Circuit breaker: `pause()` / `unpause()` disponível para o owner
 - ReentrancyGuard em todas as funções que movimentam ETH
 - Ownable2Step — transferência de owner exige confirmação
+- LOSS sem followers devolve o stake ao provider — sem ETH preso no contrato
 
 ## Redes suportadas para mainnet
 

@@ -428,6 +428,16 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
         .to.be.revertedWith("INC: sinal nao expirou");
     });
 
+    it("followSignal rejeitado após prazo de expiração", async () => {
+      await deployAll();
+      await createBtcSignal(0);
+      await ethers.provider.send("evm_increaseTime", [7 * 24 * 60 * 60]);
+      await ethers.provider.send("evm_mine");
+      await expect(
+        contract.connect(follower1).followSignal(1, { value: FOLLOWER_STAKE })
+      ).to.be.revertedWith("INC: sinal expirado");
+    });
+
     it("Follower saca ETH após claimExpired", async () => {
       await contract.connect(follower1).claimExpired(1);
       const before = await ethers.provider.getBalance(follower1.address);
@@ -511,6 +521,51 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
       await ethers.provider.send("evm_mine");
       await expect(contract.connect(owner).executeEmergencyResolve(1))
         .to.be.revertedWith("INC: sem proposta pendente");
+    });
+  });
+
+  // ── LOSS SEM FOLLOWERS ────────────────────────────────────────────────────
+  describe("LOSS sem followers — stake devolvido ao provider", () => {
+    beforeEach(async () => {
+      await deployAll(ENTRY_BTC);
+      await createBtcSignal(0); // signalId=1, sem followers
+    });
+
+    it("Provider recupera stake quando LOSS sem followers via oracle", async () => {
+      await mockFeed.updateAnswer(SL_BTC);
+      await contract.resolveByOracle(1);
+      const sig = await contract.getSignal(1);
+      expect(sig.status).to.equal(2); // LOSS
+      const expectedStake = PROVIDER_STAKE * 9650n / 10000n;
+      expect(await contract.pendingWithdrawal(provider.address)).to.equal(expectedStake);
+    });
+
+    it("Provider saca ETH após LOSS sem followers", async () => {
+      await mockFeed.updateAnswer(SL_BTC);
+      await contract.resolveByOracle(1);
+      const before = await ethers.provider.getBalance(provider.address);
+      await contract.connect(provider).withdraw();
+      const after = await ethers.provider.getBalance(provider.address);
+      expect(after).to.be.gt(before);
+    });
+
+    it("Provider recupera stake após executeEmergencyResolve com won=false sem followers", async () => {
+      await ethers.provider.send("evm_increaseTime", [3 * 24 * 60 * 60 + 1]);
+      await ethers.provider.send("evm_mine");
+      await contract.connect(owner).proposeEmergencyResolve(1, false);
+      await ethers.provider.send("evm_increaseTime", [1 * 24 * 60 * 60 + 1]);
+      await ethers.provider.send("evm_mine");
+      await contract.connect(owner).executeEmergencyResolve(1);
+      const expectedStake = PROVIDER_STAKE * 9650n / 10000n;
+      expect(await contract.pendingWithdrawal(provider.address)).to.equal(expectedStake);
+    });
+
+    it("LOSS com followers NÃO devolve stake ao provider", async () => {
+      await contract.connect(follower1).followSignal(1, { value: FOLLOWER_STAKE });
+      await mockFeed.updateAnswer(SL_BTC);
+      await contract.resolveByOracle(1);
+      // Provider não recebe nada (followers é que ganham)
+      expect(await contract.pendingWithdrawal(provider.address)).to.equal(0);
     });
   });
 
