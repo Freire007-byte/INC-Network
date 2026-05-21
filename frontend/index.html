@@ -2675,7 +2675,7 @@
 
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="value" id="hs-price" style="color:var(--green)">$3.04</div>
+      <div class="value" id="hs-price" style="color:var(--green)">$0.01</div>
       <div class="label">$INC Price</div>
     </div>
     <div class="hero-stat">
@@ -3871,7 +3871,7 @@ async function loadINCPrice() {
     const sqrtP     = parseFloat(sqrtPriceX96.toString()) / Math.pow(2, 96);
     const incPerETH = sqrtP * sqrtP;
     const ethPx     = oraclePrices["ETH"]?.price || 3000;
-    const priceUSD  = incPerETH > 0 ? ethPx / incPerETH : 3.04;
+    const priceUSD  = incPerETH > 0 ? ethPx / incPerETH : 0.01;
 
     const oldPrice = oraclePrices["INC"]?.price ?? priceUSD;
     oraclePrices["INC"] = { price: priceUSD, prev: oldPrice, change24h: 0, ts: Date.now() };
@@ -3905,10 +3905,10 @@ async function loadINCPrice() {
     }
   } catch {
     _incRpcIdx++;
-    // Mostra $3.04 como fallback se ainda não há preço
+    // Mostra $0.01 como fallback se ainda não há preço
     if (!oraclePrices["INC"]) {
-      oraclePrices["INC"] = { price: 3.04, prev: 3.04, change24h: 0, ts: Date.now() };
-      const fb = "$3.04";
+      oraclePrices["INC"] = { price: 0.01, prev: 0.01, change24h: 0, ts: Date.now() };
+      const fb = "$0.0100";
       ["stat-inc-price","oprice-INC","hs-price","psb-price"].forEach(id => {
         const el = document.getElementById(id); if (el) el.textContent = fb;
       });
@@ -3930,14 +3930,14 @@ function _updateINCSparkline() {
   el.setAttribute('d', pts.join(' '));
 }
 
-// Mostra $3.04 imediatamente antes do fetch completar
-oraclePrices["INC"] = { price: 3.04, prev: 3.04, change24h: 0, ts: Date.now() };
+// Mostra $0.01 imediatamente antes do fetch completar
+oraclePrices["INC"] = { price: 0.01, prev: 0.01, change24h: 0, ts: Date.now() };
 ["stat-inc-price","oprice-INC","hs-price","psb-price"].forEach(id => {
-  const el = document.getElementById(id); if (el) el.textContent = "$3.04";
+  const el = document.getElementById(id); if (el) el.textContent = "$0.0100";
 });
 const mcEl0 = document.getElementById("hs-mcap");
-if (mcEl0) mcEl0.textContent = "$304.00M";
-const wrInc = document.getElementById("wrp-inc"); if (wrInc) wrInc.textContent = "$3.04";
+if (mcEl0) mcEl0.textContent = "$1.02M";
+const wrInc = document.getElementById("wrp-inc"); if (wrInc) wrInc.textContent = "$0.0100";
 
 loadINCPrice();
 setInterval(loadINCPrice, 3000);
