@@ -1982,10 +1982,11 @@
   <div class="ticker-label">◈ ORACLE LIVE</div>
   <div class="ticker-overflow">
     <div class="ticker-track" id="ticker-track">
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BTC/USDT</span><span class="ticker-px" id="t-BTC">—</span><span class="ticker-chg flat">—</span></div>
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">ETH/USDT</span><span class="ticker-px" id="t-ETH">—</span><span class="ticker-chg flat">—</span></div>
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">SOL/USDT</span><span class="ticker-px" id="t-SOL">—</span><span class="ticker-chg flat">—</span></div>
-      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BNB/USDT</span><span class="ticker-px" id="t-BNB">—</span><span class="ticker-chg flat">—</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BTC/USDT</span><span class="ticker-px">$77,700</span><span class="ticker-chg up">▲ 0.12%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">ETH/USDT</span><span class="ticker-px">$2,134</span><span class="ticker-chg down">▼ 0.09%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">SOL/USDT</span><span class="ticker-px">$87.50</span><span class="ticker-chg up">▲ 1.64%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">BNB/USDT</span><span class="ticker-px">$656.00</span><span class="ticker-chg up">▲ 1.04%</span></div>
+      <div class="ticker-item"><span class="ticker-dot"></span><span class="ticker-sym">INC/USDT</span><span class="ticker-px">$0.0100</span><span class="ticker-chg flat">—</span></div>
     </div>
   </div>
 </div>
@@ -2055,7 +2056,7 @@
     <div class="oracle-card" onclick="openChart('BTC')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BTC/USDT</div>
-      <div class="oracle-px" id="oprice-BTC">$104,000</div>
+      <div class="oracle-px" id="oprice-BTC">$77,700</div>
       <div class="oracle-chg flat" id="ochg-BTC">—</div>
       <svg class="oracle-spark" id="spark-BTC" viewBox="0 0 90 24"><path id="spark-path-BTC" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2064,7 +2065,7 @@
     <div class="oracle-card" onclick="openChart('ETH')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">ETH/USDT</div>
-      <div class="oracle-px" id="oprice-ETH">$2,520</div>
+      <div class="oracle-px" id="oprice-ETH">$2,134</div>
       <div class="oracle-chg flat" id="ochg-ETH">—</div>
       <svg class="oracle-spark" id="spark-ETH" viewBox="0 0 90 24"><path id="spark-path-ETH" fill="none" stroke="#7c6dff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2073,7 +2074,7 @@
     <div class="oracle-card" onclick="openChart('SOL')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">SOL/USDT</div>
-      <div class="oracle-px" id="oprice-SOL">$178.00</div>
+      <div class="oracle-px" id="oprice-SOL">$87.50</div>
       <div class="oracle-chg flat" id="ochg-SOL">—</div>
       <svg class="oracle-spark" id="spark-SOL" viewBox="0 0 90 24"><path id="spark-path-SOL" fill="none" stroke="#00ffaa" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2082,7 +2083,7 @@
     <div class="oracle-card" onclick="openChart('BNB')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BNB/USDT</div>
-      <div class="oracle-px" id="oprice-BNB">$620.00</div>
+      <div class="oracle-px" id="oprice-BNB">$656.00</div>
       <div class="oracle-chg flat" id="ochg-BNB">—</div>
       <svg class="oracle-spark" id="spark-BNB" viewBox="0 0 90 24"><path id="spark-path-BNB" fill="none" stroke="#ffcc00" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2142,7 +2143,7 @@
           </div>
           <div class="wf-bub-canvas-wrap">
             <canvas id="hl-bubble-canvas"></canvas>
-            <div class="wf-bub-loading" id="hl-loading">
+            <div class="wf-bub-loading hidden" id="hl-loading">
               <div class="hl-spin"></div>
               <span>Carregando posições Hyperliquid…</span>
             </div>
@@ -4824,10 +4825,10 @@ async function fetchCryptoCompare() {
 
 // Preços estáticos de fallback — aparecem imediatamente
 const ORACLE_FALLBACK = {
-  BTC: { price: 104000, change24h: 0 },
-  ETH: { price: 2520,   change24h: 0 },
-  SOL: { price: 178,    change24h: 0 },
-  BNB: { price: 620,    change24h: 0 },
+  BTC: { price: 77700, change24h: 0 },
+  ETH: { price: 2134,  change24h: 0 },
+  SOL: { price: 87.5,  change24h: 0 },
+  BNB: { price: 656,   change24h: 0 },
 };
 (function seedOracleFallback() {
   for (const sym of ORACLE_SYMS) {
@@ -4836,7 +4837,7 @@ const ORACLE_FALLBACK = {
     oraclePrices[sym] = { price: d.price, prev: d.price, change24h: 0, ts: 0 };
     priceHistory[sym].push(d.price);
   }
-  renderOracleUI();
+  try { renderOracleUI(); } catch(e) { console.warn("[INC] renderOracleUI fallback:", e.message); }
 })();
 
 async function fetchAndUpdateOracle() {
@@ -4898,10 +4899,10 @@ function renderOracleUI() {
   }
 
   // ── live P&L nos cards ──
-  refreshLiveProgress();
+  try { refreshLiveProgress(); } catch(e) {}
 
   // ── form oracle price ──
-  updateFormOracle();
+  try { updateFormOracle(); } catch(e) {}
 
   // ── market chips (sinais tab) ──
   const nowMs = Date.now();
@@ -5836,8 +5837,15 @@ async function hlDrainQueue() {
   hlDrawSeedBubbles(ctx, W, H);
 })();
 
-// ── Start com delay para não bloquear carregamento ──
-setTimeout(() => { try { initHLWebSocket(); } catch(e) {} }, 7000);
+// ── Start com delay — mostra aviso se API falhar ──
+setTimeout(() => {
+  try {
+    initHLWebSocket();
+  } catch(e) {
+    const el = document.getElementById('hl-last-update');
+    if (el) el.textContent = 'API indisponível';
+  }
+}, 7000);
 
 // ══════════════════════════════════════════════
 // WHALE FLOW — Liquidações Binance Futures (fstream)
