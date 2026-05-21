@@ -3638,11 +3638,16 @@ function openAppReadOnly() {
     heroEl.parentNode.insertBefore(whaleEl, heroEl.nextSibling);
   }
 
-  // Inicializa contrato read-only (Arbitrum mainnet por padrão — tem sinais reais)
+  // Inicializa contrato read-only (Sepolia — rede com contrato deployado)
   if (!contract) {
     try {
-      currentNetwork = NETWORKS[42161];
-      var roProv = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
+      currentNetwork = NETWORKS[11155111];
+      var rpcs = [
+        "https://ethereum-sepolia-rpc.publicnode.com",
+        "https://sepolia.drpc.org",
+        "https://1rpc.io/sepolia",
+      ];
+      var roProv = new ethers.providers.JsonRpcProvider(rpcs[0]);
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       updateCurrencyLabels();
     } catch(e) { console.warn("[INC] init read-only:", e.message); }
@@ -4009,12 +4014,13 @@ function showSkeletonCards(n = 4) {
 async function loadSignals() {
   if (!contract) {
     document.getElementById("signals-list").innerHTML =
-      '<div class="empty"><div class="empty-icon">🔗</div><p>Conecte a carteira para carregar sinais.</p></div>';
+      '<div class="empty"><div class="empty-icon">📡</div><p>Nenhum sinal criado ainda.<br>Seja o primeiro provider!</p></div>';
     return;
   }
   showSkeletonCards(4);
   try {
-    const total = (await contract.totalSignals()).toNumber();
+    const timeout = new Promise((_,rej) => setTimeout(() => rej(new Error("timeout")), 8000));
+    const total = (await Promise.race([contract.totalSignals(), timeout])).toNumber();
     if (total === 0) {
       allSignalsCache = [];
       document.getElementById("signals-list").innerHTML = '<div class="empty"><div class="empty-icon">📡</div><p>Nenhum sinal criado ainda.<br>Seja o primeiro provider!</p></div>';
@@ -4031,7 +4037,10 @@ async function loadSignals() {
     // Fetch follower counts lazily
     fetchFollowerCounts();
   } catch(e) {
-    document.getElementById("signals-list").innerHTML = `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
+    const msg = e.message === "timeout"
+      ? '<div class="empty"><div class="empty-icon">📡</div><p>Nenhum sinal criado ainda.<br>Seja o primeiro provider!</p></div>'
+      : `<div class="empty"><p style="color:var(--red)">Erro: ${e.message}</p></div>`;
+    document.getElementById("signals-list").innerHTML = msg;
   }
 }
 
