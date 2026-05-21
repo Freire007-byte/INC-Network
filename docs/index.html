@@ -3417,7 +3417,7 @@ const NETWORKS = {
     name:     "Ethereum",
     currency: "ETH",
     contract: "0xAD4Fbde4810f3919F169c827A582aed34330ADA0",
-    token:    "",
+    token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
     testnet:  false,
   },
   11155111: {
@@ -3896,6 +3896,20 @@ async function loadINCPrice() {
     ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = priceStr; });
     const mcEl = document.getElementById("hs-mcap"); if (mcEl) mcEl.textContent = mcapStr;
     const incPx = document.getElementById("wrp-inc"); if (incPx) incPx.textContent = priceStr;
+
+    // Atualiza variação % no card INC (ochg-INC)
+    const chgEl = document.getElementById("ochg-INC");
+    if (chgEl && oldPrice > 0) {
+      const chgPct = ((priceUSD - oldPrice) / oldPrice) * 100;
+      if (Math.abs(chgPct) > 0.001) {
+        const sign = chgPct > 0 ? "▲" : "▼";
+        chgEl.textContent = `${sign} ${Math.abs(chgPct).toFixed(2)}%`;
+        chgEl.className = `oracle-chg ${chgPct > 0 ? "up" : "down"}`;
+      } else {
+        chgEl.textContent = "UNISWAP V3";
+        chgEl.className = "oracle-chg flat";
+      }
+    }
 
     // Flash no card INC
     const pEl = document.getElementById("oprice-INC");
@@ -5268,7 +5282,7 @@ async function loadHLWhales() {
     }
   } catch {}
 
-  // 2. Fallback: known active Hyperliquid whale addresses (public on-chain)
+  // 2. Fallback: known active Hyperliquid whale addresses (public on-chain leaderboard)
   if (addresses.length < 8) {
     addresses = [
       '0x0903d4823e41a5f3fe9a4b85f4be6b432481b49d',
@@ -5281,11 +5295,6 @@ async function loadHLWhales() {
       '0xd3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4',
       '0x5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b',
       '0x8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9',
-      '0x11223344556677889900aabbccddeeff11223344',
-      '0xaabbccddeeff00112233445566778899aabbccdd',
-      '0xdeadbeefcafe0123456789abcdef0123456789ab',
-      '0xcafe0123456789abcdef0123456789abcafebeef',
-      '0x0011223344556677889900aabb112233445566778',
     ].filter(Boolean).slice(0, 20);
   }
 
