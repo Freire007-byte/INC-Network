@@ -5958,7 +5958,7 @@ function wfBubblePush(sym, isLongLiq, usd) {
   wfDrawBubbles();
 }
 
-function wfBubbleFilter(filter, btn) {
+function setWfBubbleFilter(filter, btn) {
   wfBubbleFilter = filter;
   document.querySelectorAll('#wf-bubble-canvas ~ * .wf-fbtn, [id^="wfb-"]').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
