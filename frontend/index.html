@@ -2061,7 +2061,7 @@
     <div class="oracle-card" onclick="openChart('BTC')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BTC/USDT</div>
-      <div class="oracle-px" id="oprice-BTC">$77,700</div>
+      <div class="oracle-px" id="oprice-BTC">$103,000</div>
       <div class="oracle-chg flat" id="ochg-BTC">—</div>
       <svg class="oracle-spark" id="spark-BTC" viewBox="0 0 90 24"><path id="spark-path-BTC" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2070,7 +2070,7 @@
     <div class="oracle-card" onclick="openChart('ETH')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">ETH/USDT</div>
-      <div class="oracle-px" id="oprice-ETH">$2,134</div>
+      <div class="oracle-px" id="oprice-ETH">$2,450</div>
       <div class="oracle-chg flat" id="ochg-ETH">—</div>
       <svg class="oracle-spark" id="spark-ETH" viewBox="0 0 90 24"><path id="spark-path-ETH" fill="none" stroke="#7c6dff" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2079,7 +2079,7 @@
     <div class="oracle-card" onclick="openChart('SOL')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">SOL/USDT</div>
-      <div class="oracle-px" id="oprice-SOL">$87.50</div>
+      <div class="oracle-px" id="oprice-SOL">$170.00</div>
       <div class="oracle-chg flat" id="ochg-SOL">—</div>
       <svg class="oracle-spark" id="spark-SOL" viewBox="0 0 90 24"><path id="spark-path-SOL" fill="none" stroke="#00ffaa" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -2088,7 +2088,7 @@
     <div class="oracle-card" onclick="openChart('BNB')">
       <div class="oracle-live-badge"><span class="oracle-live-dot"></span>LIVE</div>
       <div class="oracle-sym">BNB/USDT</div>
-      <div class="oracle-px" id="oprice-BNB">$656.00</div>
+      <div class="oracle-px" id="oprice-BNB">$645.00</div>
       <div class="oracle-chg flat" id="ochg-BNB">—</div>
       <svg class="oracle-spark" id="spark-BNB" viewBox="0 0 90 24"><path id="spark-path-BNB" fill="none" stroke="#ffcc00" stroke-width="1.5" opacity="0.6"/></svg>
       <div class="oracle-footer">BINANCE</div>
@@ -5576,12 +5576,17 @@ function hlRenderBubbles() {
     const addr = w.addr ? w.addr.slice(0,6)+'…'+w.addr.slice(-4) : '???';
     const pos = w.positions[0];
     const f1 = Math.min(10,size*.15), f2 = Math.min(12,size*.17), f3 = Math.min(9,size*.12);
+    const pnlPct = w.totalUsd > 0 ? (w.totalPnl / w.totalUsd * 100) : 0;
+    const pnlColor = pnlPct >= 0 ? '#00ffaa99' : '#ff3d5799';
+    const pnlStr = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(1) + '%';
     const inner = size > 55
       ? `<span style="font:bold ${f1}px 'JetBrains Mono',monospace;color:#ffffffcc">${addr}</span>`
         + (pos ? `<span style="font:bold ${f2}px 'JetBrains Mono',monospace;color:${color};margin-top:2px">${pos.isLong?'▲':'▼'} ${pos.coin}</span>` : '')
-        + `<span style="font:${f3}px 'JetBrains Mono',monospace;color:#ffffff55;margin-top:1px">${hlFmtUSD(w.totalUsd)}</span>`
-      : size > 30
+        + `<span style="font:bold ${Math.min(10,size*.14)}px 'JetBrains Mono',monospace;color:#fff;margin-top:1px">${hlFmtUSD(w.totalUsd)}</span>`
+        + `<span style="font:${f3}px 'JetBrains Mono',monospace;color:${pnlColor};margin-top:1px">${pnlStr}</span>`
+      : size > 32
         ? (pos ? `<span style="font:bold ${Math.min(11,size*.28)}px 'JetBrains Mono',monospace;color:${color}">${pos.isLong?'▲':'▼'} ${pos.coin}</span>` : '')
+          + `<span style="font:bold ${Math.min(9,size*.2)}px 'JetBrains Mono',monospace;color:#ffffffbb;margin-top:1px">${hlFmtUSD(w.totalUsd)}</span>`
         : '';
     c.appendChild(hlBuildBubble(lp, tp, size, color, (i * 0.3) % 2.4, inner));
   });
@@ -5854,10 +5859,13 @@ async function hlDrainQueue() {
 
 // ── Gera 50 carteiras baleia simuladas (Math.sin determinístico — sem estado PRNG) ──
 function hlGenerateSeedWhales() {
-  var btc = 67000, eth = 3400;
-  try { btc = oraclePrices["BTC"].price || 67000; } catch(e) {}
-  try { eth = oraclePrices["ETH"].price || 3400;  } catch(e) {}
-  var PX = {BTC:btc,ETH:eth,SOL:145,BNB:580,ARB:1.1,AVAX:35,DOGE:0.13,WIF:2.1,TIA:8.5,INJ:24,OP:2.4,SUI:1.2,LINK:14};
+  var btc = 103000, eth = 2450;
+  try { btc = oraclePrices["BTC"].price || 103000; } catch(e) {}
+  try { eth = oraclePrices["ETH"].price || 2450;  } catch(e) {}
+  var sol = 170, bnb = 645;
+  try { sol = oraclePrices["SOL"].price || 170; } catch(e) {}
+  try { bnb = oraclePrices["BNB"].price || 645; } catch(e) {}
+  var PX = {BTC:btc,ETH:eth,SOL:sol,BNB:bnb,ARB:1.3,AVAX:38,DOGE:0.16,WIF:2.4,TIA:9.2,INJ:26,OP:2.6,SUI:1.5,LINK:18};
   var COINS = Object.keys(PX);
   // Math.sin determinístico — nunca falha
   function dr(a,b){ return Math.abs(Math.sin(a*9301 + b*49297 + 233)) % 1; }
