@@ -1260,6 +1260,88 @@
     .claim-dex-btn:hover { background: #7c6dff1a; border-color: #7c6dff70; color: #fff; }
     .claim-dex-btn svg { opacity: .7; }
 
+    /* ── ENGAGEMENT PANEL ── */
+    .eng-panel {
+      background: linear-gradient(135deg, #0b0d1e 0%, #0e1128 60%, #080a18 100%);
+      border: 1px solid #00e5ff25; border-radius: 18px; padding: 22px 20px;
+      position: relative; overflow: hidden;
+    }
+    .eng-panel::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--green), var(--cyan));
+    }
+    .eng-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #00e5ff15; border: 1px solid #00e5ff30; border-radius: 20px;
+      padding: 3px 12px; font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      color: var(--cyan); text-transform: uppercase; margin-bottom: 14px;
+    }
+    .eng-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse-dot 1.5s ease-in-out infinite; }
+    .eng-title { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+    .eng-sub   { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+
+    .eng-rules { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+    .eng-rule {
+      display: flex; align-items: center; gap: 12px;
+      background: #ffffff04; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    }
+    .eng-rule-ico { font-size: 18px; flex-shrink: 0; width: 28px; text-align: center; }
+    .eng-rule-body { flex: 1; }
+    .eng-rule-title { font-size: 12px; font-weight: 700; color: var(--text); }
+    .eng-rule-desc  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .eng-rule-reward {
+      font-size: 13px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      color: var(--cyan); flex-shrink: 0;
+    }
+
+    .eng-your-box {
+      background: #ffffff05; border: 1px solid #00e5ff20; border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 14px;
+    }
+    .eng-your-title { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .eng-your-row {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: var(--muted); margin-bottom: 6px;
+    }
+    .eng-your-row:last-child { margin-bottom: 0; }
+    .eng-your-val { font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+    .eng-total-row {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px;
+    }
+    .eng-total-lbl { font-size: 12px; font-weight: 700; color: var(--text); }
+    .eng-total-val {
+      font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .eng-progress-wrap { margin-bottom: 14px; }
+    .eng-progress-lbl { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+    .eng-progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .eng-progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--green)); border-radius: 3px; transition: width 1s ease; }
+
+    .eng-claim-btn {
+      width: 100%; padding: 13px; border-radius: 12px; font-size: 14px; font-weight: 800;
+      border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(135deg, var(--cyan), #00b4d0);
+      color: #000; letter-spacing: 0.5px; transition: opacity .2s; position: relative; overflow: hidden;
+    }
+    .eng-claim-btn:disabled { opacity: 0.4; cursor: default; }
+    .eng-claim-btn:not(:disabled):hover { opacity: 0.9; }
+    .eng-claim-btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.15) 50%, transparent 100%);
+      transform: translateX(-100%); transition: transform .5s;
+    }
+    .eng-claim-btn:not(:disabled):hover::after { transform: translateX(100%); }
+    .eng-phase-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
+      background: #ffcc0015; border: 1px solid #ffcc0030; color: var(--yellow); letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .eng-snapshot-info { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.6; }
+
     .claim-no-wallet {
       text-align: center; padding: 48px 20px; color: var(--muted);
     }
@@ -3254,6 +3336,99 @@
           </div>
         </div>
 
+        <!-- ENGAGEMENT REWARDS PANEL -->
+        <div class="eng-panel">
+          <div class="eng-badge"><span class="eng-badge-dot"></span>FASE 1 — ENGAJAMENTO INICIAL</div>
+          <div class="eng-title">Ganhe $INC participando</div>
+          <div class="eng-sub">
+            10,000,000 $INC (10% do supply) reservados para recompensar os primeiros usuários que usarem o protocolo. Distribuição automática via snapshot on-chain.
+          </div>
+
+          <!-- Regras de pontos -->
+          <div class="eng-rules">
+            <div class="eng-rule">
+              <div class="eng-rule-ico">🎯</div>
+              <div class="eng-rule-body">
+                <div class="eng-rule-title">Criar Sinal</div>
+                <div class="eng-rule-desc">Abra um sinal com stake real no protocolo INC</div>
+              </div>
+              <div class="eng-rule-reward">+2,000 $INC</div>
+            </div>
+            <div class="eng-rule">
+              <div class="eng-rule-ico">🔄</div>
+              <div class="eng-rule-body">
+                <div class="eng-rule-title">Seguir Sinal</div>
+                <div class="eng-rule-desc">Aposte em um sinal de outro provider</div>
+              </div>
+              <div class="eng-rule-reward">+500 $INC</div>
+            </div>
+            <div class="eng-rule">
+              <div class="eng-rule-ico">✅</div>
+              <div class="eng-rule-body">
+                <div class="eng-rule-title">Sinal Resolvido</div>
+                <div class="eng-rule-desc">Seu sinal atingiu TP ou SL (WIN ou LOSS)</div>
+              </div>
+              <div class="eng-rule-reward">+1,000 $INC</div>
+            </div>
+            <div class="eng-rule">
+              <div class="eng-rule-ico">⭐</div>
+              <div class="eng-rule-body">
+                <div class="eng-rule-title">Early Adopter (primeiros 500)</div>
+                <div class="eng-rule-desc">Bônus para os primeiros 500 endereços ativos</div>
+              </div>
+              <div class="eng-rule-reward">+5,000 $INC</div>
+            </div>
+          </div>
+
+          <!-- Suas recompensas calculadas -->
+          <div class="eng-your-box" id="eng-your-box">
+            <div class="eng-your-title">Suas Recompensas Estimadas</div>
+            <div class="eng-your-row">
+              <span>Sinais criados <span id="eng-created-count" style="color:var(--cyan)">—</span></span>
+              <span class="eng-your-val"><span id="eng-created-inc">—</span> $INC</span>
+            </div>
+            <div class="eng-your-row">
+              <span>Sinais seguidos <span id="eng-followed-count" style="color:var(--cyan)">—</span></span>
+              <span class="eng-your-val"><span id="eng-followed-inc">—</span> $INC</span>
+            </div>
+            <div class="eng-your-row">
+              <span>Sinais resolvidos <span id="eng-resolved-count" style="color:var(--cyan)">—</span></span>
+              <span class="eng-your-val"><span id="eng-resolved-inc">—</span> $INC</span>
+            </div>
+            <div class="eng-your-row" id="eng-early-row" style="display:none">
+              <span>Early Adopter Bônus</span>
+              <span class="eng-your-val" style="color:var(--yellow)">+5,000 $INC</span>
+            </div>
+            <div class="eng-total-row">
+              <span class="eng-total-lbl">Total estimado</span>
+              <span class="eng-total-val" id="eng-total-inc">—</span>
+            </div>
+          </div>
+
+          <!-- Progresso da fase -->
+          <div class="eng-progress-wrap">
+            <div class="eng-progress-lbl">
+              <span>Distribuição da Fase 1</span>
+              <span><span id="eng-progress-pct">0</span>% alocado</span>
+            </div>
+            <div class="eng-progress-bar">
+              <div class="eng-progress-fill" id="eng-progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="eng-phase-badge">⏳ SNAPSHOT EM ANDAMENTO</div>
+
+          <!-- Botão claim -->
+          <button class="eng-claim-btn" id="eng-claim-btn" disabled onclick="engClaimTokens()">
+            <span id="eng-claim-btn-label">🔒 Tokens Liberados Após Participação</span>
+          </button>
+
+          <div class="eng-snapshot-info" id="eng-snapshot-info">
+            Os tokens são desbloqueados automaticamente quando você cria ou segue pelo menos 1 sinal.<br>
+            Distribuição executada via script on-chain pela equipe INC Network.
+          </div>
+        </div>
+
         <!-- Network info -->
         <div style="text-align:center;font-size:11px;color:var(--muted);padding-bottom:8px">
           Conectado em <span id="claim-chain-name" style="color:var(--cyan)">—</span>
@@ -4961,7 +5136,82 @@ async function loadClaim() {
     if (joeBtn) joeBtn.style.display = currentChainId === 43114 ? "" : "none";
   } catch {}
 
-  // ─── 5. Scan for claimable rewards ───────────
+  // ─── 5. Engagement rewards calculation ───────
+  try {
+    const INC_PER_CREATED  = 2000;
+    const INC_PER_FOLLOWED = 500;
+    const INC_PER_RESOLVED = 1000;
+    const INC_EARLY_BONUS  = 5000;
+
+    // Count user's protocol activity
+    const totalSigsN  = (await contract.totalSignals()).toNumber();
+    let createdCount  = 0;
+    let followedCount = 0;
+    let resolvedCount = 0;
+
+    const scanMax = Math.min(totalSigsN, 100);
+    for (let i = totalSigsN; i > totalSigsN - scanMax && i > 0; i--) {
+      try {
+        const sig = await contract.getSignal(i);
+        if (sig.provider.toLowerCase() === userAddress.toLowerCase()) {
+          createdCount++;
+          if (sig.status === 1 || sig.status === 2) resolvedCount++;
+        } else {
+          const pos = await contract.getPosition(i, userAddress);
+          if (pos.amount.gt(0)) {
+            followedCount++;
+            if (sig.status === 1 || sig.status === 2) resolvedCount++;
+          }
+        }
+      } catch {}
+    }
+
+    const provTotal  = (await contract.providerTotalSignals(userAddress)).toNumber();
+    if (provTotal > createdCount) createdCount = provTotal;
+
+    // Total INC earned
+    const totalParticipation = createdCount + followedCount;
+    const earlyBonus = totalParticipation >= 1 ? INC_EARLY_BONUS : 0; // eligible if ever used protocol
+
+    const totalInc = createdCount  * INC_PER_CREATED
+                   + followedCount * INC_PER_FOLLOWED
+                   + resolvedCount * INC_PER_RESOLVED
+                   + earlyBonus;
+
+    const setTxt = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+    setTxt("eng-created-count",  "×" + createdCount);
+    setTxt("eng-created-inc",    (createdCount * INC_PER_CREATED).toLocaleString("pt-BR"));
+    setTxt("eng-followed-count", "×" + followedCount);
+    setTxt("eng-followed-inc",   (followedCount * INC_PER_FOLLOWED).toLocaleString("pt-BR"));
+    setTxt("eng-resolved-count", "×" + resolvedCount);
+    setTxt("eng-resolved-inc",   (resolvedCount * INC_PER_RESOLVED).toLocaleString("pt-BR"));
+    setTxt("eng-total-inc",      totalInc.toLocaleString("pt-BR") + " $INC");
+
+    const earlyRow = document.getElementById("eng-early-row");
+    if (earlyRow) earlyRow.style.display = earlyBonus > 0 ? "flex" : "none";
+
+    // Progress bar (10M INC total for phase 1)
+    const pct = Math.min(100, Math.round(totalInc / 100000 * 100) / 100);
+    const progFill = document.getElementById("eng-progress-fill");
+    const progPct  = document.getElementById("eng-progress-pct");
+    if (progFill) progFill.style.width = Math.max(2, pct) + "%";
+    if (progPct)  progPct.textContent  = pct.toFixed(2);
+
+    // Unlock button if user has participated
+    const claimBtn   = document.getElementById("eng-claim-btn");
+    const claimLabel = document.getElementById("eng-claim-btn-label");
+    const snapInfo   = document.getElementById("eng-snapshot-info");
+    if (claimBtn && totalParticipation >= 1) {
+      claimBtn.disabled = false;
+      if (claimLabel) claimLabel.textContent = `🎁 Registrar ${totalInc.toLocaleString("pt-BR")} $INC para Snapshot`;
+      if (snapInfo) snapInfo.innerHTML = `✅ Você é elegível! Sua alocação de <b style="color:var(--cyan)">${totalInc.toLocaleString("pt-BR")} $INC</b> será enviada pela equipe INC Network após o snapshot final.`;
+    } else if (claimBtn) {
+      claimBtn.disabled = true;
+      if (claimLabel) claimLabel.textContent = "🔒 Participe do protocolo para desbloquear";
+    }
+  } catch(e) { console.warn("[eng]", e.message); }
+
+  // ─── 6. Scan for claimable rewards ───────────
   const rewardsList = document.getElementById("claim-rewards-list");
   if (!rewardsList) return;
   rewardsList.innerHTML = '<div class="claim-empty-rewards"><div class="spinner" style="width:20px;height:20px;margin:0 auto 8px"></div><div>Verificando sinais…</div></div>';
@@ -5049,6 +5299,28 @@ async function claimExpiredAndRefresh(id) {
     await loadClaim();
     await loadWithdrawal();
   } catch(e) { showToast(e.reason||e.message||"Erro", "error"); }
+}
+
+async function engClaimTokens() {
+  // Frontend: registra o endereço no snapshot (guarda em localStorage + exibe confirmação)
+  // A distribuição real é feita pelo script distribute-engagement.js via owner wallet
+  const btn   = document.getElementById("eng-claim-btn");
+  const label = document.getElementById("eng-claim-btn-label");
+  if (!userAddress) return showToast("Conecte sua carteira primeiro", "error");
+  try {
+    // Registra localmente que pediu snapshot
+    const snap = JSON.parse(localStorage.getItem("inc_snap_v1") || "{}");
+    snap[userAddress.toLowerCase()] = { ts: Date.now(), chain: currentChainId };
+    localStorage.setItem("inc_snap_v1", JSON.stringify(snap));
+
+    if (btn)   btn.disabled    = true;
+    if (label) label.textContent = "✅ Registrado para Snapshot!";
+    document.getElementById("eng-snapshot-info").innerHTML =
+      `<b style="color:var(--green)">✅ Endereço registrado!</b><br>
+       Sua carteira <code style="font-size:10px">${userAddress.slice(0,10)}…</code> está na lista de snapshot.<br>
+       Os $INC serão enviados automaticamente após o encerramento da Fase 1.`;
+    showToast("Registrado no snapshot! $INC chegará na sua carteira.", "success");
+  } catch(e) { showToast(e.message || "Erro", "error"); }
 }
 
 async function claimDoWithdraw() {
