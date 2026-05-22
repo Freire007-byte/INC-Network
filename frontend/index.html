@@ -5523,9 +5523,12 @@ function wfSwitchTab(tab, btn) {
         c.width  = (w > 0 ? w : c.offsetWidth)  || 700;
         c.height = (h > 0 ? h : c.offsetHeight) || 280;
       }
-      // Re-seed liquidações se feed ainda estiver vazio
-      if (!_wfLiqSeeded) {
-        _wfLiqSeeded = true;
+      // Re-seed se feed estiver vazio (seja primeira vez ou após limpeza)
+      const _liqFeed = document.getElementById('wf-feed');
+      const _feedEmpty = !_liqFeed || _liqFeed.children.length === 0 ||
+        (_liqFeed.children.length === 1 && _liqFeed.querySelector('.wf-empty'));
+      if (_feedEmpty) {
+        _wfSeedDone = false; // permite re-seed
         try { wfSeedLiquidations(); } catch(e) {}
       }
     }, 80);
@@ -5978,7 +5981,10 @@ function initWhaleFlow() {
 
   wfWs.onopen = () => {
     const feed = document.getElementById('wf-feed');
-    if (feed) feed.innerHTML = '<div class="wf-empty"><div class="wf-empty-dot"></div>Aguardando liquidações…</div>';
+    // Só mostra "aguardando" se ainda não há nenhum card — não apaga os seeds
+    if (feed && feed.children.length === 0) {
+      feed.innerHTML = '<div class="wf-empty"><div class="wf-empty-dot"></div>Aguardando liquidações ao vivo…</div>';
+    }
   };
 
   wfWs.onmessage = (e) => {
@@ -6212,19 +6218,23 @@ var _wfSeedDone = false;
 function wfSeedLiquidations() {
   if (_wfSeedDone) return;
   _wfSeedDone = true;
+  const btc = (oraclePrices['BTC']&&oraclePrices['BTC'].price)||103000;
+  const eth = (oraclePrices['ETH']&&oraclePrices['ETH'].price)||2450;
+  const sol = (oraclePrices['SOL']&&oraclePrices['SOL'].price)||170;
+  const bnb = (oraclePrices['BNB']&&oraclePrices['BNB'].price)||645;
   const seedLiqs = [
-    {sym:'BTCUSDT',isLong:false,usd:485000,price:67240},
-    {sym:'ETHUSDT',isLong:true, usd:312000,price:3382},
-    {sym:'SOLUSDT',isLong:false,usd:198000,price:144.8},
-    {sym:'BTCUSDT',isLong:true, usd:872000,price:67180},
-    {sym:'BNBUSDT',isLong:false,usd:145000,price:579.5},
-    {sym:'ETHUSDT',isLong:false,usd:267000,price:3378},
-    {sym:'AVAXUSDT',isLong:true,usd:92000, price:34.9},
-    {sym:'SOLUSDT',isLong:true, usd:156000,price:145.2},
-    {sym:'BTCUSDT',isLong:false,usd:1240000,price:67320},
-    {sym:'ETHUSDT',isLong:true, usd:538000,price:3390},
-    {sym:'MATICUSDT',isLong:false,usd:68000,price:0.848},
-    {sym:'BNBUSDT',isLong:true, usd:211000,price:581},
+    {sym:'BTCUSDT', isLong:false, usd:485000,  price:btc},
+    {sym:'ETHUSDT', isLong:true,  usd:312000,  price:eth},
+    {sym:'SOLUSDT', isLong:false, usd:198000,  price:sol},
+    {sym:'BTCUSDT', isLong:true,  usd:872000,  price:btc*0.9995},
+    {sym:'BNBUSDT', isLong:false, usd:145000,  price:bnb},
+    {sym:'ETHUSDT', isLong:false, usd:267000,  price:eth*0.9992},
+    {sym:'AVAXUSDT',isLong:true,  usd:92000,   price:38.4},
+    {sym:'SOLUSDT', isLong:true,  usd:156000,  price:sol*1.001},
+    {sym:'BTCUSDT', isLong:false, usd:1240000, price:btc*1.0003},
+    {sym:'ETHUSDT', isLong:true,  usd:538000,  price:eth*1.002},
+    {sym:'MATICUSDT',isLong:false,usd:68000,   price:0.22},
+    {sym:'BNBUSDT', isLong:true,  usd:211000,  price:bnb*1.001},
   ];
   // Adiciona do mais antigo ao mais novo (insertBefore inverte)
   [...seedLiqs].reverse().forEach((l,i) => {
