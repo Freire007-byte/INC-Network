@@ -1,7 +1,9 @@
 {
   "INCNetwork": {
+    "treasury": "0x3f357a46E6202e0b28Ce0EEd7c2717ABF3d2c308",
+    "owner":    "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679",
     "polygon": {
-      "address": "0x417eBE04a591B575F23C49A54D74834a846E0370",
+      "address": "0xf49841DF7726691D04D311BC4A0821C0AB9211f5",
       "feeds": {
         "BTC/USDT": "0xc907E116054Ad103354f2D350FD2514433D57F6f",
         "ETH/USDT": "0xF9680D99D6C9589e2a93a78A04A279e509205945",
@@ -10,26 +12,26 @@
       }
     },
     "sepolia": {
-      "address": "0x891d1254023eD620aD2ED948c756AB92e79E0BF1",
+      "address": "0x99ABa0D947367ABC96dDc612C6e407954aC46836",
       "feeds": {
         "BTC/USDT": "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
         "ETH/USDT": "0x694AA1769357215DE4FAC081bf1f309aDC325306"
       }
-    }
-  },
-  "arbitrum": {
-    "address": "0x55413bF29C5b2c7EE54333fD09382f13Ca081593",
-    "feeds": {
-      "BTC/USDT": "0x6CE185539ad4fdabDfDa9d6e7f0cBE8E1438Ef6D",
-      "ETH/USDT": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612"
-    }
-  },
-  "avalanche": {
-    "address": "0xB501c00f25b39CFCeD29489644CCdDCFb79d4E74",
-    "feeds": {
-      "BTC/USDT": "0x2779D32d5166BAaa2B2b658333bA7e6Ec0C65743",
-      "ETH/USDT": "0x976B3D034E162d8bD72D6b9C989d545b839003b0",
-      "AVAX/USDT": "0x0A77230d17318075983913bC2145DB16C7366156"
+    },
+    "arbitrum": {
+      "address": "0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745",
+      "feeds": {
+        "BTC/USDT": "0x6CE185539ad4fdabDfDa9d6e7f0cBE8E1438Ef6D",
+        "ETH/USDT": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612"
+      }
+    },
+    "avalanche": {
+      "address": "0x55413bF29C5b2c7EE54333fD09382f13Ca081593",
+      "feeds": {
+        "BTC/USDT": "0x2779D32d5166BAaa2B2b658333bA7e6Ec0C65743",
+        "ETH/USDT": "0x976B3D034E162d8bD72D6b9C989d545b839003b0",
+        "AVAX/USDT": "0x0A77230d17318075983913bC2145DB16C7366156"
+      }
     }
   }
 }
