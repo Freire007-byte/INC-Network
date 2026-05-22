@@ -12,7 +12,8 @@
     "deploy:optimism": "npx hardhat run scripts/deploy.js --network optimism",
     "deploy:avalanche": "npx hardhat run scripts/deploy.js --network avalanche",
     "deploy:polygon": "npx hardhat run scripts/deploy.js --network polygon",
-    "verify": "npx hardhat verify --network mainnet"
+    "verify": "npx hardhat verify --network mainnet",
+    "distribute": "node scripts/treasury-distribute.js"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.1.2",
