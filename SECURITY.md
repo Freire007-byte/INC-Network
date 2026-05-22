@@ -371,8 +371,10 @@ npx hardhat test
 |------|----------|---------|
 | Sepolia — INCNetwork v1.5 | `0x98F7C8a59E1A8c3B25d0e99958837A19343248a1` | [sepolia.etherscan.io](https://sepolia.etherscan.io/address/0x98F7C8a59E1A8c3B25d0e99958837A19343248a1) |
 | Sepolia — INCToken v2    | `0x4249152E9c372B3968fEDCE1A05D093456CbFEC8` | [sepolia.etherscan.io](https://sepolia.etherscan.io/address/0x4249152E9c372B3968fEDCE1A05D093456CbFEC8) |
-| Polygon | `0xf49841DF7726691D04D311BC4A0821C0AB9211f5` | [polygonscan.com](https://polygonscan.com/address/0xf49841DF7726691D04D311BC4A0821C0AB9211f5) |
-| Arbitrum | `0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745` | [arbiscan.io](https://arbiscan.io/address/0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745) |
+| Polygon — INCNetwork v1.5 | `0x4078b28e19f826f3e4C24187eaE90b294A6A68cc` | [polygonscan.com](https://polygonscan.com/address/0x4078b28e19f826f3e4C24187eaE90b294A6A68cc#code) |
+| Polygon — INCToken v2    | `0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51` | [polygonscan.com](https://polygonscan.com/address/0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51#code) |
+| Arbitrum — INCNetwork v1.5 | `0xD5DdE529F3B1bB0ab408063E64104709086c9f5B` | [arbiscan.io](https://arbiscan.io/address/0xD5DdE529F3B1bB0ab408063E64104709086c9f5B#code) |
+| Arbitrum — INCToken v2    | `0xEaa8383593972b621Cb4Ed7E049db167e5fCC1C3` | [arbiscan.io](https://arbiscan.io/address/0xEaa8383593972b621Cb4Ed7E049db167e5fCC1C3#code) |
 | Avalanche | `0x55413bF29C5b2c7EE54333fD09382f13Ca081593` | [snowscan.xyz](https://snowscan.xyz/address/0x55413bF29C5b2c7EE54333fD09382f13Ca081593) |
 
 ---
