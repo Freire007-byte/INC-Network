@@ -27,6 +27,11 @@ interface AggregatorV3Interface {
     );
 }
 
+/// @notice Interface mínima do INCToken para desbloquear endereços
+interface IINCToken {
+    function unlockAddress(address user) external;
+}
+
 // Chainlink Automation: execução automática de upkeep
 interface AutomationCompatibleInterface {
     function checkUpkeep(bytes calldata checkData)
@@ -168,6 +173,12 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     mapping(address => uint256) public providerWins;
     mapping(address => uint256) public providerTotalStaked;
 
+    /// @notice Total staked como follower — usado pelo INCToken para verificar participação
+    mapping(address => uint256) public followerTotalStaked;
+
+    /// @notice Endereço do INCToken nesta rede (opcional — se definido, desbloqueia tokens)
+    address public incTokenContract;
+
     /// @notice Feed Chainlink registrado para cada par (ex: keccak256("BTC/USDT"))
     mapping(bytes32 => address) public priceFeedForPair;
 
@@ -198,6 +209,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     event Withdrawn(address indexed user, uint256 amount);
     event FeeCollected(uint256 indexed signalId, uint256 amount, address treasury);
     event PriceFeedSet(string pair, address feed);
+    event IncTokenSet(address indexed token);
     event OracleResolved(uint256 indexed signalId, uint256 price, bool won);
     event EmergencyResolutionProposed(uint256 indexed signalId, bool won, uint256 executeAfter);
     event EmergencyResolved(uint256 indexed signalId, bool won);
@@ -258,6 +270,26 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         require(bytes(pair).length > 0,       "INC: par invalido");
         priceFeedForPair[keccak256(bytes(pair))] = feed;
         emit PriceFeedSet(pair, feed);
+    }
+
+    // ── INC TOKEN INTEGRATION ─────────────────────────────────────────────────
+
+    /**
+     * @notice Define o contrato INCToken para desbloquear endereços ao participar.
+     * @dev    Opcional — se não configurado, o lock de token não é acionado daqui.
+     *         Pode ser chamado após o deploy de INCToken.
+     */
+    function setIncToken(address token) external onlyOwner {
+        require(token != address(0), "INC: zero address");
+        incTokenContract = token;
+        emit IncTokenSet(token);
+    }
+
+    /**
+     * @notice Retorna true se o endereço já participou (criou ou seguiu algum sinal).
+     */
+    function hasParticipated(address user) external view returns (bool) {
+        return providerTotalSignals[user] > 0 || followerTotalStaked[user] > 0;
     }
 
     // ── FUNÇÕES PRINCIPAIS ────────────────────────────────────────────────────
@@ -329,6 +361,11 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         totalFeesCollected += fee;
         totalVolumeETH     += msg.value;
 
+        // Desbloqueia tokens INC se contrato configurado
+        if (incTokenContract != address(0)) {
+            try IINCToken(incTokenContract).unlockAddress(msg.sender) {} catch {}
+        }
+
         // Registra na lista de sinais abertos para o Chainlink Automation
         _openSignalIndex[signalId] = _openSignalIds.length;
         _openSignalIds.push(signalId);
@@ -357,9 +394,15 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         signalFollowers[signalId].push(msg.sender);
         followerCount[signalId]++;
 
-        sig.followersStake += stakeNet;
-        totalVolumeETH     += msg.value;
-        totalFeesCollected += fee;
+        sig.followersStake                  += stakeNet;
+        followerTotalStaked[msg.sender]     += stakeNet;
+        totalVolumeETH                      += msg.value;
+        totalFeesCollected                  += fee;
+
+        // Desbloqueia tokens INC se contrato configurado
+        if (incTokenContract != address(0)) {
+            try IINCToken(incTokenContract).unlockAddress(msg.sender) {} catch {}
+        }
 
         // Pull-payment: treasury retira via withdraw() — evita falha se treasury não aceita ETH
         pendingWithdrawal[incTreasury] += fee;

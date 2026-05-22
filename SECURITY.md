@@ -1,16 +1,19 @@
 # INC Network — Relatório de Segurança
 
-**Versão auditada:** v1.4  
+**Versão auditada:** v1.5 (INCNetwork) + v2.0 (INCToken)  
 **Contratos:** `INCNetwork.sol`, `INCToken.sol`  
-**Suite de testes:** `test/INCNetwork.attack.test.js`  
-**Resultado:** 57 testes de ataque · **57 passando · 0 falhando**  
+**Suites de testes:**  
+- `test/INCNetwork.attack.test.js` — 57 testes de ataque  
+- `test/INCToken.lock.test.js` — 37 testes de Participation Lock  
+
+**Resultado:** 94 testes · **94 passando · 0 falhando**  
 **Data:** 2026-05-22
 
 ---
 
 ## Resumo Executivo
 
-O contrato INCNetwork v1.4 foi submetido a uma bateria de 57 testes de segurança cobrindo os principais vetores de ataque em contratos DeFi/Proof-of-Signal. Nenhuma vulnerabilidade crítica ou alta foi encontrada. O contrato implementa corretamente os padrões CEI (Checks-Effects-Interactions), ReentrancyGuard, Ownable2Step, e pull-payment para todas as transferências de ETH.
+Os contratos INCNetwork v1.5 e INCToken v2.0 foram submetidos a uma bateria de 94 testes cobrindo os principais vetores de ataque em contratos DeFi/Proof-of-Signal, além de todos os cenários do mecanismo Participation Lock. Nenhuma vulnerabilidade crítica ou alta foi encontrada. Os contratos implementam corretamente os padrões CEI, ReentrancyGuard, Ownable2Step, pull-payment e Participation Lock com lazy on-chain unlock.
 
 ---
 
@@ -225,6 +228,74 @@ O contrato INCNetwork v1.4 foi submetido a uma bateria de 57 testes de seguranç
 
 ---
 
+## INCToken v2 — Participation Lock (37 testes)
+
+### LOCK-1 — Lock Ativo por Padrão
+| Teste | Resultado |
+|-------|-----------|
+| `lockEnabled = true` após deploy | ✅ CORRETO |
+| Usuário sem participação não pode transferir | ✅ BLOQUEADO |
+| Endereços whitelisted transferem livremente | ✅ CORRETO |
+
+### LOCK-2 — Unlock via createSignal
+| Teste | Resultado |
+|-------|-----------|
+| Provider desbloqueado ao criar sinal | ✅ CORRETO |
+| Provider pode transferir após unlock | ✅ CORRETO |
+| Evento `AddressUnlocked` emitido | ✅ CORRETO |
+
+### LOCK-3 — Unlock via followSignal
+| Teste | Resultado |
+|-------|-----------|
+| Follower desbloqueado ao seguir sinal | ✅ CORRETO |
+| Follower pode transferir após unlock | ✅ CORRETO |
+| `followerTotalStaked` incrementado corretamente | ✅ CORRETO |
+
+### LOCK-4 — selfUnlock
+| Teste | Resultado |
+|-------|-----------|
+| `selfUnlock` funciona para participante comprovado on-chain | ✅ CORRETO |
+| `selfUnlock` reverte para não-participante | ✅ BLOQUEADO |
+
+### LOCK-5 — canTransfer (view)
+| Teste | Resultado |
+|-------|-----------|
+| Retorna `true` para whitelisted | ✅ CORRETO |
+| Retorna `true` para unlocked | ✅ CORRETO |
+| Retorna `false` para endereço não participante | ✅ CORRETO |
+| Retorna `true` quando lock desabilitado | ✅ CORRETO |
+
+### LOCK-6 — Admin setLockEnabled
+| Teste | Resultado |
+|-------|-----------|
+| Owner desativa e reativa lock | ✅ CORRETO |
+| Com lock OFF, qualquer endereço transfere | ✅ CORRETO |
+| Não-owner não pode alterar | ✅ BLOQUEADO |
+
+### LOCK-7 — Whitelist
+| Teste | Resultado |
+|-------|-----------|
+| Owner adiciona e remove da whitelist | ✅ CORRETO |
+| `batchWhitelist` funciona para múltiplos endereços | ✅ CORRETO |
+| Não-owner não pode alterar | ✅ BLOQUEADO |
+
+### LOCK-8 — unlockAddress controle de acesso
+| Teste | Resultado |
+|-------|-----------|
+| Owner pode desbloquear manualmente | ✅ CORRETO |
+| INCNetwork pode desbloquear endereços | ✅ CORRETO |
+| Terceiro não pode chamar `unlockAddress` | ✅ BLOQUEADO |
+| `unlockAddress(address(0))` rejeitado | ✅ BLOQUEADO |
+
+### LOCK-9 — hasParticipated (INCNetwork)
+| Teste | Resultado |
+|-------|-----------|
+| Retorna `true` para provider | ✅ CORRETO |
+| Retorna `true` para follower | ✅ CORRETO |
+| Retorna `false` sem participação | ✅ CORRETO |
+
+---
+
 ## Achados por Severidade
 
 ### CRÍTICO — Nenhum
@@ -265,6 +336,8 @@ O contrato INCNetwork v1.4 foi submetido a uma bateria de 57 testes de seguranç
 | **Imutabilidade da treasury** | `address public immutable incTreasury` — não pode ser alterado pós-deploy |
 | **Validação de entryPrice** | Tolerância de ±2% em relação ao preço oracle atual |
 | **Anti-WIN instantâneo** | TP deve estar além do preço atual no momento de criação |
+| **Participation Lock** | Tokens bloqueados até o endereço criar ou seguir pelo menos 1 sinal (lazy on-chain unlock) |
+| **Lazy Auto-Unlock** | `_update` verifica `IINCNetwork` on-chain e registra `isUnlocked` sem exigir tx prévia |
 
 ---
 
@@ -274,16 +347,19 @@ O contrato INCNetwork v1.4 foi submetido a uma bateria de 57 testes de seguranç
 # Instalar dependências
 npm install
 
-# Rodar apenas os testes de segurança
+# Testes de ataque (INCNetwork)
 npx hardhat test test/INCNetwork.attack.test.js
 
-# Rodar toda a suite
+# Testes de Participation Lock (INCToken)
+npx hardhat test test/INCToken.lock.test.js
+
+# Toda a suite
 npx hardhat test
 ```
 
 **Resultado esperado:**
 ```
-57 passing
+94 passing
 0 failing
 ```
 
