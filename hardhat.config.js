@@ -25,24 +25,38 @@ module.exports = {
     sepolia:   { url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.eth.gateway.fm", chainId: 11155111, accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
   },
   etherscan: {
-    apiKey: {
-      mainnet:            process.env.ETHERSCAN_KEY   || "",
-      sepolia:            process.env.ETHERSCAN_KEY   || "",
-      arbitrumOne:        process.env.ARBISCAN_KEY    || "",
-      arbitrum:           process.env.ARBISCAN_KEY    || "",
-      polygon:            process.env.POLYGONSCAN_KEY || "",
-      bsc:                process.env.BSCSCAN_KEY     || "",
-      bnb:                process.env.BSCSCAN_KEY     || "",
-      optimisticEthereum: process.env.OPTIMISM_KEY    || "",
-      optimism:           process.env.OPTIMISM_KEY    || "",
-      avalanche:          process.env.SNOWSCAN_KEY    || "",
-    },
+    // Etherscan v2 — uma única chave universal
+    apiKey: process.env.ETHERSCAN_KEY || "",
     customChains: [
+      {
+        network: "sepolia",
+        chainId: 11155111,
+        urls: {
+          apiURL:     "https://api.etherscan.io/v2/api?chainid=11155111",
+          browserURL: "https://sepolia.etherscan.io",
+        },
+      },
+      {
+        network: "mainnet",
+        chainId: 1,
+        urls: {
+          apiURL:     "https://api.etherscan.io/v2/api?chainid=1",
+          browserURL: "https://etherscan.io",
+        },
+      },
+      {
+        network: "polygon",
+        chainId: 137,
+        urls: {
+          apiURL:     "https://api.etherscan.io/v2/api?chainid=137",
+          browserURL: "https://polygonscan.com",
+        },
+      },
       {
         network: "arbitrum",
         chainId: 42161,
         urls: {
-          apiURL: "https://api.arbiscan.io/api",
+          apiURL:     "https://api.etherscan.io/v2/api?chainid=42161",
           browserURL: "https://arbiscan.io",
         },
       },
@@ -50,7 +64,7 @@ module.exports = {
         network: "bnb",
         chainId: 56,
         urls: {
-          apiURL: "https://api.bscscan.com/api",
+          apiURL:     "https://api.etherscan.io/v2/api?chainid=56",
           browserURL: "https://bscscan.com",
         },
       },
@@ -58,31 +72,15 @@ module.exports = {
         network: "optimism",
         chainId: 10,
         urls: {
-          apiURL: "https://api-optimistic.etherscan.io/api",
+          apiURL:     "https://api.etherscan.io/v2/api?chainid=10",
           browserURL: "https://optimistic.etherscan.io",
-        },
-      },
-      {
-        network: "sepolia",
-        chainId: 11155111,
-        urls: {
-          apiURL: "https://api.etherscan.io/v2/api?chainid=11155111",
-          browserURL: "https://sepolia.etherscan.io",
-        },
-      },
-      {
-        network: "polygon",
-        chainId: 137,
-        urls: {
-          apiURL: "https://api.polygonscan.com/api",
-          browserURL: "https://polygonscan.com",
         },
       },
       {
         network: "avalanche",
         chainId: 43114,
         urls: {
-          apiURL: "https://api.snowscan.xyz/api",
+          apiURL:     "https://api.snowscan.xyz/api",
           browserURL: "https://snowscan.xyz",
         },
       },
