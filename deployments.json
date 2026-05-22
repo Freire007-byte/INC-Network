@@ -16,5 +16,12 @@
         "ETH/USDT": "0x694AA1769357215DE4FAC081bf1f309aDC325306"
       }
     }
+  },
+  "arbitrum": {
+    "address": "0x55413bF29C5b2c7EE54333fD09382f13Ca081593",
+    "feeds": {
+      "BTC/USDT": "0x6CE185539ad4fdabDfDa9d6e7f0cBE8E1438Ef6D",
+      "ETH/USDT": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612"
+    }
   }
 }

@@ -11,7 +11,7 @@ const FEEDS = {
     "BNB/USDT": "0x14e613AC84a31f709eadbEF2dD6360A0f0FC3Af6",
   },
   arbitrum: {
-    "BTC/USDT": "0x6ce185539ad4fdaBDFDa9d6e7f0cbE8E1438eF6D",
+    "BTC/USDT": "0x6CE185539ad4fdabDfDa9d6e7f0cBE8E1438Ef6D",
     "ETH/USDT": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
   },
   bnb: {
