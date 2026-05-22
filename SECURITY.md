@@ -369,7 +369,8 @@ npx hardhat test
 
 | Rede | Endereço | Explorer |
 |------|----------|---------|
-| Sepolia (testnet) | `0x99ABa0D947367ABC96dDc612C6e407954aC46836` | [sepolia.etherscan.io](https://sepolia.etherscan.io/address/0x99ABa0D947367ABC96dDc612C6e407954aC46836) |
+| Sepolia — INCNetwork v1.5 | `0x98F7C8a59E1A8c3B25d0e99958837A19343248a1` | [sepolia.etherscan.io](https://sepolia.etherscan.io/address/0x98F7C8a59E1A8c3B25d0e99958837A19343248a1) |
+| Sepolia — INCToken v2    | `0x4249152E9c372B3968fEDCE1A05D093456CbFEC8` | [sepolia.etherscan.io](https://sepolia.etherscan.io/address/0x4249152E9c372B3968fEDCE1A05D093456CbFEC8) |
 | Polygon | `0xf49841DF7726691D04D311BC4A0821C0AB9211f5` | [polygonscan.com](https://polygonscan.com/address/0xf49841DF7726691D04D311BC4A0821C0AB9211f5) |
 | Arbitrum | `0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745` | [arbiscan.io](https://arbiscan.io/address/0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745) |
 | Avalanche | `0x55413bF29C5b2c7EE54333fD09382f13Ca081593` | [snowscan.xyz](https://snowscan.xyz/address/0x55413bF29C5b2c7EE54333fD09382f13Ca081593) |
