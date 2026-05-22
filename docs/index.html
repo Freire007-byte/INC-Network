@@ -4846,12 +4846,12 @@ async function fetchCryptoCompare() {
   };
 }
 
-// Preços estáticos de fallback — aparecem imediatamente
+// Preços estáticos de fallback — aparecem imediatamente (atualizados maio/2025)
 const ORACLE_FALLBACK = {
-  BTC: { price: 77700, change24h: 0 },
-  ETH: { price: 2134,  change24h: 0 },
-  SOL: { price: 87.5,  change24h: 0 },
-  BNB: { price: 656,   change24h: 0 },
+  BTC: { price: 103000, change24h: 0 },
+  ETH: { price: 2450,   change24h: 0 },
+  SOL: { price: 170,    change24h: 0 },
+  BNB: { price: 645,    change24h: 0 },
 };
 (function seedOracleFallback() {
   for (const sym of ORACLE_SYMS) {
@@ -4991,7 +4991,60 @@ function renderOracleUI() {
 
 async function initLiveOracle() {
   await fetchAndUpdateOracle();
-  setInterval(fetchAndUpdateOracle, 3000);
+  setInterval(fetchAndUpdateOracle, 15000); // REST como fallback a cada 15s
+  initPriceWebSocket();                     // WebSocket como fonte principal
+}
+
+// ── WebSocket Binance — preços em tempo real sem CORS ──
+var _priceWS = null;
+var _lastBubbleRender = 0;
+
+function initPriceWebSocket() {
+  var streams = 'btcusdt@miniTicker/ethusdt@miniTicker/solusdt@miniTicker/bnbusdt@miniTicker';
+  function connect() {
+    try { _priceWS = new WebSocket('wss://stream.binance.com:9443/stream?streams=' + streams); }
+    catch(e) { return; }
+    _priceWS.onmessage = function(ev) {
+      try {
+        var msg = JSON.parse(ev.data);
+        var t = msg.data; if (!t || !t.s) return;
+        var sym = t.s.replace('USDT','');
+        if (ORACLE_SYMS.indexOf(sym) === -1) return;
+        var price = parseFloat(t.c);
+        var open  = parseFloat(t.o);
+        var prev  = (oraclePrices[sym] && oraclePrices[sym].price) ? oraclePrices[sym].price : price;
+        oraclePrices[sym] = { price: price, prev: prev, change24h: ((price-open)/open*100), ts: Date.now() };
+        priceHistory[sym].push(price);
+        if (priceHistory[sym].length > SPARK_MAX) priceHistory[sym].shift();
+        try { renderOracleUI(); } catch(e) {}
+        // Atualiza PnL das baleias (máx 1x por segundo para não sobrecarregar DOM)
+        var now = Date.now();
+        if (hlWhales.length > 0 && now - _lastBubbleRender > 1000) {
+          _lastBubbleRender = now;
+          hlWhales.forEach(function(w) {
+            var totUsd = 0, totPnl = 0;
+            w.positions.forEach(function(p) {
+              var cur = (oraclePrices[p.coin] && oraclePrices[p.coin].price) ? oraclePrices[p.coin].price : p.entryPx;
+              p.usdVal = Math.round(Math.abs(p.szi) * cur);
+              p.pnl    = Math.round((cur - p.entryPx) * (p.isLong ? 1 : -1) * Math.abs(p.szi));
+              p.pnlPct = parseFloat(((cur - p.entryPx) / p.entryPx * 100 * (p.isLong ? 1 : -1)).toFixed(2));
+              totUsd  += p.usdVal; totPnl += p.pnl;
+            });
+            w.totalUsd = totUsd; w.totalPnl = totPnl;
+          });
+          hlWhales.sort(function(a,b){ return b.totalUsd - a.totalUsd; });
+          try { hlRenderBubbles();   } catch(e) {}
+          try { hlRenderCoinPanel(); } catch(e) {}
+          try { hlRenderPosList();   } catch(e) {}
+          var upEl = document.getElementById('hl-last-update');
+          if (upEl) upEl.textContent = 'Ao vivo · ' + new Date().toLocaleTimeString('pt-BR');
+        }
+      } catch(e) {}
+    };
+    _priceWS.onclose = function() { setTimeout(connect, 4000); };
+    _priceWS.onerror = function() { try { _priceWS.close(); } catch(e) {} };
+  }
+  connect();
 }
 
 // ── GLITCH LOGO ──
@@ -5834,6 +5887,8 @@ function hlGenerateSeedWhales() {
     '0xADbe1d7B3d033e37d37946E1B55E47e36Bb7aC2C','0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
     '0x93054188d876f558f4a66B2EF1d97d16eDf0895B','0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb',
   ];
+  // Garante distribuição: cada carteira tem pelo menos 1 moeda principal
+  var MAJOR = ['BTC','ETH','SOL','BNB'];
   var out = [];
   for (var i = 0; i < 50; i++) {
     var isLong = dr(i,0) > 0.35;
@@ -5842,8 +5897,10 @@ function hlGenerateSeedWhales() {
     var addr = ADDRS[i] || ('0x' + (i+100).toString(16).padStart(40,'f'));
     var positions = [];
     var rem = total;
+    // Primeira posição sempre em moeda principal (rotação garantida)
+    var mainCoin = MAJOR[i % MAJOR.length];
     for (var j = 0; j < n; j++) {
-      var coin = COINS[Math.floor(dr(i, j+10) * COINS.length)];
+      var coin = j === 0 ? mainCoin : COINS[Math.floor(dr(i, j+10) * COINS.length)];
       var usd = j === n-1 ? Math.max(rem, 5000) : Math.round(rem * (0.3 + dr(i, j+20) * 0.5));
       rem = Math.max(0, rem - usd);
       var p = PX[coin] || 1;
