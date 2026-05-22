@@ -4,6 +4,7 @@
     "owner":    "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679",
     "polygon": {
       "address": "0xf49841DF7726691D04D311BC4A0821C0AB9211f5",
+      "chainlink_automation": null,
       "feeds": {
         "BTC/USDT": "0xc907E116054Ad103354f2D350FD2514433D57F6f",
         "ETH/USDT": "0xF9680D99D6C9589e2a93a78A04A279e509205945",
@@ -13,6 +14,8 @@
     },
     "sepolia": {
       "address": "0x99ABa0D947367ABC96dDc612C6e407954aC46836",
+      "chainlink_automation": "20075292387348116169849282218967473926732952719393284027873651927317891963598",
+      "automation_tx": "0xf8e44675739a8c50c991e1fbfe40a9917d602a001b1edc6af94f16b51f14bc73",
       "feeds": {
         "BTC/USDT": "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
         "ETH/USDT": "0x694AA1769357215DE4FAC081bf1f309aDC325306"
@@ -20,6 +23,7 @@
     },
     "arbitrum": {
       "address": "0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745",
+      "chainlink_automation": null,
       "feeds": {
         "BTC/USDT": "0x6CE185539ad4fdabDfDa9d6e7f0cBE8E1438Ef6D",
         "ETH/USDT": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612"
@@ -27,6 +31,7 @@
     },
     "avalanche": {
       "address": "0x55413bF29C5b2c7EE54333fD09382f13Ca081593",
+      "chainlink_automation": null,
       "feeds": {
         "BTC/USDT": "0x2779D32d5166BAaa2B2b658333bA7e6Ec0C65743",
         "ETH/USDT": "0x976B3D034E162d8bD72D6b9C989d545b839003b0",

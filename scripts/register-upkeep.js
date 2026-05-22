@@ -6,31 +6,25 @@ const NETWORK_CONFIG = {
     linkToken:   "0x779877A7B0D9E8603169DdbD7836e478b4624789",
     registrar:   "0xb0E49c5D0d05cbc241d68c05BC5BA1d1B7B72976",
     dashboard:   "https://automation.chain.link/sepolia",
-    incContract: "0x3aF7127ca9Fa313D4AB7FAcdf7062F0FA5574993",
-  },
-  ethereum: {
-    linkToken:   "0x514910771AF9Ca656af840dff83E8264EcF986CA",
-    registrar:   "0x6B0B234fB2f380309D47A7E9391E29E9a179395a",
-    dashboard:   "https://automation.chain.link/mainnet",
-    incContract: "0xAD4Fbde4810f3919F169c827A582aed34330ADA0",
+    incContract: process.env.INC_CONTRACT_SEPOLIA || "0x99ABa0D947367ABC96dDc612C6e407954aC46836",
   },
   polygon: {
     linkToken:   "0xb0897686c545045aFc77CF20eC7A532E3120E0F1",
     registrar:   "0x9a811502d843E5a03913d5A2cfb646c11463467A",
     dashboard:   "https://automation.chain.link/polygon",
-    incContract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+    incContract: process.env.INC_CONTRACT_POLYGON  || "0xf49841DF7726691D04D311BC4A0821C0AB9211f5",
   },
   arbitrum: {
     linkToken:   "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
     registrar:   "0x37D9dC70bfcd8BC77Ec2858836B923c560E891D1",
     dashboard:   "https://automation.chain.link/arbitrum",
-    incContract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+    incContract: process.env.INC_CONTRACT_ARBITRUM || "0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745",
   },
   avalanche: {
     linkToken:   "0x5947BB275c521040051D82396192181b413227A3",
     registrar:   "0x9778f3ea234B2D3B1E5F66beB99B4AaDE00D3d48",
     dashboard:   "https://automation.chain.link/avalanche",
-    incContract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+    incContract: process.env.INC_CONTRACT_AVALANCHE || "0x55413bF29C5b2c7EE54333fD09382f13Ca081593",
   },
   bnb: {
     linkToken:   "0x404460C6A5EdE2D891e8297795264fDe62ADBB75",
@@ -80,7 +74,7 @@ async function main() {
   const config = NETWORK_CONFIG[net];
 
   if (!config) throw new Error(`Rede "${net}" não configurada em NETWORK_CONFIG.`);
-  if (!config.incContract) throw new Error(`INC_CONTRACT_POLYGON não definido no .env`);
+  if (!config.incContract) throw new Error(`Contrato INC não definido para a rede "${net}". Faça o deploy primeiro.`);
 
   const LINK_AMOUNT = ethers.parseEther("5");
   const [deployer] = await ethers.getSigners();
