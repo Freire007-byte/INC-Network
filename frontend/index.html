@@ -3468,24 +3468,17 @@ if (typeof ethers === "undefined") {
 // CONFIGURAÇÃO MULTI-REDE
 // ══════════════════════════════════════════════
 const NETWORKS = {
-  1: {
-    name:     "Ethereum",
-    currency: "ETH",
-    contract: "0xAD4Fbde4810f3919F169c827A582aed34330ADA0",
-    token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
-    testnet:  false,
-  },
   11155111: {
     name:     "Sepolia",
     currency: "ETH",
-    contract: "0x3aF7127ca9Fa313D4AB7FAcdf7062F0FA5574993",
+    contract: "0x99ABa0D947367ABC96dDc612C6e407954aC46836",
     token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
     testnet:  true,
   },
   137: {
     name:     "Polygon",
     currency: "MATIC",
-    contract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+    contract: "0xf49841DF7726691D04D311BC4A0821C0AB9211f5",
     token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
     pool:     "0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1",
     testnet:  false,
@@ -3493,17 +3486,17 @@ const NETWORKS = {
   42161: {
     name:     "Arbitrum",
     currency: "ETH",
-    contract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
+    contract: "0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745",
     token:    "0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
     pool:     "0x8770e3B0aE902092dE06F821ff59b48F961F098D",
     testnet:  false,
   },
-  10: {
-    name:     "Optimism",
-    currency: "ETH",
-    contract: "",
-    token:    "",
-    pool:     "",
+  43114: {
+    name:     "Avalanche",
+    currency: "AVAX",
+    contract: "0x55413bF29C5b2c7EE54333fD09382f13Ca081593",
+    token:    "0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
+    pool:     "0xa04A83aD438866788f54b67e6e9BB96E569C3061",
     testnet:  false,
   },
   56: {
@@ -3514,19 +3507,12 @@ const NETWORKS = {
     pool:     "",
     testnet:  false,
   },
-  43114: {
-    name:     "Avalanche",
-    currency: "AVAX",
-    contract: "0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC",
-    token:    "0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
-    pool:     "0xa04A83aD438866788f54b67e6e9BB96E569C3061",
-    testnet:  false,
-  },
-  30: {
-    name:     "Rootstock",
-    currency: "RBTC",
+  10: {
+    name:     "Optimism",
+    currency: "ETH",
     contract: "",
     token:    "",
+    pool:     "",
     testnet:  false,
   },
 };
@@ -3537,6 +3523,8 @@ const TOKEN_EXPLORER = {
   137:      "https://polygonscan.com/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
   42161:    "https://arbiscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7",
   43114:    "https://snowscan.xyz/token/0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B",
+  56:       "https://bscscan.com/token/",   // preencher após deploy BNB
+  10:       "https://optimistic.etherscan.io/token/", // preencher após deploy OP
 };
 
 // Uniswap V3 pool links
@@ -3832,9 +3820,9 @@ async function doConnect(rawProvider) {
     currentNetwork = NETWORKS[net.chainId];
 
     if (!currentNetwork)
-      return showToast(`Rede não suportada (Chain ID: ${net.chainId}). Conecte em Ethereum, Polygon, Arbitrum, Avalanche ou Sepolia.`, "error");
+      return showToast(`Rede não suportada (Chain ID: ${net.chainId}). Conecte em Polygon, Arbitrum, Avalanche ou Sepolia.`, "error");
     if (!currentNetwork.contract)
-      return showToast(`🚧 Deploy na ${currentNetwork.name} em breve. Tente Polygon, Arbitrum ou Ethereum.`, "error");
+      return showToast(`🚧 Deploy na ${currentNetwork.name} em breve. Use Polygon, Arbitrum ou Avalanche.`, "error");
 
     provider    = web3Provider;
     signer      = web3Provider.getSigner();
