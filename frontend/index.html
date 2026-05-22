@@ -1131,7 +1131,141 @@
       .sort-bar { flex-wrap: wrap; }
       .balance-card { padding: 20px; }
       .bc-amount { font-size: 38px; }
+      .claim-stats-row { grid-template-columns: 1fr; }
+      .claim-earn-grid { grid-template-columns: 1fr 1fr; }
     }
+
+    /* ══ RESGATAR $INC ══ */
+    .claim-wrap { max-width: 640px; display: flex; flex-direction: column; gap: 18px; }
+
+    .claim-hero {
+      background: linear-gradient(135deg, #0d0e1f 0%, #111428 60%, #0a0c1a 100%);
+      border: 1px solid #7c6dff30; border-radius: 20px; padding: 28px 26px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      position: relative; overflow: hidden;
+    }
+    .claim-hero::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--cyan), var(--green));
+    }
+    .claim-hero::after {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, #7c6dff1a 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .claim-hero-left { display: flex; align-items: center; gap: 14px; }
+    .claim-hero-icon {
+      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+      background: linear-gradient(135deg, #7c6dff22, #00e5ff11);
+      border: 1px solid #7c6dff40;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: var(--primary);
+    }
+    .claim-hero-title { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; }
+    .claim-hero-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .claim-hero-right { text-align: right; flex-shrink: 0; }
+    .claim-inc-big {
+      font-size: 28px; font-weight: 800; letter-spacing: -0.5px;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .claim-inc-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 1px; }
+
+    .claim-stats-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    }
+    .claim-stat {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px 14px; text-align: center; position: relative; overflow: hidden;
+      transition: border-color .2s;
+    }
+    .claim-stat:hover { border-color: #7c6dff40; }
+    .claim-stat-val {
+      font-size: 18px; font-weight: 800; color: var(--text);
+      font-family: 'JetBrains Mono', monospace; margin-bottom: 4px;
+    }
+    .claim-stat-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+    .claim-stat-action {
+      margin-top: 10px; padding: 5px 14px; border-radius: 8px; font-size: 11px;
+      font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(135deg, var(--primary), #5a4ee0);
+      color: #fff; transition: opacity .2s; letter-spacing: 0.5px;
+    }
+    .claim-stat-action:hover { opacity: 0.85; }
+    .claim-stat-action:disabled { opacity: 0.4; cursor: default; }
+
+    .claim-section {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px 18px;
+    }
+    .claim-section-title {
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .claim-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .claim-reward-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 12px;
+      background: #ffffff04; border: 1px solid var(--border);
+      margin-bottom: 8px; transition: border-color .2s;
+    }
+    .claim-reward-item:last-child { margin-bottom: 0; }
+    .claim-reward-item:hover { border-color: #00ffaa30; }
+    .claim-reward-ico {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .claim-reward-ico.loss  { background: #00ffaa12; border: 1px solid #00ffaa25; }
+    .claim-reward-ico.exp   { background: #ffcc0012; border: 1px solid #ffcc0025; }
+    .claim-reward-body { flex: 1; min-width: 0; }
+    .claim-reward-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .claim-reward-meta  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .claim-reward-amount {
+      font-size: 14px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      color: var(--green); flex-shrink: 0;
+    }
+    .claim-reward-btn {
+      padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700;
+      border: 1px solid #00ffaa40; color: var(--green); background: #00ffaa10;
+      cursor: pointer; font-family: 'Space Grotesk', sans-serif; transition: all .2s; flex-shrink: 0;
+    }
+    .claim-reward-btn:hover { background: #00ffaa20; border-color: #00ffaa60; }
+    .claim-empty-rewards {
+      text-align: center; padding: 24px 0; color: var(--muted); font-size: 13px;
+    }
+    .claim-empty-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 6px; opacity: .4; }
+
+    .claim-earn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .claim-earn-card {
+      background: #ffffff03; border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 14px; transition: border-color .2s;
+    }
+    .claim-earn-card:hover { border-color: #7c6dff30; }
+    .claim-earn-icon { font-size: 20px; margin-bottom: 8px; }
+    .claim-earn-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .claim-earn-desc  { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .claim-earn-reward { font-size: 11px; color: var(--green); margin-top: 6px; font-weight: 600; }
+
+    .claim-dex-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .claim-dex-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700;
+      border: 1px solid #7c6dff40; color: var(--primary); background: #7c6dff0d;
+      cursor: pointer; text-decoration: none; font-family: 'Space Grotesk', sans-serif;
+      transition: all .2s;
+    }
+    .claim-dex-btn:hover { background: #7c6dff1a; border-color: #7c6dff70; color: #fff; }
+    .claim-dex-btn svg { opacity: .7; }
+
+    .claim-no-wallet {
+      text-align: center; padding: 48px 20px; color: var(--muted);
+    }
+    .claim-no-wallet-icon { font-size: 48px; margin-bottom: 14px; opacity: .4; }
+    .claim-no-wallet-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .claim-no-wallet-sub { font-size: 13px; line-height: 1.6; }
 
     /* ══ WHALE FLOW SECTION ══ */
     #whale-flow-section {
@@ -2786,6 +2920,7 @@
     <button class="tab" onclick="switchTab('criar')">Criar Sinal</button>
     <button class="tab" onclick="switchTab('posicoes')">Minhas Posições</button>
     <button class="tab" onclick="switchTab('sacar')">Sacar</button>
+    <button class="tab" onclick="switchTab('resgatar')" style="color:var(--primary)">◈ Resgatar $INC</button>
   </div>
 
   <!-- SINAIS -->
@@ -3016,6 +3151,116 @@
   <div id="tab-posicoes" class="section">
     <div id="positions-list">
       <div class="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- RESGATAR $INC -->
+  <div id="tab-resgatar" class="section">
+    <div class="claim-wrap" id="claim-main-wrap">
+
+      <!-- No wallet state -->
+      <div id="claim-no-wallet" style="display:none">
+        <div class="claim-no-wallet">
+          <div class="claim-no-wallet-icon">◈</div>
+          <div class="claim-no-wallet-title">Conecte sua carteira</div>
+          <div class="claim-no-wallet-sub">Conecte sua carteira para ver<br>seus saldos e recompensas $INC.</div>
+          <button class="btn btn-primary" style="margin-top:20px" onclick="showWalletModal()">Conectar Carteira</button>
+        </div>
+      </div>
+
+      <!-- Connected state -->
+      <div id="claim-connected" style="display:none">
+
+        <!-- Hero Banner -->
+        <div class="claim-hero">
+          <div class="claim-hero-left">
+            <div class="claim-hero-icon">◈</div>
+            <div>
+              <div class="claim-hero-title">Resgatar $INC</div>
+              <div class="claim-hero-sub" id="claim-addr-display">—</div>
+            </div>
+          </div>
+          <div class="claim-hero-right">
+            <div class="claim-inc-big" id="claim-inc-balance">—</div>
+            <div class="claim-inc-lbl">$INC NA CARTEIRA</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px" id="claim-inc-usd">≈ $—</div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="claim-stats-row">
+          <div class="claim-stat">
+            <div class="claim-stat-val" id="claim-eth-pending">—</div>
+            <div class="claim-stat-lbl">ETH Disponível</div>
+            <button class="claim-stat-action" id="claim-sacar-btn" onclick="claimDoWithdraw()" disabled>SACAR</button>
+          </div>
+          <div class="claim-stat">
+            <div class="claim-stat-val" id="claim-signals-count">—</div>
+            <div class="claim-stat-lbl">Sinais Criados</div>
+          </div>
+          <div class="claim-stat">
+            <div class="claim-stat-val" id="claim-winrate">—%</div>
+            <div class="claim-stat-lbl">Taxa de Acerto</div>
+          </div>
+        </div>
+
+        <!-- Pending Rewards -->
+        <div class="claim-section">
+          <div class="claim-section-title">Recompensas Disponíveis</div>
+          <div id="claim-rewards-list">
+            <div class="claim-empty-rewards">
+              <span class="loading"><div class="spinner" style="width:20px;height:20px;margin:0 auto 8px"></div></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- How to earn -->
+        <div class="claim-section">
+          <div class="claim-section-title">Como Ganhar $INC</div>
+          <div class="claim-earn-grid">
+            <div class="claim-earn-card">
+              <div class="claim-earn-icon">🎯</div>
+              <div class="claim-earn-title">Criar Sinais WIN</div>
+              <div class="claim-earn-desc">Crie sinais e ganhe todo o pool quando o TP for atingido.</div>
+              <div class="claim-earn-reward">▲ Provider stake + followers stake</div>
+            </div>
+            <div class="claim-earn-card">
+              <div class="claim-earn-icon">🔄</div>
+              <div class="claim-earn-title">Seguir & Vencer</div>
+              <div class="claim-earn-desc">Siga sinais de providers qualificados e ganhe proporcional ao seu stake.</div>
+              <div class="claim-earn-reward">▲ Stake × (pool / followers total)</div>
+            </div>
+            <div class="claim-earn-card">
+              <div class="claim-earn-icon">💧</div>
+              <div class="claim-earn-title">Prover Liquidez</div>
+              <div class="claim-earn-desc">Adicione $INC/ETH nos pools Uniswap e Trader Joe para ganhar fees.</div>
+              <div class="claim-earn-reward">▲ APY variável por rede</div>
+            </div>
+            <div class="claim-earn-card">
+              <div class="claim-earn-icon">🛒</div>
+              <div class="claim-earn-title">Comprar na DEX</div>
+              <div class="claim-earn-desc">Adquira $INC diretamente nas exchanges descentralizadas.</div>
+              <div class="claim-dex-row" id="claim-dex-buttons">
+                <a class="claim-dex-btn" id="claim-dex-uniswap" href="#" target="_blank" rel="noopener">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                  Uniswap ↗
+                </a>
+                <a class="claim-dex-btn" id="claim-dex-joe" href="https://traderjoexyz.com/avalanche/trade" target="_blank" rel="noopener" style="display:none">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                  Trader Joe ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Network info -->
+        <div style="text-align:center;font-size:11px;color:var(--muted);padding-bottom:8px">
+          Conectado em <span id="claim-chain-name" style="color:var(--cyan)">—</span>
+          · Contrato <span id="claim-contract-addr" style="font-family:'JetBrains Mono',monospace;font-size:10px">—</span>
+        </div>
+
+      </div><!-- /claim-connected -->
     </div>
   </div>
 
@@ -3728,7 +3973,7 @@ async function initReadOnlyContract() {
 
 function switchTab(name) {
   document.querySelectorAll(".tab").forEach((t,i) => {
-    const names = ["sinais","criar","posicoes","sacar"];
+    const names = ["sinais","criar","posicoes","sacar","resgatar"];
     t.classList.toggle("active", names[i] === name);
   });
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
@@ -3738,6 +3983,7 @@ function switchTab(name) {
   if (name === "criar")    updateFormOracle();
   if (name === "posicoes") loadPositions();
   if (name === "sacar")    loadWithdrawal();
+  if (name === "resgatar") loadClaim();
 }
 
 // ══════════════════════════════════════════════
@@ -4624,6 +4870,200 @@ async function withdraw() {
     showToast(e.reason||e.message||"Erro ao sacar", "error");
   } finally {
     if (btn) btn.classList.remove("loading");
+  }
+}
+
+// ══════════════════════════════════════════════
+// RESGATAR $INC — claim tab
+// ══════════════════════════════════════════════
+const ERC20_ABI = ["function balanceOf(address) view returns (uint256)"];
+
+async function loadClaim() {
+  const noWallet  = document.getElementById("claim-no-wallet");
+  const connected = document.getElementById("claim-connected");
+  if (!noWallet || !connected) return;
+
+  if (!contract || !userAddress) {
+    noWallet.style.display  = "block";
+    connected.style.display = "none";
+    return;
+  }
+  noWallet.style.display  = "none";
+  connected.style.display = "block";
+
+  // Address display
+  const addrEl = document.getElementById("claim-addr-display");
+  if (addrEl) addrEl.textContent = userAddress.slice(0,8) + "…" + userAddress.slice(-6);
+
+  // Chain name
+  const chainEl = document.getElementById("claim-chain-name");
+  const ctEl    = document.getElementById("claim-contract-addr");
+  if (chainEl) chainEl.textContent = currentNetwork?.name || "—";
+  if (ctEl)    ctEl.textContent    = (await contract.getAddress?.()  || contract.address || "—").slice(0,14) + "…";
+
+  // ─── 1. ETH pending withdrawal ───────────────
+  try {
+    const pending = await contract.pendingWithdrawal(userAddress);
+    const fmtPend = parseFloat(ethers.utils.formatEther(pending)).toFixed(4);
+    const curr    = currentNetwork?.currency ?? "ETH";
+    const pendEl  = document.getElementById("claim-eth-pending");
+    if (pendEl) pendEl.textContent = fmtPend + " " + curr;
+    const sacBtn  = document.getElementById("claim-sacar-btn");
+    if (sacBtn) sacBtn.disabled = pending.isZero();
+  } catch {}
+
+  // ─── 2. $INC token balance ────────────────────
+  try {
+    const netCfg  = NETWORKS[currentChainId];
+    const incBalEl = document.getElementById("claim-inc-balance");
+    const incUsdEl = document.getElementById("claim-inc-usd");
+    if (netCfg?.token && incBalEl) {
+      const tok    = new ethers.Contract(netCfg.token, ERC20_ABI, provider);
+      const rawBal = await tok.balanceOf(userAddress);
+      const num    = parseFloat(ethers.utils.formatEther(rawBal));
+      incBalEl.textContent = num.toLocaleString("pt-BR", {maximumFractionDigits:2}) + " $INC";
+      // Estimate USD using $INC price from oracle (or default 0.01)
+      const incPriceUSD = parseFloat(document.getElementById("psb-price")?.textContent?.replace("$","") || "0.01");
+      if (incUsdEl) incUsdEl.textContent = "≈ $" + (num * incPriceUSD).toFixed(2);
+    } else if (incBalEl) {
+      incBalEl.textContent = "— $INC";
+    }
+  } catch {}
+
+  // ─── 3. Provider stats ────────────────────────
+  try {
+    const totalSigs = await contract.providerTotalSignals(userAddress);
+    const wins      = await contract.providerWins(userAddress);
+    const sigCountEl = document.getElementById("claim-signals-count");
+    const wrEl       = document.getElementById("claim-winrate");
+    if (sigCountEl) sigCountEl.textContent = totalSigs.toString();
+    if (wrEl) {
+      if (totalSigs.gt(0)) {
+        const wr = Math.round(wins.mul(100).div(totalSigs).toNumber());
+        wrEl.textContent = wr + "%";
+        wrEl.style.color = wr >= 60 ? "var(--green)" : wr >= 40 ? "var(--yellow)" : "var(--red)";
+      } else {
+        wrEl.textContent = "—%";
+      }
+    }
+  } catch {}
+
+  // ─── 4. DEX buttons ──────────────────────────
+  try {
+    const netCfg = NETWORKS[currentChainId];
+    const uniBtn = document.getElementById("claim-dex-uniswap");
+    const joeBtn = document.getElementById("claim-dex-joe");
+    if (netCfg?.token && uniBtn) {
+      const chainName = { 137:"polygon", 42161:"arbitrum", 43114:"avalanche", 11155111:"sepolia" }[currentChainId] || "";
+      uniBtn.href = `https://app.uniswap.org/#/swap?outputCurrency=${netCfg.token}&chain=${chainName}`;
+      uniBtn.style.display = "";
+    }
+    if (joeBtn) joeBtn.style.display = currentChainId === 43114 ? "" : "none";
+  } catch {}
+
+  // ─── 5. Scan for claimable rewards ───────────
+  const rewardsList = document.getElementById("claim-rewards-list");
+  if (!rewardsList) return;
+  rewardsList.innerHTML = '<div class="claim-empty-rewards"><div class="spinner" style="width:20px;height:20px;margin:0 auto 8px"></div><div>Verificando sinais…</div></div>';
+  try {
+    const total = await contract.totalSignals();
+    const maxN  = Math.min(total.toNumber(), 50);
+    const claimable = [];
+
+    for (let i = total.toNumber(); i > total.toNumber() - maxN && i > 0; i--) {
+      try {
+        const sig = await contract.getSignal(i);
+        // status: 0=OPEN 1=WIN 2=LOSS 3=EXPIRED
+        if (sig.status === 2 || sig.status === 3) {
+          const pos = await contract.getPosition(i, userAddress);
+          if (pos.amount.gt(0) && !pos.claimed) {
+            claimable.push({ id: i, sig, pos, expired: sig.status === 3 });
+          }
+        }
+      } catch {}
+    }
+
+    if (claimable.length === 0) {
+      rewardsList.innerHTML = `
+        <div class="claim-empty-rewards">
+          <span class="claim-empty-dot"></span>
+          Nenhuma recompensa pendente nos últimos ${maxN} sinais.
+        </div>`;
+      return;
+    }
+
+    rewardsList.innerHTML = "";
+    const curr = currentNetwork?.currency ?? "ETH";
+    for (const { id, sig, pos, expired } of claimable) {
+      // Estimate reward for LOSS signals
+      let rewardEst = "";
+      if (!expired && sig.followersStake.gt(0)) {
+        const pool = sig.totalPoolAtResolution;
+        if (pool.gt(0)) {
+          const r = pos.amount.mul(pool).div(sig.followersStake);
+          rewardEst = parseFloat(ethers.utils.formatEther(r)).toFixed(5) + " " + curr;
+        } else {
+          rewardEst = parseFloat(ethers.utils.formatEther(pos.amount)).toFixed(5) + " " + curr;
+        }
+      } else {
+        rewardEst = parseFloat(ethers.utils.formatEther(pos.amount)).toFixed(5) + " " + curr;
+      }
+      const type   = expired ? "exp"  : "loss";
+      const icon   = expired ? "⏱"   : "🏆";
+      const label  = expired ? "EXPIRADO" : "LOSS";
+      const fnCall = expired ? `claimExpiredAndRefresh(${id})` : `claimRewardAndRefresh(${id})`;
+      const btnLbl = expired ? "Recuperar Stake" : "Resgatar";
+
+      const row = document.createElement("div");
+      row.className = "claim-reward-item";
+      row.innerHTML = `
+        <div class="claim-reward-ico ${type}">${icon}</div>
+        <div class="claim-reward-body">
+          <div class="claim-reward-title">Sinal #${String(id).padStart(4,"0")} — ${escHtml(sig.pair)}</div>
+          <div class="claim-reward-meta">${label} · ${sig.direction===0?"↑ LONG":"↓ SHORT"} · Stake: ${parseFloat(ethers.utils.formatEther(pos.amount)).toFixed(5)} ${curr}</div>
+        </div>
+        <div class="claim-reward-amount">+${rewardEst}</div>
+        <button class="claim-reward-btn" onclick="${fnCall}">${btnLbl}</button>`;
+      rewardsList.appendChild(row);
+    }
+  } catch(e) {
+    rewardsList.innerHTML = `<div class="claim-empty-rewards" style="color:var(--red)">Erro ao carregar: ${escHtml(e.message||"")}</div>`;
+  }
+}
+
+async function claimRewardAndRefresh(id) {
+  try {
+    showToast("Resgatando recompensa…", "info");
+    await (await contract.claimReward(id)).wait();
+    showToast("Recompensa creditada!", "success");
+    await loadClaim();
+    await loadWithdrawal();
+  } catch(e) { showToast(e.reason||e.message||"Erro", "error"); }
+}
+
+async function claimExpiredAndRefresh(id) {
+  try {
+    showToast("Recuperando stake…", "info");
+    await (await contract.claimExpired(id)).wait();
+    showToast("Stake recuperado!", "success");
+    await loadClaim();
+    await loadWithdrawal();
+  } catch(e) { showToast(e.reason||e.message||"Erro", "error"); }
+}
+
+async function claimDoWithdraw() {
+  const btn = document.getElementById("claim-sacar-btn");
+  if (btn) btn.textContent = "SACANDO…";
+  try {
+    showToast("Iniciando saque…", "info");
+    await (await contract.withdraw()).wait();
+    showToast("Saque realizado!", "success");
+    await loadClaim();
+    await loadWithdrawal();
+  } catch(e) {
+    showToast(e.reason||e.message||"Erro ao sacar", "error");
+  } finally {
+    if (btn) btn.textContent = "SACAR";
   }
 }
 
