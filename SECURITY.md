@@ -375,7 +375,8 @@ npx hardhat test
 | Polygon — INCToken v2    | `0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51` | [polygonscan.com](https://polygonscan.com/address/0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51#code) |
 | Arbitrum — INCNetwork v1.5 | `0xD5DdE529F3B1bB0ab408063E64104709086c9f5B` | [arbiscan.io](https://arbiscan.io/address/0xD5DdE529F3B1bB0ab408063E64104709086c9f5B#code) |
 | Arbitrum — INCToken v2    | `0xEaa8383593972b621Cb4Ed7E049db167e5fCC1C3` | [arbiscan.io](https://arbiscan.io/address/0xEaa8383593972b621Cb4Ed7E049db167e5fCC1C3#code) |
-| Avalanche | `0x55413bF29C5b2c7EE54333fD09382f13Ca081593` | [snowscan.xyz](https://snowscan.xyz/address/0x55413bF29C5b2c7EE54333fD09382f13Ca081593) |
+| Avalanche — INCNetwork v1.5 | `0xf49841DF7726691D04D311BC4A0821C0AB9211f5` | [snowscan.xyz](https://snowscan.xyz/address/0xf49841DF7726691D04D311BC4A0821C0AB9211f5#code) |
+| Avalanche — INCToken v2    | `0x672CA0c46ED2E00a1bb8E57Cb1F6b3d74d7BAf54` | [snowscan.xyz](https://snowscan.xyz/address/0x672CA0c46ED2E00a1bb8E57Cb1F6b3d74d7BAf54#code) |
 
 ---
 
