@@ -147,9 +147,9 @@ Todos os contratos sÃ£o open source e verificados nos respectivos explorers.
 
 ## Links
 
-- **App**: https://freire007-byte.github.io/INC-Network
+- **App**: https://incnetwork.vercel.app
 - **GitHub**: https://github.com/Freire007-byte/INC-Network
-- **Twitter**: https://twitter.com/incnetwork
+- **Twitter**: https://x.com/incnetwork_
 - **Instagram**: https://instagram.com/inc_network_
 - **Uniswap**: https://app.uniswap.org/#/swap?outputCurrency=0xeAa4FAF815e36caaa082C71aC8ca962F531443d7&chain=arbitrum
 

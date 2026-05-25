@@ -1,0 +1,7 @@
+{
+  "name": "incnetwork-frontend",
+  "private": true,
+  "dependencies": {
+    "ethers": "5.7.2"
+  }
+}

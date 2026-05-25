@@ -9,16 +9,16 @@ Submeter em: https://www.coingecko.com/en/coins/add_form
 **Token Name:** INC Network Token
 **Token Symbol:** INC
 **Launch Date:** 2026-05-19
-**Project Website:** https://freire007-byte.github.io/INC-Network
+**Project Website:** https://incnetwork.vercel.app
 **Whitepaper:** https://github.com/Freire007-byte/INC-Network/blob/master/README.md
 
 ## Contratos (preencher para cada rede)
 
 | Blockchain | Contract Address |
 |---|---|
-| Arbitrum | `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` |
-| Polygon   | `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7` |
-| Avalanche | `0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B` |
+| Polygon   | `0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51` |
+| Arbitrum  | `0xEaa8383593972b621Cb4Ed7E049db167e5fCC1C3` |
+| Avalanche | `0x672CA0c46ED2E00a1bb8E57Cb1F6b3d74d7BAf54` |
 
 ## DescriÃ§Ã£o (inglÃªs â€” copiar no formulÃ¡rio)
 
@@ -35,7 +35,7 @@ and Avalanche.
 
 ## Redes Sociais
 
-- **Twitter/X:** https://twitter.com/incnetwork
+- **Twitter/X:** https://x.com/incnetwork_
 - **Instagram:** https://instagram.com/inc_network_
 - **GitHub:** https://github.com/Freire007-byte/INC-Network
 
@@ -85,20 +85,25 @@ deflationary burn mechanics, and multichain staking rewards.
 
 ## Smart Contract Addresses
 
-- **Arbitrum One:** `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` (INCNetwork)
-- **Polygon:** `0x83F723a613a47cE2F0FB805bCA71C4AAA2F8d9EC` (INCNetwork)
-- **Ethereum:** `0xAD4Fbde4810f3919F169c827A582aed34330ADA0` (INCNetwork)
+### INCNetwork Protocol
+- **Polygon:** `0xf49841DF7726691D04D311BC4A0821C0AB9211f5`
+- **Arbitrum One:** `0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745`
+- **Avalanche:** `0x55413bF29C5b2c7EE54333fD09382f13Ca081593`
+- **Sepolia (testnet):** `0x99ABa0D947367ABC96dDc612C6e407954aC46836`
 
-- **$INC Token Arbitrum:** `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7`
-- **$INC Token Polygon:** `0xeAa4FAF815e36caaa082C71aC8ca962F531443d7`
-- **$INC Token Avalanche:** `0x9A48dCDF8FC1e9047F1834D70e328C30B1B1863B`
+### $INC Token (ERC-20)
+- **Polygon:** `0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51`
+- **Arbitrum One:** `0xEaa8383593972b621Cb4Ed7E049db167e5fCC1C3`
+- **Avalanche:** `0x672CA0c46ED2E00a1bb8E57Cb1F6b3d74d7BAf54`
+- **Sepolia (testnet):** `0x4249152E9c372B3968fEDCE1A05D093456CbFEC8`
 
 ## Links
 
-- Website: https://freire007-byte.github.io/INC-Network
+- Website: https://incnetwork.vercel.app
 - GitHub (source code): https://github.com/Freire007-byte/INC-Network
-- Twitter: https://twitter.com/incnetwork
+- Twitter: https://x.com/incnetwork_
 - Whitepaper: https://github.com/Freire007-byte/INC-Network/blob/master/README.md
-- Arbiscan: https://arbiscan.io/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7
-- Polygonscan: https://polygonscan.com/token/0xeAa4FAF815e36caaa082C71aC8ca962F531443d7
+- Polygonscan: https://polygonscan.com/token/0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51
+- Arbiscan: https://arbiscan.io/token/0xEaa8383593972b621Cb4Ed7E049db167e5fCC1C3
+- Snowscan: https://snowscan.xyz/token/0x672CA0c46ED2E00a1bb8E57Cb1F6b3d74d7BAf54
 
