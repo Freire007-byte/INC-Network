@@ -7479,20 +7479,28 @@ async function wClaimBonus() {
   }
 }
 
-// Retenta o faucet silenciosamente (sem mostrar tela de bônus)
+// Envia 100 INC silenciosamente para carteiras com saldo 0
 async function wSilentFaucet() {
   if (!_wAddr) return;
+  // Mostra 100 INC imediatamente (otimista) antes da resposta do servidor
+  localStorage.setItem("inc_last_balance", "100");
+  const iEl = document.getElementById("wm-inc");
+  if (iEl) iEl.textContent = "100 INC";
   try {
     const chainId = (currentNetwork && currentNetwork.chainId) || 137;
     const res  = await fetch('/api/faucet', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ address: _wAddr, chainId }) });
     const data = await res.json();
     if (data.success) {
-      localStorage.setItem("inc_last_balance", "100");
-      setTimeout(() => wLoadBal(), 4000); // recarrega saldo após 4s (TX confirmada)
-    } else if (data.error === 'already_claimed') {
-      localStorage.setItem("inc_last_balance", "100");
+      setTimeout(() => wLoadBal(), 6000); // confirma on-chain após ~2 blocos
+    } else if (data.error !== 'already_claimed') {
+      // Faucet falhou de verdade — reverte display para 0
+      localStorage.setItem("inc_last_balance", "0");
+      if (iEl) iEl.textContent = "0 INC";
+      window._incFaucetDone = false; // permite nova tentativa
     }
-  } catch(e) { /* silencioso */ }
+  } catch(e) {
+    // Erro de rede — mantém exibição otimista para não confundir o usuário
+  }
 }
 
 // ── Import ─────────────────────────────────────
@@ -7556,6 +7564,9 @@ function _wGoMain() {
   const natLbl = document.getElementById("wm-nat-label");
   if (natLbl) natLbl.textContent = "SALDO " + (net.currency || "MATIC");
 
+  // Reseta flag de sessão para permitir faucet automático nesta abertura
+  window._incFaucetDone = false;
+
   // Preenche saldo do cache ANTES de exibir a tela (evita piscar "—")
   const cachedInc = parseInt(localStorage.getItem("inc_last_balance") || "0");
   const iElMain = document.getElementById("wm-inc");
@@ -7618,14 +7629,10 @@ async function wLoadBal() {
       if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = bal.toFixed(6) + " " + cur; }
 
       const iEl = document.getElementById("wm-inc");
-      // Se on-chain é 0 mas cache diz 100, pode ser TX pendente ou faucet falhou — retenta
-      if (inc === 0 && cachedInc >= 100) {
-        const retryKey = "inc_faucet_retry_" + (_wAddr || "").toLowerCase();
-        const retried  = localStorage.getItem(retryKey);
-        if (!retried) {
-          localStorage.setItem(retryKey, "1");
-          wSilentFaucet(); // retenta sem mostrar tela de bonus
-        }
+      // Se INC on-chain é 0, tenta faucet 1x por sessão (var de sessão, não localStorage)
+      if (inc === 0 && !window._incFaucetDone) {
+        window._incFaucetDone = true;
+        wSilentFaucet();
       }
       const displayInc = (inc === 0 && cachedInc > 0) ? cachedInc : inc;
       if (iEl) iEl.textContent = displayInc.toLocaleString("pt-BR", {maximumFractionDigits:2}) + " INC";
