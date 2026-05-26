@@ -593,6 +593,19 @@
     }
     .btn-submit:hover { box-shadow: 0 0 40px #7c6dff70; transform: translateY(-1px); }
 
+    /* ── ENTRADA RÁPIDA ── */
+    .quick-entry-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; padding: 14px 8px; border-radius: 14px;
+      background: linear-gradient(135deg,#1a1a2e,#16213e);
+      border: 2px solid #7c6dff55; color: var(--text);
+      font-size: 18px; font-weight: 800; cursor: pointer;
+      transition: all .2s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .quick-entry-btn:hover { border-color: #7c6dff; background: #7c6dff22; transform: translateY(-2px); box-shadow: 0 0 20px #7c6dff50; }
+    .quick-entry-btn:active { transform: scale(.97); }
+    .quick-entry-btn .qe-cur { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+
     /* ── POSIÇÕES ── */
     .position-row {
       display: flex; align-items: center; justify-content: space-between;
@@ -3751,17 +3764,6 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <label id="label-provider-stake">Stake — mínimo 0.005</label>
-          <input type="number" id="f-stake" placeholder="0.01" step="0.001" min="0.005" oninput="updateRRCalc()" />
-          <div class="pct-btns" style="margin-top:7px">
-            <button class="pct-btn neutral" onclick="setStakePreset(0.01)">0.01 ETH</button>
-            <button class="pct-btn neutral" onclick="setStakePreset(0.05)">0.05 ETH</button>
-            <button class="pct-btn neutral" onclick="setStakePreset(0.1)">0.1 ETH</button>
-            <button class="pct-btn neutral" onclick="setStakePreset(0.5)">0.5 ETH</button>
-          </div>
-        </div>
-
         <!-- Risco/Retorno Calculator -->
         <div class="rr-calc" id="rr-calc" style="display:none">
           <div class="rr-row"><span class="rr-label">Risk/Reward</span><span class="rr-val" id="rr-ratio">—</span></div>
@@ -3770,7 +3772,17 @@
           <div class="rr-row"><span class="rr-label">Pool ao publicar</span><span class="rr-val" id="rr-pool">—</span></div>
         </div>
 
-        <button class="btn-submit" onclick="createSignal()">🚀 Publicar Sinal</button>
+        <!-- Entrada rápida: 1 clique entra na posição -->
+        <div style="margin-top:8px;margin-bottom:4px;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">⚡ Entrar agora — escolha o valor</div>
+        <input type="hidden" id="f-stake" value="0.01" />
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+          <button class="quick-entry-btn" id="qe-001" onclick="quickEnter(0.01)">0.01<span class="qe-cur">MATIC</span></button>
+          <button class="quick-entry-btn" id="qe-005" onclick="quickEnter(0.05)">0.05<span class="qe-cur">MATIC</span></button>
+          <button class="quick-entry-btn" id="qe-01"  onclick="quickEnter(0.1)">0.1<span class="qe-cur">MATIC</span></button>
+          <button class="quick-entry-btn" id="qe-05"  onclick="quickEnter(0.5)">0.5<span class="qe-cur">MATIC</span></button>
+        </div>
+        <button class="btn-submit" onclick="createSignal()" style="margin-top:10px;opacity:.5;font-size:12px;padding:10px">ou inserir valor personalizado ↓</button>
+        <input type="number" id="f-stake-custom" placeholder="valor personalizado" step="0.001" min="0.005" style="margin-top:6px;width:100%;box-sizing:border-box;background:#ffffff08;border:1px solid #ffffff15;border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none" oninput="document.getElementById('f-stake').value=this.value;updateRRCalc()" />
       </div>
     </div>
   </div>
@@ -6200,12 +6212,8 @@ function updateFormOracle() {
   // Stake padrão 0.01 se vazio
   const stakeEl = document.getElementById('f-stake');
   if (stakeEl && !stakeEl.value) setStakePreset(0.01);
-  // Atualiza label da moeda nos botões de stake
-  const cur = currentNetwork?.currency || 'MATIC';
-  document.querySelectorAll('#tab-criar .pct-btn.neutral').forEach((btn, i) => {
-    const vals = [0.01, 0.05, 0.1, 0.5];
-    if (vals[i] !== undefined) btn.textContent = vals[i] + ' ' + cur;
-  });
+  // Atualiza label da moeda nos botões de entrada rápida
+  updateQuickEntryLabels();
 }
 
 function fillEntryFromOracle() {
@@ -6243,13 +6251,30 @@ function setDirection(val) {
 function setStakePreset(v) {
   const el = document.getElementById('f-stake');
   if (el) { el.value = v; updateRRCalc(); }
-  // Destaca botão selecionado
-  document.querySelectorAll('#tab-criar .pct-btn.neutral').forEach(btn => {
-    const bv = parseFloat(btn.textContent);
-    btn.style.background = bv === v ? 'var(--primary)' : '';
-    btn.style.color      = bv === v ? '#fff' : '';
-    btn.style.fontWeight = bv === v ? '800' : '';
+}
+
+// 1 clique → define stake → publica sinal imediatamente
+async function quickEnter(v) {
+  const cur = currentNetwork?.currency || 'MATIC';
+  // Destaca botão
+  document.querySelectorAll('.quick-entry-btn').forEach(b => {
+    b.style.borderColor = '';  b.style.background = ''; b.style.boxShadow = '';
   });
+  const idMap = { 0.01:'qe-001', 0.05:'qe-005', 0.1:'qe-01', 0.5:'qe-05' };
+  const btn = document.getElementById(idMap[v]);
+  if (btn) { btn.style.borderColor = 'var(--primary)'; btn.style.background = '#7c6dff33'; btn.style.boxShadow = '0 0 20px #7c6dff60'; }
+
+  document.getElementById('f-stake').value = v;
+  const custom = document.getElementById('f-stake-custom');
+  if (custom) custom.value = v;
+  updateRRCalc();
+  await createSignal();
+}
+
+// Atualiza label MATIC/ETH/AVAX nos botões de entrada rápida
+function updateQuickEntryLabels() {
+  const cur = currentNetwork?.currency || 'MATIC';
+  document.querySelectorAll('.quick-entry-btn .qe-cur').forEach(el => { el.textContent = cur; });
 }
 
 function openChartFromForm() { openChart(getFormSym()); }
