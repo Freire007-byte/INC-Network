@@ -13,3 +13,6 @@ frontend/.netlify/
 frontend/.gitignore
 RESUMO_PROJETO.md
 scripts/wire-contracts.backup*.js
+test_faucet*.py
+debug_wallet.py
+server_fix.py
