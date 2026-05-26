@@ -6194,6 +6194,18 @@ function updateFormOracle() {
   document.getElementById('dir-btn-short')?.classList.toggle('active', curDir === 1);
   fillEntryFromOracle();
   updateTPSL();
+  // RSI padrão 50 se vazio
+  const rsiEl = document.getElementById('f-rsi');
+  if (rsiEl && !rsiEl.value) rsiEl.value = 50;
+  // Stake padrão 0.01 se vazio
+  const stakeEl = document.getElementById('f-stake');
+  if (stakeEl && !stakeEl.value) setStakePreset(0.01);
+  // Atualiza label da moeda nos botões de stake
+  const cur = currentNetwork?.currency || 'MATIC';
+  document.querySelectorAll('#tab-criar .pct-btn.neutral').forEach((btn, i) => {
+    const vals = [0.01, 0.05, 0.1, 0.5];
+    if (vals[i] !== undefined) btn.textContent = vals[i] + ' ' + cur;
+  });
 }
 
 function fillEntryFromOracle() {
@@ -6231,6 +6243,13 @@ function setDirection(val) {
 function setStakePreset(v) {
   const el = document.getElementById('f-stake');
   if (el) { el.value = v; updateRRCalc(); }
+  // Destaca botão selecionado
+  document.querySelectorAll('#tab-criar .pct-btn.neutral').forEach(btn => {
+    const bv = parseFloat(btn.textContent);
+    btn.style.background = bv === v ? 'var(--primary)' : '';
+    btn.style.color      = bv === v ? '#fff' : '';
+    btn.style.fontWeight = bv === v ? '800' : '';
+  });
 }
 
 function openChartFromForm() { openChart(getFormSym()); }
