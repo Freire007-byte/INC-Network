@@ -2595,19 +2595,20 @@
   .lang-btn:hover { border-color: var(--primary); color: var(--primary); }
   .lang-menu {
     position: absolute; right: 0; top: calc(100% + 6px);
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 6px; min-width: 155px; z-index: 500;
-    display: none; flex-direction: column; gap: 2px;
-    box-shadow: 0 8px 32px #0009;
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 8px; z-index: 9999; width: 290px;
+    display: none; grid-template-columns: 1fr 1fr; gap: 3px;
+    box-shadow: 0 12px 40px #000a; max-height: 70vh; overflow-y: auto;
   }
-  .lang-menu.open { display: flex; }
+  .lang-menu.open { display: grid; }
   .lang-menu button {
-    background: none; border: none; border-radius: 8px;
-    padding: 7px 10px; cursor: pointer; color: var(--text);
-    font-size: 12px; text-align: left; transition: background .15s; white-space: nowrap;
+    background: none; border: 1px solid transparent; border-radius: 8px;
+    padding: 7px 9px; cursor: pointer; color: var(--text);
+    font-size: 11.5px; text-align: left; transition: all .15s; white-space: nowrap;
+    font-family: 'Space Grotesk', sans-serif;
   }
-  .lang-menu button:hover { background: var(--card2); }
-  .lang-menu button.lm-active { background: #7c6dff18; color: var(--primary); font-weight: 700; }
+  .lang-menu button:hover { background: var(--card2); border-color: var(--border); }
+  .lang-menu button.lm-active { background: #7c6dff18; color: var(--primary); font-weight: 700; border-color: #7c6dff30; }
 
   /* ── Ranking ── */
   .rk-wrap { padding: 0 0 40px; max-width: 720px; margin: 0 auto; }
@@ -2715,13 +2716,23 @@
         <button onclick="setLang('pt')">🇧🇷 Português</button>
         <button onclick="setLang('en')">🇺🇸 English</button>
         <button onclick="setLang('es')">🇪🇸 Español</button>
+        <button onclick="setLang('fr')">🇫🇷 Français</button>
+        <button onclick="setLang('de')">🇩🇪 Deutsch</button>
+        <button onclick="setLang('it')">🇮🇹 Italiano</button>
+        <button onclick="setLang('ru')">🇷🇺 Русский</button>
+        <button onclick="setLang('uk')">🇺🇦 Українська</button>
+        <button onclick="setLang('pl')">🇵🇱 Polski</button>
+        <button onclick="setLang('nl')">🇳🇱 Nederlands</button>
+        <button onclick="setLang('ro')">🇷🇴 Română</button>
+        <button onclick="setLang('el')">🇬🇷 Ελληνικά</button>
+        <button onclick="setLang('tr')">🇹🇷 Türkçe</button>
+        <button onclick="setLang('ar')">🇸🇦 العربية</button>
+        <button onclick="setLang('hi')">🇮🇳 हिन्दी</button>
         <button onclick="setLang('zh')">🇨🇳 中文</button>
         <button onclick="setLang('ja')">🇯🇵 日本語</button>
         <button onclick="setLang('ko')">🇰🇷 한국어</button>
-        <button onclick="setLang('ru')">🇷🇺 Русский</button>
-        <button onclick="setLang('fr')">🇫🇷 Français</button>
-        <button onclick="setLang('de')">🇩🇪 Deutsch</button>
-        <button onclick="setLang('tr')">🇹🇷 Türkçe</button>
+        <button onclick="setLang('id')">🇮🇩 Indonesia</button>
+        <button onclick="setLang('vi')">🇻🇳 Tiếng Việt</button>
       </div>
     </div>
     <!-- Social icons -->
@@ -9797,8 +9808,7 @@ const I18N = {
     'hero.sub':'Publique sinais de trading com stake real. Followers apostam junto. A Chainlink resolve automaticamente. Sem intermediários.',
     'wrtm.oracle':'Preço Oracle','wrtm.use_price':'← Usar como Entrada',
     'wrtm.entry_label':'Preço de Entrada (USD)','wrtm.tp_label':'Take Profit (USD)',
-    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)',
-    'wrtm.submit':'🚀 Publicar Sinal',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)','wrtm.submit':'🚀 Publicar Sinal',
   },
   en: {
     'stat.signals':'Signals','stat.volume':'Volume','stat.fees':'Fees',
@@ -9808,8 +9818,7 @@ const I18N = {
     'hero.sub':'Post trading signals with real stake. Followers bet along. Chainlink resolves automatically. No intermediaries.',
     'wrtm.oracle':'Oracle Price','wrtm.use_price':'← Use as Entry',
     'wrtm.entry_label':'Entry Price (USD)','wrtm.tp_label':'Take Profit (USD)',
-    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)',
-    'wrtm.submit':'🚀 Publish Signal',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)','wrtm.submit':'🚀 Publish Signal',
   },
   es: {
     'stat.signals':'Señales','stat.volume':'Volumen','stat.fees':'Comisiones',
@@ -9819,52 +9828,7 @@ const I18N = {
     'hero.sub':'Publica señales de trading con stake real. Los seguidores apuestan juntos. Chainlink resuelve automáticamente. Sin intermediarios.',
     'wrtm.oracle':'Precio Oracle','wrtm.use_price':'← Usar como Entrada',
     'wrtm.entry_label':'Precio de Entrada (USD)','wrtm.tp_label':'Take Profit (USD)',
-    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)',
-    'wrtm.submit':'🚀 Publicar Señal',
-  },
-  zh: {
-    'stat.signals':'信号','stat.volume':'交易量','stat.fees':'手续费',
-    'btn.connect':'连接钱包','btn.operate':'⚡ 立即交易',
-    'tab.signals':'开放信号','tab.create':'创建信号',
-    'tab.positions':'我的仓位','tab.withdraw':'提现','tab.claim':'◈ 领取 $INC',
-    'hero.sub':'发布真实质押的交易信号。跟随者共同押注。Chainlink自动结算。无中间商。',
-    'wrtm.oracle':'预言机价格','wrtm.use_price':'← 用作入场价',
-    'wrtm.entry_label':'入场价格 (USD)','wrtm.tp_label':'止盈 (USD)',
-    'wrtm.sl_label':'止损 (USD)','wrtm.stake_label':'质押 (ETH)',
-    'wrtm.submit':'🚀 发布信号',
-  },
-  ja: {
-    'stat.signals':'シグナル','stat.volume':'取引量','stat.fees':'手数料',
-    'btn.connect':'ウォレット接続','btn.operate':'⚡ 今すぐトレード',
-    'tab.signals':'オープンシグナル','tab.create':'シグナル作成',
-    'tab.positions':'マイポジション','tab.withdraw':'出金','tab.claim':'◈ $INC 請求',
-    'hero.sub':'リアルなステークで取引シグナルを公開。フォロワーが共に賭けます。Chainlinkが自動解決。仲介者なし。',
-    'wrtm.oracle':'Oracleレート','wrtm.use_price':'← エントリーとして使用',
-    'wrtm.entry_label':'エントリー価格 (USD)','wrtm.tp_label':'テイクプロフィット (USD)',
-    'wrtm.sl_label':'ストップロス (USD)','wrtm.stake_label':'ステーク (ETH)',
-    'wrtm.submit':'🚀 シグナル公開',
-  },
-  ko: {
-    'stat.signals':'시그널','stat.volume':'거래량','stat.fees':'수수료',
-    'btn.connect':'지갑 연결','btn.operate':'⚡ 지금 거래',
-    'tab.signals':'오픈 시그널','tab.create':'시그널 생성',
-    'tab.positions':'내 포지션','tab.withdraw':'출금','tab.claim':'◈ $INC 클레임',
-    'hero.sub':'실제 스테이크로 거래 시그널을 게시하세요. 팔로워들이 함께 베팅합니다. Chainlink가 자동으로 정산합니다. 중개자 없음.',
-    'wrtm.oracle':'Oracle 가격','wrtm.use_price':'← 진입가로 사용',
-    'wrtm.entry_label':'진입 가격 (USD)','wrtm.tp_label':'테이크 프로핏 (USD)',
-    'wrtm.sl_label':'스톱 로스 (USD)','wrtm.stake_label':'스테이크 (ETH)',
-    'wrtm.submit':'🚀 시그널 게시',
-  },
-  ru: {
-    'stat.signals':'Сигналы','stat.volume':'Объём','stat.fees':'Комиссии',
-    'btn.connect':'Подключить кошелёк','btn.operate':'⚡ Торговать',
-    'tab.signals':'Открытые сигналы','tab.create':'Создать сигнал',
-    'tab.positions':'Мои позиции','tab.withdraw':'Вывести','tab.claim':'◈ Получить $INC',
-    'hero.sub':'Публикуйте торговые сигналы с реальным стейком. Подписчики ставят вместе. Chainlink решает автоматически. Без посредников.',
-    'wrtm.oracle':'Цена Oracle','wrtm.use_price':'← Использовать как вход',
-    'wrtm.entry_label':'Цена входа (USD)','wrtm.tp_label':'Тейк Профит (USD)',
-    'wrtm.sl_label':'Стоп Лосс (USD)','wrtm.stake_label':'Стейк (ETH)',
-    'wrtm.submit':'🚀 Опубликовать сигнал',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)','wrtm.submit':'🚀 Publicar Señal',
   },
   fr: {
     'stat.signals':'Signaux','stat.volume':'Volume','stat.fees':'Frais',
@@ -9874,8 +9838,7 @@ const I18N = {
     'hero.sub':'Publiez des signaux de trading avec un vrai stake. Les abonnés misent ensemble. Chainlink résout automatiquement. Sans intermédiaires.',
     'wrtm.oracle':'Prix Oracle','wrtm.use_price':"← Utiliser comme Entrée",
     'wrtm.entry_label':"Prix d'Entrée (USD)",'wrtm.tp_label':'Take Profit (USD)',
-    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Mise (ETH)',
-    'wrtm.submit':'🚀 Publier le Signal',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Mise (ETH)','wrtm.submit':'🚀 Publier le Signal',
   },
   de: {
     'stat.signals':'Signale','stat.volume':'Volumen','stat.fees':'Gebühren',
@@ -9885,8 +9848,77 @@ const I18N = {
     'hero.sub':'Veröffentliche Handelssignale mit echtem Einsatz. Follower setzen gemeinsam. Chainlink löst automatisch auf. Ohne Vermittler.',
     'wrtm.oracle':'Oracle-Preis','wrtm.use_price':'← Als Einstieg Verwenden',
     'wrtm.entry_label':'Einstiegspreis (USD)','wrtm.tp_label':'Take Profit (USD)',
-    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Einsatz (ETH)',
-    'wrtm.submit':'🚀 Signal Veröffentlichen',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Einsatz (ETH)','wrtm.submit':'🚀 Signal Veröffentlichen',
+  },
+  it: {
+    'stat.signals':'Segnali','stat.volume':'Volume','stat.fees':'Commissioni',
+    'btn.connect':'Connetti Portafoglio','btn.operate':'⚡ Fai Trading Ora',
+    'tab.signals':'Segnali Aperti','tab.create':'Crea Segnale',
+    'tab.positions':'Le Mie Posizioni','tab.withdraw':'Prelievo','tab.claim':'◈ Reclama $INC',
+    'hero.sub':'Pubblica segnali di trading con stake reale. I follower scommettono insieme. Chainlink risolve automaticamente. Senza intermediari.',
+    'wrtm.oracle':'Prezzo Oracle','wrtm.use_price':'← Usa come Entrata',
+    'wrtm.entry_label':'Prezzo di Entrata (USD)','wrtm.tp_label':'Take Profit (USD)',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)','wrtm.submit':'🚀 Pubblica Segnale',
+  },
+  ru: {
+    'stat.signals':'Сигналы','stat.volume':'Объём','stat.fees':'Комиссии',
+    'btn.connect':'Подключить кошелёк','btn.operate':'⚡ Торговать',
+    'tab.signals':'Открытые сигналы','tab.create':'Создать сигнал',
+    'tab.positions':'Мои позиции','tab.withdraw':'Вывести','tab.claim':'◈ Получить $INC',
+    'hero.sub':'Публикуйте торговые сигналы с реальным стейком. Подписчики ставят вместе. Chainlink решает автоматически. Без посредников.',
+    'wrtm.oracle':'Цена Oracle','wrtm.use_price':'← Использовать как вход',
+    'wrtm.entry_label':'Цена входа (USD)','wrtm.tp_label':'Тейк Профит (USD)',
+    'wrtm.sl_label':'Стоп Лосс (USD)','wrtm.stake_label':'Стейк (ETH)','wrtm.submit':'🚀 Опубликовать сигнал',
+  },
+  uk: {
+    'stat.signals':'Сигнали','stat.volume':"Об'єм",'stat.fees':'Комісії',
+    'btn.connect':'Підключити гаманець','btn.operate':'⚡ Торгувати',
+    'tab.signals':'Відкриті сигнали','tab.create':'Створити сигнал',
+    'tab.positions':'Мої позиції','tab.withdraw':'Вивести','tab.claim':'◈ Отримати $INC',
+    'hero.sub':'Публікуйте торгові сигнали з реальним стейком. Підписники ставлять разом. Chainlink вирішує автоматично. Без посередників.',
+    'wrtm.oracle':'Ціна Oracle','wrtm.use_price':'← Використати як вхід',
+    'wrtm.entry_label':'Ціна входу (USD)','wrtm.tp_label':'Тейк Профіт (USD)',
+    'wrtm.sl_label':'Стоп Лосс (USD)','wrtm.stake_label':'Стейк (ETH)','wrtm.submit':'🚀 Опублікувати сигнал',
+  },
+  pl: {
+    'stat.signals':'Sygnały','stat.volume':'Wolumen','stat.fees':'Opłaty',
+    'btn.connect':'Połącz Portfel','btn.operate':'⚡ Handluj Teraz',
+    'tab.signals':'Otwarte Sygnały','tab.create':'Utwórz Sygnał',
+    'tab.positions':'Moje Pozycje','tab.withdraw':'Wypłać','tab.claim':'◈ Odbierz $INC',
+    'hero.sub':'Publikuj sygnały handlowe z prawdziwym stawką. Obserwujący obstawiają razem. Chainlink rozwiązuje automatycznie. Bez pośredników.',
+    'wrtm.oracle':'Cena Oracle','wrtm.use_price':'← Użyj jako Wejście',
+    'wrtm.entry_label':'Cena Wejścia (USD)','wrtm.tp_label':'Take Profit (USD)',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stawka (ETH)','wrtm.submit':'🚀 Opublikuj Sygnał',
+  },
+  nl: {
+    'stat.signals':'Signalen','stat.volume':'Volume','stat.fees':'Vergoedingen',
+    'btn.connect':'Verbind Wallet','btn.operate':'⚡ Nu Handelen',
+    'tab.signals':'Open Signalen','tab.create':'Signaal Maken',
+    'tab.positions':'Mijn Posities','tab.withdraw':'Opnemen','tab.claim':'◈ $INC Claimen',
+    'hero.sub':'Publiceer handelssignalen met echt inzet. Volgers wedden samen. Chainlink lost automatisch op. Zonder tussenpersonen.',
+    'wrtm.oracle':'Oracle Prijs','wrtm.use_price':'← Gebruik als Instap',
+    'wrtm.entry_label':'Instapprijs (USD)','wrtm.tp_label':'Take Profit (USD)',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Inzet (ETH)','wrtm.submit':'🚀 Signaal Publiceren',
+  },
+  ro: {
+    'stat.signals':'Semnale','stat.volume':'Volum','stat.fees':'Taxe',
+    'btn.connect':'Conectează Portofelul','btn.operate':'⚡ Tranzacționează Acum',
+    'tab.signals':'Semnale Deschise','tab.create':'Crează Semnal',
+    'tab.positions':'Pozițiile Mele','tab.withdraw':'Retragere','tab.claim':'◈ Revendică $INC',
+    'hero.sub':'Publică semnale de tranzacționare cu miză reală. Urmăritorii pariază împreună. Chainlink rezolvă automat. Fără intermediari.',
+    'wrtm.oracle':'Preț Oracle','wrtm.use_price':'← Folosește ca Intrare',
+    'wrtm.entry_label':'Preț de Intrare (USD)','wrtm.tp_label':'Take Profit (USD)',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Miză (ETH)','wrtm.submit':'🚀 Publică Semnal',
+  },
+  el: {
+    'stat.signals':'Σήματα','stat.volume':'Όγκος','stat.fees':'Τέλη',
+    'btn.connect':'Σύνδεση Πορτοφολιού','btn.operate':'⚡ Συναλλαγή Τώρα',
+    'tab.signals':'Ανοιχτά Σήματα','tab.create':'Δημιουργία Σήματος',
+    'tab.positions':'Οι Θέσεις Μου','tab.withdraw':'Ανάληψη','tab.claim':'◈ Διεκδίκηση $INC',
+    'hero.sub':'Δημοσίευσε σήματα συναλλαγών με πραγματικό στοίχημα. Οι ακόλουθοι στοιχηματίζουν μαζί. Το Chainlink επιλύει αυτόματα. Χωρίς μεσάζοντες.',
+    'wrtm.oracle':'Τιμή Oracle','wrtm.use_price':'← Χρήση ως Είσοδος',
+    'wrtm.entry_label':'Τιμή Εισόδου (USD)','wrtm.tp_label':'Take Profit (USD)',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Στοίχημα (ETH)','wrtm.submit':'🚀 Δημοσίευση Σήματος',
   },
   tr: {
     'stat.signals':'Sinyaller','stat.volume':'Hacim','stat.fees':'Ücretler',
@@ -9896,63 +9928,151 @@ const I18N = {
     'hero.sub':'Gerçek stake ile ticaret sinyalleri yayınlayın. Takipçiler birlikte bahse girer. Chainlink otomatik çözümler. Aracısız.',
     'wrtm.oracle':'Oracle Fiyatı','wrtm.use_price':'← Giriş Olarak Kullan',
     'wrtm.entry_label':'Giriş Fiyatı (USD)','wrtm.tp_label':'Kar Al (USD)',
-    'wrtm.sl_label':'Zarar Durdur (USD)','wrtm.stake_label':'Stake (ETH)',
-    'wrtm.submit':'🚀 Sinyal Yayınla',
+    'wrtm.sl_label':'Zarar Durdur (USD)','wrtm.stake_label':'Stake (ETH)','wrtm.submit':'🚀 Sinyal Yayınla',
+  },
+  ar: {
+    'stat.signals':'الإشارات','stat.volume':'الحجم','stat.fees':'الرسوم',
+    'btn.connect':'ربط المحفظة','btn.operate':'⚡ تداول الآن',
+    'tab.signals':'الإشارات المفتوحة','tab.create':'إنشاء إشارة',
+    'tab.positions':'مراكزي','tab.withdraw':'سحب','tab.claim':'◈ استلام $INC',
+    'hero.sub':'انشر إشارات تداول بحصص حقيقية. يراهن المتابعون معاً. يحل Chainlink تلقائياً. بدون وسطاء.',
+    'wrtm.oracle':'سعر Oracle','wrtm.use_price':'← استخدم كنقطة دخول',
+    'wrtm.entry_label':'سعر الدخول (USD)','wrtm.tp_label':'جني الأرباح (USD)',
+    'wrtm.sl_label':'وقف الخسارة (USD)','wrtm.stake_label':'الحصة (ETH)','wrtm.submit':'🚀 نشر الإشارة',
+  },
+  hi: {
+    'stat.signals':'सिग्नल','stat.volume':'वॉल्यूम','stat.fees':'शुल्क',
+    'btn.connect':'वॉलेट कनेक्ट करें','btn.operate':'⚡ अभी ट्रेड करें',
+    'tab.signals':'खुले सिग्नल','tab.create':'सिग्नल बनाएं',
+    'tab.positions':'मेरी पोजीशन','tab.withdraw':'निकालें','tab.claim':'◈ $INC क्लेम करें',
+    'hero.sub':'वास्तविक स्टेक के साथ ट्रेडिंग सिग्नल प्रकाशित करें। Chainlink स्वचालित रूप से हल करता है। कोई बिचौलिया नहीं।',
+    'wrtm.oracle':'Oracle कीमत','wrtm.use_price':'← प्रवेश के रूप में उपयोग करें',
+    'wrtm.entry_label':'प्रवेश मूल्य (USD)','wrtm.tp_label':'टेक प्रॉफिट (USD)',
+    'wrtm.sl_label':'स्टॉप लॉस (USD)','wrtm.stake_label':'स्टेक (ETH)','wrtm.submit':'🚀 सिग्नल प्रकाशित करें',
+  },
+  zh: {
+    'stat.signals':'信号','stat.volume':'交易量','stat.fees':'手续费',
+    'btn.connect':'连接钱包','btn.operate':'⚡ 立即交易',
+    'tab.signals':'开放信号','tab.create':'创建信号',
+    'tab.positions':'我的仓位','tab.withdraw':'提现','tab.claim':'◈ 领取 $INC',
+    'hero.sub':'发布真实质押的交易信号。跟随者共同押注。Chainlink自动结算。无中间商。',
+    'wrtm.oracle':'预言机价格','wrtm.use_price':'← 用作入场价',
+    'wrtm.entry_label':'入场价格 (USD)','wrtm.tp_label':'止盈 (USD)',
+    'wrtm.sl_label':'止损 (USD)','wrtm.stake_label':'质押 (ETH)','wrtm.submit':'🚀 发布信号',
+  },
+  ja: {
+    'stat.signals':'シグナル','stat.volume':'取引量','stat.fees':'手数料',
+    'btn.connect':'ウォレット接続','btn.operate':'⚡ 今すぐトレード',
+    'tab.signals':'オープンシグナル','tab.create':'シグナル作成',
+    'tab.positions':'マイポジション','tab.withdraw':'出金','tab.claim':'◈ $INC 請求',
+    'hero.sub':'リアルなステークで取引シグナルを公開。フォロワーが共に賭けます。Chainlinkが自動解決。仲介者なし。',
+    'wrtm.oracle':'Oracleレート','wrtm.use_price':'← エントリーとして使用',
+    'wrtm.entry_label':'エントリー価格 (USD)','wrtm.tp_label':'テイクプロフィット (USD)',
+    'wrtm.sl_label':'ストップロス (USD)','wrtm.stake_label':'ステーク (ETH)','wrtm.submit':'🚀 シグナル公開',
+  },
+  ko: {
+    'stat.signals':'시그널','stat.volume':'거래량','stat.fees':'수수료',
+    'btn.connect':'지갑 연결','btn.operate':'⚡ 지금 거래',
+    'tab.signals':'오픈 시그널','tab.create':'시그널 생성',
+    'tab.positions':'내 포지션','tab.withdraw':'출금','tab.claim':'◈ $INC 클레임',
+    'hero.sub':'실제 스테이크로 거래 시그널을 게시하세요. 팔로워들이 함께 베팅합니다. Chainlink가 자동으로 정산합니다. 중개자 없음.',
+    'wrtm.oracle':'Oracle 가격','wrtm.use_price':'← 진입가로 사용',
+    'wrtm.entry_label':'진입 가격 (USD)','wrtm.tp_label':'테이크 프로핏 (USD)',
+    'wrtm.sl_label':'스톱 로스 (USD)','wrtm.stake_label':'스테이크 (ETH)','wrtm.submit':'🚀 시그널 게시',
+  },
+  id: {
+    'stat.signals':'Sinyal','stat.volume':'Volume','stat.fees':'Biaya',
+    'btn.connect':'Hubungkan Dompet','btn.operate':'⚡ Trading Sekarang',
+    'tab.signals':'Sinyal Terbuka','tab.create':'Buat Sinyal',
+    'tab.positions':'Posisi Saya','tab.withdraw':'Tarik Dana','tab.claim':'◈ Klaim $INC',
+    'hero.sub':'Publikasikan sinyal trading dengan stake nyata. Pengikut bertaruh bersama. Chainlink menyelesaikan secara otomatis. Tanpa perantara.',
+    'wrtm.oracle':'Harga Oracle','wrtm.use_price':'← Gunakan sebagai Entri',
+    'wrtm.entry_label':'Harga Entri (USD)','wrtm.tp_label':'Take Profit (USD)',
+    'wrtm.sl_label':'Stop Loss (USD)','wrtm.stake_label':'Stake (ETH)','wrtm.submit':'🚀 Publikasikan Sinyal',
+  },
+  vi: {
+    'stat.signals':'Tín hiệu','stat.volume':'Khối lượng','stat.fees':'Phí',
+    'btn.connect':'Kết nối Ví','btn.operate':'⚡ Giao dịch Ngay',
+    'tab.signals':'Tín hiệu Mở','tab.create':'Tạo Tín hiệu',
+    'tab.positions':'Vị thế của Tôi','tab.withdraw':'Rút tiền','tab.claim':'◈ Nhận $INC',
+    'hero.sub':'Đăng tín hiệu giao dịch với cược thực. Người theo dõi cùng đặt cược. Chainlink tự động giải quyết. Không có trung gian.',
+    'wrtm.oracle':'Giá Oracle','wrtm.use_price':'← Dùng làm Điểm vào',
+    'wrtm.entry_label':'Giá vào (USD)','wrtm.tp_label':'Chốt lời (USD)',
+    'wrtm.sl_label':'Cắt lỗ (USD)','wrtm.stake_label':'Cược (ETH)','wrtm.submit':'🚀 Đăng Tín hiệu',
   },
 };
 
+// Países → idioma (para detecção por IP via Cloudflare trace)
+const COUNTRY_LANG = {
+  BR:'pt',PT:'pt',AO:'pt',MZ:'pt',CV:'pt',GW:'pt',ST:'pt',TL:'pt',
+  US:'en',GB:'en',AU:'en',CA:'en',NZ:'en',IE:'en',ZA:'en',NG:'en',KE:'en',GH:'en',PK:'en',PH:'en',SG:'en',
+  ES:'es',MX:'es',AR:'es',CO:'es',CL:'es',PE:'es',VE:'es',EC:'es',BO:'es',PY:'es',UY:'es',CU:'es',DO:'es',GT:'es',HN:'es',SV:'es',NI:'es',CR:'es',PA:'es',
+  FR:'fr',BE:'fr',LU:'fr',MC:'fr',CI:'fr',SN:'fr',ML:'fr',BF:'fr',NE:'fr',TG:'fr',BJ:'fr',MG:'fr',CM:'fr',CD:'fr',CG:'fr',GA:'fr',GQ:'fr',
+  DE:'de',AT:'de',LI:'de',
+  IT:'it',SM:'it',VA:'it',
+  RU:'ru',BY:'ru',KZ:'ru',
+  UA:'uk',
+  PL:'pl',
+  NL:'nl',
+  RO:'ro',MD:'ro',
+  GR:'el',CY:'el',
+  TR:'tr',
+  SA:'ar',AE:'ar',EG:'ar',IQ:'ar',SY:'ar',JO:'ar',LB:'ar',KW:'ar',QA:'ar',BH:'ar',OM:'ar',YE:'ar',LY:'ar',TN:'ar',DZ:'ar',MA:'ar',SD:'ar',
+  IN:'hi',NP:'hi',
+  CN:'zh',TW:'zh',HK:'zh',MO:'zh',
+  JP:'ja',
+  KR:'ko',
+  ID:'id',
+  VN:'vi',
+};
+
 let _currentLang = 'pt';
+const _LANG_CODES = ['pt','en','es','fr','de','it','ru','uk','pl','nl','ro','el','tr','ar','hi','zh','ja','ko','id','vi'];
 
 function t(key) {
-  return (I18N[_currentLang] || I18N['pt'])[key] || (I18N['pt'])[key] || key;
+  return (I18N[_currentLang] || I18N.pt)[key] || I18N.pt[key] || key;
 }
 
 function applyLang(lang) {
   _currentLang = lang;
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
+    const val = t(el.getAttribute('data-i18n'));
     if (val) el.textContent = val;
   });
-  // Atualiza active no menu
   document.querySelectorAll('#lang-menu button').forEach((btn, i) => {
-    const codes = ['pt','en','es','zh','ja','ko','ru','fr','de','tr'];
-    btn.classList.toggle('lm-active', codes[i] === lang);
+    btn.classList.toggle('lm-active', _LANG_CODES[i] === lang);
   });
-  // Atualiza botão connect se ainda não conectado
   const btnConnect = document.getElementById('btn-connect');
-  if (btnConnect && !btnConnect.classList.contains('connected')) {
-    btnConnect.textContent = t('btn.connect');
-  }
+  if (btnConnect && !btnConnect.classList.contains('connected')) btnConnect.textContent = t('btn.connect');
+  // RTL para árabe
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   localStorage.setItem('inc_lang', lang);
 }
 
-function setLang(lang) {
-  applyLang(lang);
-  closeLangMenu();
-}
+function setLang(lang) { applyLang(lang); closeLangMenu(); }
+function toggleLangMenu() { document.getElementById('lang-menu')?.classList.toggle('open'); }
+function closeLangMenu()  { document.getElementById('lang-menu')?.classList.remove('open'); }
 
-function toggleLangMenu() {
-  document.getElementById('lang-menu')?.classList.toggle('open');
-}
-
-function closeLangMenu() {
-  document.getElementById('lang-menu')?.classList.remove('open');
-}
-
-// Fechar ao clicar fora
 document.addEventListener('click', e => {
   const sw = document.getElementById('lang-switcher');
   if (sw && !sw.contains(e.target)) closeLangMenu();
 });
 
-// Auto-detecção: salvo > browser > pt
+// Auto-detecção: localStorage > IP (Cloudflare trace) > browser > pt
 (function initLang() {
-  const saved = localStorage.getItem('inc_lang');
+  const saved   = localStorage.getItem('inc_lang');
   const supported = Object.keys(I18N);
   if (saved && supported.includes(saved)) { applyLang(saved); return; }
-  const browserLang = (navigator.language || navigator.userLanguage || 'pt').slice(0,2).toLowerCase();
-  applyLang(supported.includes(browserLang) ? browserLang : 'pt');
+  const browserLang = (navigator.language || 'pt').slice(0,2).toLowerCase();
+  // Tenta IP via Cloudflare trace (grátis, sem rate limit, funciona em HTTPS)
+  fetch('https://www.cloudflare.com/cdn-cgi/trace', { cache:'no-store' })
+    .then(r => r.text())
+    .then(txt => {
+      const country = (txt.match(/loc=([A-Z]{2})/)||[])[1] || '';
+      const ipLang  = COUNTRY_LANG[country] || browserLang;
+      applyLang(supported.includes(ipLang) ? ipLang : 'pt');
+    })
+    .catch(() => applyLang(supported.includes(browserLang) ? browserLang : 'pt'));
 })();
 </script>
 
