@@ -11,3 +11,5 @@ server/server.env
 C:Temp*
 frontend/.netlify/
 frontend/.gitignore
+RESUMO_PROJETO.md
+scripts/wire-contracts.backup*.js
