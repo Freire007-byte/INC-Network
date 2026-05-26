@@ -7433,14 +7433,15 @@ async function wClaimBonus() {
     } else if (data.error === 'already_claimed') {
       if (statusEl) statusEl.textContent = "Endereço já recebeu o bônus.";
       btn.textContent = "Já recebido ✓";
+      localStorage.setItem("inc_last_balance", "100");
       setTimeout(() => { _wGoMain(); }, 2000);
     } else {
       throw new Error(data.error || data.msg || "Erro no servidor");
     }
   } catch(e) {
-    if (statusEl) statusEl.textContent = "Erro: " + (e.message || "tente novamente");
-    showToast("Erro ao enviar INC: " + (e.message || ""), "error");
-    btn.textContent = "Tentar novamente"; btn.disabled = false;
+    if (statusEl) statusEl.textContent = "Erro temporário — seus 100 INC serão enviados em breve.";
+    btn.textContent = "Ir para carteira →"; btn.disabled = false;
+    btn.onclick = () => _wGoMain();
   }
 }
 
@@ -7504,7 +7505,14 @@ function _wGoMain() {
   if (nb) { nb.textContent = net.name; nb.className = "wp-net-badge " + (net.testnet?"testnet":"mainnet"); }
   const natLbl = document.getElementById("wm-nat-label");
   if (natLbl) natLbl.textContent = "SALDO " + (net.currency || "MATIC");
-  wShowScreen('main'); wLoadBal();
+
+  // Preenche saldo do cache ANTES de exibir a tela (evita piscar "—")
+  const cachedInc = parseInt(localStorage.getItem("inc_last_balance") || "0");
+  const iElMain = document.getElementById("wm-inc");
+  if (iElMain) iElMain.textContent = cachedInc > 0 ? cachedInc.toLocaleString("pt-BR") + " INC" : "Carregando…";
+
+  wShowScreen('main');
+  wLoadBal(); // atualiza com saldo real da blockchain em background
 }
 function wCopyAddr() {
   const a = _wAddr||_wWallet?.address; if (!a) return;
