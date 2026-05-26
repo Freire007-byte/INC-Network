@@ -991,13 +991,19 @@
     .wallet-opt:hover::before { opacity: 1; }
     .wallet-opt:active { transform: translateX(2px); }
     .w-icon {
-      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 24px;
+      transition: transform .2s;
     }
-    .w-icon.mm  { background: #f6851b12; border: 1px solid #f6851b25; }
-    .w-icon.rb  { background: #8697ff12; border: 1px solid #8697ff25; }
-    .w-icon.cb  { background: #0052ff12; border: 1px solid #0052ff25; }
-    .w-icon.wc  { background: #3b99fc12; border: 1px solid #3b99fc25; }
+    .wallet-opt:hover .w-icon { transform: scale(1.1); }
+    .w-icon.mm  { background: linear-gradient(135deg,#f6851b22,#e2761b0e); border: 1px solid #f6851b50; }
+    .w-icon.rb  { background: linear-gradient(135deg,#8B5CF622,#7c3aed0e); border: 1px solid #8B5CF650; }
+    .w-icon.cb  { background: linear-gradient(135deg,#0052ff22,#0038cc0e); border: 1px solid #0052ff50; }
+    .w-icon.wc  { background: linear-gradient(135deg,#3b99fc22,#2685e80e); border: 1px solid #3b99fc50; }
+    .wallet-opt.opt-mm:hover { border-color: #f6851b55; box-shadow: 0 4px 28px #f6851b20; }
+    .wallet-opt.opt-rb:hover { border-color: #8B5CF655; box-shadow: 0 4px 28px #8B5CF620; }
+    .wallet-opt.opt-cb:hover { border-color: #0052ff55; box-shadow: 0 4px 28px #0052ff20; }
+    .wallet-opt.opt-wc:hover { border-color: #3b99fc55; box-shadow: 0 4px 28px #3b99fc20; }
     .w-info { flex: 1; }
     .w-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
     .w-desc { font-size: 11px; color: var(--muted); }
@@ -2007,7 +2013,7 @@
     }
     .wp-tok-card:hover { border-color:#7c6dff50; }
     .wp-tok-card.active { border-color:#7c6dff; background:#7c6dff18; }
-    .wp-tok-card .wtc-ico { font-size:18px; line-height:1; }
+    .wp-tok-card .wtc-ico { font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; }
     .wp-tok-card .wtc-sym { font-size:10px; font-weight:800; color:var(--text); font-family:'JetBrains Mono',monospace; }
     .wp-tok-card .wtc-bal { font-size:9px; color:var(--muted); font-family:'JetBrains Mono',monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:62px; }
     .wp-max-btn { font-size:10px; font-weight:700; color:var(--cyan); background:transparent; border:1px solid var(--cyan); border-radius:5px; padding:2px 7px; cursor:pointer; float:right; }
@@ -4522,8 +4528,8 @@
         <span class="w-badge" style="background:#00e5ff22;color:var(--cyan);border:1px solid #00e5ff44">SEM EXTENSÃO</span>
       </button>
 
-      <button class="wallet-opt" onclick="connectWith('metamask')">
-        <div class="w-icon mm">🦊</div>
+      <button class="wallet-opt opt-mm" onclick="connectWith('metamask')">
+        <div class="w-icon mm"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:30px;height:30px"><polygon points="22,44 15,12 40,36" fill="#CD6116"/><polygon points="78,44 85,12 60,36" fill="#CD6116"/><polygon points="25,42 20,18 38,36" fill="#E4761B"/><polygon points="75,42 80,18 62,36" fill="#E4761B"/><polygon points="16,44 84,44 80,80 50,88 20,80" fill="#F6851B"/><polygon points="30,46 70,46 72,73 50,81 28,73" fill="#D7C1B3"/><ellipse cx="38" cy="58" rx="10" ry="10" fill="white"/><ellipse cx="62" cy="58" rx="10" ry="10" fill="white"/><circle cx="38" cy="58" r="5.5" fill="#1a1a2e"/><circle cx="62" cy="58" r="5.5" fill="#1a1a2e"/><circle cx="36" cy="56" r="1.8" fill="white"/><circle cx="60" cy="56" r="1.8" fill="white"/><ellipse cx="50" cy="74" rx="11" ry="7.5" fill="#C0AD9E"/><polygon points="47,69 50,65 53,69 50,71" fill="#CD6116"/></svg></div>
         <div class="w-info">
           <div class="w-name">MetaMask</div>
           <div class="w-desc">A carteira Web3 mais popular do mundo</div>
@@ -4531,8 +4537,8 @@
         <span class="w-badge popular" id="badge-metamask">Popular</span>
       </button>
 
-      <button class="wallet-opt" onclick="connectWith('rabby')">
-        <div class="w-icon rb">🐰</div>
+      <button class="wallet-opt opt-rb" onclick="connectWith('rabby')">
+        <div class="w-icon rb"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:30px;height:30px"><ellipse cx="36" cy="28" rx="9" ry="22" fill="#7C3AED"/><ellipse cx="36" cy="30" rx="5" ry="16" fill="#C4B5FD" opacity="0.7"/><ellipse cx="64" cy="28" rx="9" ry="22" fill="#7C3AED"/><ellipse cx="64" cy="30" rx="5" ry="16" fill="#C4B5FD" opacity="0.7"/><ellipse cx="50" cy="65" rx="28" ry="24" fill="#8B5CF6"/><ellipse cx="50" cy="72" rx="18" ry="13" fill="#A78BFA" opacity="0.5"/><circle cx="40" cy="60" r="6" fill="white"/><circle cx="40" cy="60" r="3" fill="#1a1a2e"/><circle cx="39" cy="59" r="1" fill="white"/><circle cx="60" cy="60" r="6" fill="white"/><circle cx="60" cy="60" r="3" fill="#1a1a2e"/><circle cx="59" cy="59" r="1" fill="white"/><ellipse cx="50" cy="71" rx="4" ry="3" fill="#EC4899"/></svg></div>
         <div class="w-info">
           <div class="w-name">Rabby Wallet</div>
           <div class="w-desc">Multi-chain, segura e open source</div>
@@ -4540,8 +4546,8 @@
         <span class="w-badge" id="badge-rabby" style="display:none"></span>
       </button>
 
-      <button class="wallet-opt" onclick="connectWith('coinbase')">
-        <div class="w-icon cb">🔵</div>
+      <button class="wallet-opt opt-cb" onclick="connectWith('coinbase')">
+        <div class="w-icon cb"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:30px;height:30px"><defs><mask id="wm-cb-mask"><rect width="100" height="100" fill="white"/><rect x="57" y="25" width="43" height="50" fill="black"/><circle cx="50" cy="50" r="19" fill="black"/></mask></defs><circle cx="50" cy="50" r="34" fill="#0052FF" mask="url(#wm-cb-mask)"/></svg></div>
         <div class="w-info">
           <div class="w-name">Coinbase Wallet</div>
           <div class="w-desc">Recomendada para iniciantes</div>
@@ -4562,8 +4568,8 @@
 
       <div class="wallet-divider">ou acesse pelo celular</div>
 
-      <button class="wallet-opt" onclick="connectWith('mobile')">
-        <div class="w-icon wc">📱</div>
+      <button class="wallet-opt opt-wc" onclick="connectWith('mobile')">
+        <div class="w-icon wc"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:28px"><rect x="26" y="8" width="48" height="82" rx="9" fill="white" opacity="0.95"/><rect x="30" y="16" width="40" height="60" rx="4" fill="#0d1b2e"/><rect x="40" y="12" width="20" height="3" rx="1.5" fill="#aaa" opacity="0.5"/><circle cx="50" cy="84" r="4" fill="#ccc" opacity="0.7"/><rect x="35" y="22" width="11" height="11" rx="2" fill="#3b99fc" opacity="0.9"/><rect x="54" y="22" width="11" height="11" rx="2" fill="#3b99fc" opacity="0.9"/><rect x="35" y="37" width="11" height="11" rx="2" fill="#3b99fc" opacity="0.9"/><rect x="54" y="37" width="5" height="5" rx="1" fill="#3b99fc" opacity="0.9"/><rect x="60" y="37" width="5" height="5" rx="1" fill="#3b99fc" opacity="0.9"/><rect x="54" y="43" width="5" height="5" rx="1" fill="#3b99fc" opacity="0.9"/><rect x="35" y="55" width="30" height="3" rx="1.5" fill="#3b99fc" opacity="0.5"/><rect x="35" y="62" width="22" height="3" rx="1.5" fill="#3b99fc" opacity="0.4"/></svg></div>
         <div class="w-info">
           <div class="w-name">Carteira Mobile</div>
           <div class="w-desc">MetaMask Mobile · Trust Wallet · Rainbow</div>
@@ -7911,14 +7917,21 @@ let _wTokBals = {};       // cache de saldos { native, inc, usdt, usdc, wbtc }
 function _wTokList() {
   const chain = currentNetwork?.chainId;
   const nat   = currentNetwork?.currency || 'ETH';
+  const CG    = 'https://assets.coingecko.com/coins/images';
+  const _li   = (src, alt) => `<img src="${src}" alt="${alt}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;display:block">`;
+  const NATI  = {
+    MATIC: _li(`${CG}/4713/small/polygon.png`,                             'MATIC'),
+    ETH:   _li(`${CG}/279/small/ethereum.png`,                             'ETH'),
+    AVAX:  _li(`${CG}/12559/small/Avalanche_Circle_RedWhite_Trans.png`,    'AVAX'),
+  };
   return [
-    { id:'native', sym:nat,    icon:'⟠',  label:nat,    evm:true  },
-    { id:'inc',    sym:'INC',  icon:'◈',  label:'$INC', evm:true  },
-    { id:'usdt',   sym:'USDT', icon:'💵', label:'USDT', evm:true, addr: TOKEN_CONTRACTS.usdt[chain] },
-    { id:'usdc',   sym:'USDC', icon:'🔵', label:'USDC', evm:true, addr: TOKEN_CONTRACTS.usdc[chain] },
-    { id:'wbtc',   sym:'WBTC', icon:'🟠', label:'WBTC', evm:true, addr: TOKEN_CONTRACTS.wbtc[chain] },
-    { id:'btc',    sym:'BTC',  icon:'₿',  label:'BTC',  evm:false },
-    { id:'sol',    sym:'SOL',  icon:'◎',  label:'SOL',  evm:false },
+    { id:'native', sym:nat,    icon: NATI[nat]||NATI.ETH,                                                                  label:nat,    evm:true  },
+    { id:'inc',    sym:'INC',  icon:`<img src="logo.svg" alt="INC" style="width:26px;height:26px;border-radius:50%;object-fit:cover;display:block">`, label:'$INC', evm:true  },
+    { id:'usdt',   sym:'USDT', icon:_li(`${CG}/325/small/Tether.png`,                             'USDT'),                 label:'USDT', evm:true,  addr: TOKEN_CONTRACTS.usdt[chain] },
+    { id:'usdc',   sym:'USDC', icon:_li(`${CG}/6319/small/USD_Coin_icon.png`,                     'USDC'),                 label:'USDC', evm:true,  addr: TOKEN_CONTRACTS.usdc[chain] },
+    { id:'wbtc',   sym:'WBTC', icon:_li(`${CG}/7598/small/wrapped_bitcoin_wbtc.png`,              'WBTC'),                 label:'WBTC', evm:true,  addr: TOKEN_CONTRACTS.wbtc[chain] },
+    { id:'btc',    sym:'BTC',  icon:_li(`${CG}/1/small/bitcoin.png`,                              'BTC'),                  label:'BTC',  evm:false },
+    { id:'sol',    sym:'SOL',  icon:_li(`${CG}/4128/small/solana.png`,                            'SOL'),                  label:'SOL',  evm:false },
   ];
 }
 
