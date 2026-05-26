@@ -2602,6 +2602,51 @@
   }
   .lang-menu button:hover { background: var(--card2); }
   .lang-menu button.lm-active { background: #7c6dff18; color: var(--primary); font-weight: 700; }
+
+  /* ── Ranking ── */
+  .rk-wrap { padding: 0 0 40px; max-width: 720px; margin: 0 auto; }
+  .rk-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+  .rk-title { font-size: 20px; font-weight: 800; letter-spacing: -.3px; }
+  .rk-net-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: #7c6dff18; border: 1px solid #7c6dff35; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+  .rk-sort { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .rk-sort-btn { font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .2s; letter-spacing: .3px; }
+  .rk-sort-btn.active { background: #7c6dff18; border-color: #7c6dff60; color: var(--primary); }
+  .rk-sort-btn:hover:not(.active) { border-color: #ffffff20; color: var(--text); }
+  .rk-loading { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
+  .rk-empty { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
+  .rk-list { display: flex; flex-direction: column; gap: 10px; }
+  .rk-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: border-color .2s; position: relative; overflow: hidden; }
+  .rk-card:hover { border-color: #7c6dff35; }
+  .rk-card.gold   { border-color: #ffd70040; background: linear-gradient(135deg, #ffd70008 0%, var(--card) 60%); }
+  .rk-card.silver { border-color: #c0c0c040; background: linear-gradient(135deg, #c0c0c008 0%, var(--card) 60%); }
+  .rk-card.bronze { border-color: #cd7f3240; background: linear-gradient(135deg, #cd7f3208 0%, var(--card) 60%); }
+  .rk-rank { font-size: 22px; width: 36px; text-align: center; flex-shrink: 0; font-weight: 900; font-family: 'JetBrains Mono', monospace; }
+  .rk-rank.num { font-size: 15px; color: var(--muted); }
+  .rk-info { flex: 1; min-width: 0; }
+  .rk-addr { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text); }
+  .rk-pair { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rk-stats { display: flex; gap: 18px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .rk-stat { text-align: center; }
+  .rk-stat-val { font-size: 15px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+  .rk-stat-lbl { font-size: 10px; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; margin-top: 1px; }
+  .rk-winrate { color: var(--green); }
+  .rk-winrate.low { color: var(--red); }
+  .rk-winrate.mid { color: #f5a623; }
+  .rk-wl { color: var(--text); }
+  .rk-vol { color: var(--cyan); }
+  .rk-bar { position: absolute; bottom: 0; left: 0; height: 2px; background: linear-gradient(90deg, #7c6dff, #00ffaa); border-radius: 0 2px 0 0; }
+  .rk-me { border-color: #7c6dff70 !important; box-shadow: 0 0 20px #7c6dff12; }
+  .rk-me-badge { font-size: 10px; font-weight: 700; background: #7c6dff22; border: 1px solid #7c6dff40; color: var(--primary); padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+  .rk-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+  .rk-sum-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; text-align: center; }
+  .rk-sum-val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--primary); }
+  .rk-sum-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+  @media (max-width: 480px) {
+    .rk-stats { gap: 10px; }
+    .rk-stat-val { font-size: 13px; }
+    .rk-summary { grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .rk-sum-val { font-size: 16px; }
+  }
   </style>
 </head>
 <body>
@@ -3546,6 +3591,7 @@
     <button class="tab" onclick="switchTab('sacar')" data-i18n="tab.withdraw">Sacar</button>
     <button class="tab" onclick="switchTab('resgatar')" style="color:var(--primary)" data-i18n="tab.claim">◈ Resgatar $INC</button>
     <button class="tab" onclick="switchTab('gov')" style="color:var(--cyan)">⚖️ Governança</button>
+    <button class="tab" onclick="switchTab('ranking')" style="color:#ffd700">🏆 Ranking</button>
   </div>
 
   <!-- SINAIS -->
@@ -4157,6 +4203,49 @@
     </div>
 
   </div><!-- /tab-gov -->
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ABA RANKING                                    -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="tab-ranking" class="section">
+    <div class="rk-wrap">
+
+      <div class="rk-header">
+        <div class="rk-title">🏆 Ranking de Traders</div>
+        <span class="rk-net-badge" id="rk-net-badge">Polygon</span>
+      </div>
+
+      <!-- Resumo protocolo -->
+      <div class="rk-summary">
+        <div class="rk-sum-card">
+          <div class="rk-sum-val" id="rk-total-signals">—</div>
+          <div class="rk-sum-lbl">Sinais</div>
+        </div>
+        <div class="rk-sum-card">
+          <div class="rk-sum-val" id="rk-total-traders">—</div>
+          <div class="rk-sum-lbl">Traders</div>
+        </div>
+        <div class="rk-sum-card">
+          <div class="rk-sum-val" id="rk-total-volume">—</div>
+          <div class="rk-sum-lbl">Volume</div>
+        </div>
+      </div>
+
+      <!-- Ordenação -->
+      <div class="rk-sort">
+        <button class="rk-sort-btn active" onclick="rkSort('winrate',this)">⚡ Win Rate</button>
+        <button class="rk-sort-btn" onclick="rkSort('wins',this)">🏅 Vitórias</button>
+        <button class="rk-sort-btn" onclick="rkSort('signals',this)">📊 Sinais</button>
+        <button class="rk-sort-btn" onclick="rkSort('volume',this)">💰 Volume</button>
+      </div>
+
+      <!-- Lista -->
+      <div id="rk-list" class="rk-list">
+        <div class="rk-loading">⏳ Carregando ranking…</div>
+      </div>
+
+    </div>
+  </div><!-- /tab-ranking -->
 
 </div>
 
@@ -5381,7 +5470,7 @@ async function initReadOnlyContract() {
 
 function switchTab(name) {
   document.querySelectorAll(".tab").forEach((t,i) => {
-    const names = ["sinais","criar","posicoes","sacar","resgatar","gov"];
+    const names = ["sinais","criar","posicoes","sacar","resgatar","gov","ranking"];
     t.classList.toggle("active", names[i] === name);
   });
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
@@ -5393,6 +5482,156 @@ function switchTab(name) {
   if (name === "sacar")    loadWithdrawal();
   if (name === "resgatar") loadClaim();
   if (name === "gov")      { govLoadVotingPower(); govRestoreVotes(); }
+  if (name === "ranking")  loadRanking();
+}
+
+// ══════════════════════════════════════════════
+// RANKING
+// ══════════════════════════════════════════════
+const RK_ABI = [
+  "function totalSignals() view returns (uint256)",
+  "function totalVolumeETH() view returns (uint256)",
+  "function getSignal(uint256) view returns (tuple(uint256 id,address provider,string pair,uint8 direction,uint256 entryPrice,uint256 targetPrice,uint256 stopPrice,uint256 providerStake,uint256 followersStake,uint256 createdAt,uint256 resolvedAt,uint8 status,uint256 rsi,uint256 totalPoolAtResolution,address priceFeed))",
+];
+
+let _rkData     = [];   // array de stats por provider
+let _rkSortKey  = "winrate";
+let _rkLoaded   = false;
+
+async function loadRanking() {
+  const net = currentNetwork || NETWORKS[137];
+  const badge = document.getElementById("rk-net-badge");
+  if (badge) badge.textContent = net.name;
+
+  if (_rkLoaded) { rkRender(); return; } // usa cache
+
+  const listEl = document.getElementById("rk-list");
+  if (listEl) listEl.innerHTML = '<div class="rk-loading">⏳ Lendo blockchain…</div>';
+
+  try {
+    const rpc      = new ethers.providers.JsonRpcProvider(net.rpc);
+    const contract = new ethers.Contract(net.address, RK_ABI, rpc);
+
+    const total = (await contract.totalSignals()).toNumber();
+    const volWei = await contract.totalVolumeETH().catch(() => ethers.BigNumber.from(0));
+
+    // Atualiza resumo
+    const elSig = document.getElementById("rk-total-signals");
+    const elVol = document.getElementById("rk-total-volume");
+    if (elSig) elSig.textContent = total.toLocaleString("pt-BR");
+    if (elVol) elVol.textContent = parseFloat(ethers.utils.formatEther(volWei)).toFixed(2) + " " + (net.currency || "ETH");
+
+    if (total === 0) {
+      if (listEl) listEl.innerHTML = '<div class="rk-empty">Nenhum sinal ainda — seja o primeiro trader!</div>';
+      return;
+    }
+
+    // Busca sinais em lotes de 20
+    const providers = {}; // addr -> { wins, losses, total, stake, pairs:{} }
+    const BATCH = 20;
+    for (let i = 1; i <= total; i += BATCH) {
+      const ids    = Array.from({length: Math.min(BATCH, total - i + 1)}, (_, k) => i + k);
+      const calls  = ids.map(id => contract.getSignal(id).catch(() => null));
+      const sigs   = await Promise.all(calls);
+
+      sigs.forEach(sig => {
+        if (!sig || !sig.provider || sig.provider === ethers.constants.AddressZero) return;
+        const addr   = sig.provider.toLowerCase();
+        const status = sig.status; // 0=open, 1=win, 2=loss, 3=expired
+        if (!providers[addr]) providers[addr] = { wins:0, losses:0, total:0, stake: ethers.BigNumber.from(0), pairs:{} };
+        const p = providers[addr];
+        p.total++;
+        if (status === 1) p.wins++;
+        if (status === 2) p.losses++;
+        p.stake = p.stake.add(sig.providerStake || 0);
+        const pair = sig.pair || "?";
+        p.pairs[pair] = (p.pairs[pair] || 0) + 1;
+      });
+    }
+
+    // Converte para array
+    _rkData = Object.entries(providers).map(([addr, p]) => {
+      const resolved = p.wins + p.losses;
+      const winRate  = resolved > 0 ? Math.round((p.wins / resolved) * 100) : 0;
+      const topPair  = Object.entries(p.pairs).sort((a,b) => b[1]-a[1])[0]?.[0] || "—";
+      return { addr, wins: p.wins, losses: p.losses, total: p.total, winRate, stake: p.stake, topPair };
+    }).filter(p => p.total > 0);
+
+    const elTrd = document.getElementById("rk-total-traders");
+    if (elTrd) elTrd.textContent = _rkData.length.toLocaleString("pt-BR");
+
+    _rkLoaded = true;
+    rkRender();
+
+  } catch(e) {
+    console.error("loadRanking:", e);
+    if (listEl) listEl.innerHTML = `<div class="rk-empty">Erro ao carregar: ${e.message?.substring(0,80)}</div>`;
+  }
+}
+
+function rkSort(key, btn) {
+  _rkSortKey = key;
+  document.querySelectorAll(".rk-sort-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  rkRender();
+}
+
+function rkRender() {
+  const listEl = document.getElementById("rk-list");
+  if (!listEl || !_rkData.length) return;
+
+  const myAddr = (_wAddr || "").toLowerCase();
+  const net    = currentNetwork || NETWORKS[137];
+  const cur    = net.currency || "ETH";
+
+  const sorted = [..._rkData].sort((a, b) => {
+    if (_rkSortKey === "winrate") return (b.winRate - a.winRate) || (b.wins - a.wins);
+    if (_rkSortKey === "wins")    return (b.wins - a.wins) || (b.winRate - a.winRate);
+    if (_rkSortKey === "signals") return b.total - a.total;
+    if (_rkSortKey === "volume")  return b.stake.gt(a.stake) ? 1 : -1;
+    return 0;
+  });
+
+  const medals = ["🥇","🥈","🥉"];
+  const cls    = ["gold","silver","bronze"];
+
+  listEl.innerHTML = sorted.slice(0, 50).map((p, i) => {
+    const rank    = i + 1;
+    const isMe    = p.addr === myAddr;
+    const medal   = rank <= 3 ? medals[rank-1] : rank;
+    const cardCls = rank <= 3 ? cls[rank-1] : "";
+    const wr      = p.winRate;
+    const wrCls   = wr >= 60 ? "rk-winrate" : wr >= 40 ? "rk-winrate mid" : "rk-winrate low";
+    const stakeEth = parseFloat(ethers.utils.formatEther(p.stake)).toFixed(3);
+    const barW    = Math.min(wr, 100);
+    const resolved = p.wins + p.losses;
+    const wlStr   = resolved > 0 ? `${p.wins}W / ${p.losses}L` : `${p.total} abertos`;
+    const addrShort = p.addr.slice(0,6) + "…" + p.addr.slice(-4);
+
+    return `
+    <div class="rk-card ${cardCls} ${isMe ? 'rk-me' : ''}" onclick="navigator.clipboard?.writeText('${p.addr}')">
+      <div class="rk-rank ${typeof medal === 'number' ? 'num' : ''}">${medal}</div>
+      <div class="rk-info">
+        <div class="rk-addr">${addrShort}${isMe ? '<span class="rk-me-badge">VOCÊ</span>' : ''}</div>
+        <div class="rk-pair">${p.topPair} · ${p.total} sinal${p.total !== 1 ? 'is' : ''}</div>
+      </div>
+      <div class="rk-stats">
+        <div class="rk-stat">
+          <div class="rk-stat-val ${wrCls}">${resolved > 0 ? wr + '%' : '—'}</div>
+          <div class="rk-stat-lbl">Win Rate</div>
+        </div>
+        <div class="rk-stat">
+          <div class="rk-stat-val rk-wl">${wlStr}</div>
+          <div class="rk-stat-lbl">Resultado</div>
+        </div>
+        <div class="rk-stat">
+          <div class="rk-stat-val rk-vol">${stakeEth}</div>
+          <div class="rk-stat-lbl">${cur}</div>
+        </div>
+      </div>
+      <div class="rk-bar" style="width:${barW}%"></div>
+    </div>`;
+  }).join('');
 }
 
 // ══════════════════════════════════════════════
