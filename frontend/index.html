@@ -3686,33 +3686,33 @@
   <div id="tab-criar" class="section">
     <div class="form-wrap">
       <div class="form-card">
-        <div class="form-title">Publicar Novo Sinal</div>
-        <div class="form-subtitle">Stake real. Resolução automática via Chainlink.</div>
 
-        <!-- Preço oracle ao vivo do par selecionado -->
-        <div class="oracle-price-row">
+        <!-- Campos ocultos — preenchidos automaticamente pelo oracle -->
+        <input type="hidden" id="f-pair"      value="BTC/USDT" />
+        <input type="hidden" id="f-direction" value="0" />
+        <input type="hidden" id="f-entry"     value="" />
+        <input type="hidden" id="f-tp"        value="" />
+        <input type="hidden" id="f-sl"        value="" />
+        <input type="hidden" id="f-rsi"       value="50" />
+        <input type="hidden" id="f-stake"     value="0.01" />
+
+        <!-- Oracle ao vivo -->
+        <div class="oracle-price-row" style="margin-bottom:14px">
           <div>
-            <div class="oracle-price-label" id="form-oracle-label">BTC/USDT — Preço Oracle Atual</div>
+            <div class="oracle-price-label" id="form-oracle-label">BTC/USDT — Preço Oracle</div>
             <div>
               <span class="oracle-price-val" id="form-oracle-val">—</span>
               <span class="oracle-price-chg" id="form-oracle-chg"></span>
             </div>
           </div>
-          <div class="oracle-price-actions">
-            <button class="btn-use-price" onclick="fillEntryFromOracle()">← Usar como Entrada</button>
-            <button class="btn-chart-sm" onclick="openChartFromForm()">📈 Gráfico</button>
-          </div>
+          <button class="btn-chart-sm" onclick="openChartFromForm()">📈 Gráfico</button>
         </div>
 
-        <div class="fee-banner">
-          <span>⚡</span>
-          Taxa da rede: <b>3.5%</b> do stake vai para a treasury INC.
-        </div>
-
-        <div class="form-2col">
+        <!-- Par + Direção -->
+        <div class="form-2col" style="margin-bottom:14px">
           <div class="form-row">
-            <label>Par de Moedas</label>
-            <select id="f-pair" onchange="updateFormOracle()">
+            <label>Par</label>
+            <select id="f-pair-sel" onchange="document.getElementById('f-pair').value=this.value;_autoFillForm()">
               <option value="BTC/USDT">BTC/USDT</option>
               <option value="ETH/USDT">ETH/USDT</option>
               <option value="SOL/USDT">SOL/USDT</option>
@@ -3724,7 +3724,6 @@
           </div>
           <div class="form-row">
             <label>Direção</label>
-            <input type="hidden" id="f-direction" value="0" />
             <div class="dir-btn-row">
               <button class="dir-btn dir-long active" id="dir-btn-long" onclick="setDirection(0)">⬆ LONG</button>
               <button class="dir-btn dir-short" id="dir-btn-short" onclick="setDirection(1)">⬇ SHORT</button>
@@ -3732,49 +3731,15 @@
           </div>
         </div>
 
-        <div class="form-2col">
-          <div class="form-row">
-            <label>Preço de Entrada (USD)</label>
-            <input type="number" id="f-entry" placeholder="65000" step="0.01" oninput="updateTPSL()" />
-          </div>
-          <div class="form-row">
-            <label>RSI (0 – 100)</label>
-            <input type="number" id="f-rsi" placeholder="28" min="0" max="100" />
-          </div>
-        </div>
-
-        <div class="form-2col">
-          <div class="form-row">
-            <label>Take Profit (USD)</label>
-            <input type="number" id="f-tp" placeholder="68000" step="0.01" />
-            <div class="pct-btns">
-              <button class="pct-btn tp" onclick="setTP(3)">+3%</button>
-              <button class="pct-btn tp" onclick="setTP(5)">+5%</button>
-              <button class="pct-btn tp" onclick="setTP(10)">+10%</button>
-            </div>
-          </div>
-          <div class="form-row">
-            <label>Stop Loss (USD)</label>
-            <input type="number" id="f-sl" placeholder="62000" step="0.01" />
-            <div class="pct-btns">
-              <button class="pct-btn sl" onclick="setSL(2)">-2%</button>
-              <button class="pct-btn sl" onclick="setSL(3)">-3%</button>
-              <button class="pct-btn sl" onclick="setSL(5)">-5%</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Risco/Retorno Calculator -->
-        <div class="rr-calc" id="rr-calc" style="display:none">
-          <div class="rr-row"><span class="rr-label">Risk/Reward</span><span class="rr-val" id="rr-ratio">—</span></div>
-          <div class="rr-row"><span class="rr-label">TP Distance</span><span class="rr-val rr-green" id="rr-tp-pct">—</span></div>
-          <div class="rr-row"><span class="rr-label">SL Distance</span><span class="rr-val rr-red" id="rr-sl-pct">—</span></div>
-          <div class="rr-row"><span class="rr-label">Pool ao publicar</span><span class="rr-val" id="rr-pool">—</span></div>
+        <!-- Resumo automático compacto -->
+        <div id="form-auto-summary" style="background:#ffffff08;border:1px solid #ffffff10;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--muted);display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div><div style="color:var(--green);font-weight:700;font-size:13px" id="fas-tp">—</div><div>Take Profit +5%</div></div>
+          <div><div style="color:var(--text);font-weight:700;font-size:13px" id="fas-entry">—</div><div>Entrada</div></div>
+          <div><div style="color:#ff4757;font-weight:700;font-size:13px" id="fas-sl">—</div><div>Stop Loss -3%</div></div>
         </div>
 
         <!-- Entrada rápida: 1 clique entra na posição -->
-        <div style="margin-top:8px;margin-bottom:4px;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">⚡ Entrar agora — escolha o valor</div>
-        <input type="hidden" id="f-stake" value="0.01" />
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚡ Escolha o valor e entre agora</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
           <button class="quick-entry-btn" id="qe-001" onclick="quickEnter(0.01)">0.01<span class="qe-cur">MATIC</span></button>
           <button class="quick-entry-btn" id="qe-005" onclick="quickEnter(0.05)">0.05<span class="qe-cur">MATIC</span></button>
@@ -6181,8 +6146,7 @@ async function confirmFollow() {
 // ══════════════════════════════════════════════
 // CRIAR SINAL — helpers oracle
 // ══════════════════════════════════════════════
-function getFormSym() {
-  return (document.getElementById("f-pair")?.value || "BTC/USDT").replace("/USDT","");
+function getFormSym() {  return (document.getElementById("f-pair")?.value || "BTC/USDT").replace("/USDT","");
 }
 
 // Tenta preencher o form — se oracle ainda não carregou, tenta de novo a cada 400ms (máx 10x)
@@ -6232,10 +6196,10 @@ function fillEntryFromOracle() {
   const d   = oraclePrices[sym];
   if (!d) return;
   document.getElementById("f-entry").value = d.price.toFixed(2);
-  updateRRCalc();
+  updateTPSL();
 }
 
-// Auto-calcula TP (+5%) e SL (-3%) com base na direção e preço atual
+// Auto-calcula TP (+5%) e SL (-3%) e atualiza resumo visual
 function updateTPSL() {
   const dir   = parseInt(document.getElementById("f-direction")?.value ?? "0");
   const entry = parseFloat(document.getElementById("f-entry")?.value);
@@ -6243,10 +6207,16 @@ function updateTPSL() {
   const tpPct = 5, slPct = 3;
   const tp = dir === 0 ? entry * (1 + tpPct/100) : entry * (1 - tpPct/100);
   const sl = dir === 0 ? entry * (1 - slPct/100) : entry * (1 + slPct/100);
-  const tpEl = document.getElementById("f-tp");
-  const slEl = document.getElementById("f-sl");
-  if (tpEl) tpEl.value = tp.toFixed(2);
-  if (slEl) slEl.value = sl.toFixed(2);
+  document.getElementById("f-tp").value = tp.toFixed(2);
+  document.getElementById("f-sl").value = sl.toFixed(2);
+  // Resumo visual compacto
+  const fmt = v => v >= 1000 ? '$' + v.toLocaleString('pt-BR', {maximumFractionDigits:0}) : '$' + v.toFixed(2);
+  const fasEntry = document.getElementById("fas-entry");
+  const fasTp    = document.getElementById("fas-tp");
+  const fasSl    = document.getElementById("fas-sl");
+  if (fasEntry) fasEntry.textContent = fmt(entry);
+  if (fasTp)    fasTp.textContent    = fmt(tp);
+  if (fasSl)    fasSl.textContent    = fmt(sl);
   updateRRCalc();
 }
 
