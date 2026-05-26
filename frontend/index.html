@@ -2703,10 +2703,6 @@
   </p>
 
   <!-- Banner de atualização live -->
-  <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;background:rgba(124,109,255,.1);border:1px solid rgba(124,109,255,.35);border-radius:20px;padding:6px 18px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--primary);position:relative;z-index:1">
-    <span style="width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary);display:inline-block;animation:pulse 1.5s infinite"></span>
-    ⚡ Acesse sempre a URL oficial: <span style="color:var(--cyan);margin-left:4px">incnetwork.vercel.app</span>
-  </div>
 
   <!-- Badges de stats -->
   <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px;position:relative;z-index:1">
@@ -4779,7 +4775,7 @@
       </div>
       <!-- ETH Balance -->
       <div class="wp-balance-card">
-        <div style="font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:8px">SALDO ETH</div>
+        <div id="wm-nat-label" style="font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:8px">SALDO MATIC</div>
         <div class="wp-bal-eth" id="wm-eth">0.0000</div>
         <div class="wp-bal-usd" id="wm-usd">≈ $0.00 USD</div>
       </div>
@@ -4868,7 +4864,7 @@
   </div>
 
   <!-- ── BÔNUS DE BOAS-VINDAS ── -->
-  <div class="wp-screen" id="wp-bonus" style="display:none">
+  <div class="wp-screen" id="wp-bonus">
     <div class="wp-header">
       <button class="wp-close" onclick="wShowScreen('main');_wGoMain()">✕</button>
     </div>
@@ -4884,7 +4880,7 @@
         ✅ Sem taxa! O INC Network paga o envio por você.
       </div>
       <div id="wp-bonus-status" style="font-size:12px;color:var(--muted);min-height:18px"></div>
-      <button id="wp-bonus-btn" class="wp-btn wp-btn-primary wp-btn-center" disabled style="opacity:.6">
+      <button id="wp-bonus-btn" class="wp-btn wp-btn-primary wp-btn-center" onclick="wClaimBonus()" disabled style="opacity:.6">
         Enviando… 🎁
       </button>
       <button class="wp-btn wp-btn-outline wp-btn-center" onclick="_wGoMain()" style="font-size:12px;padding:10px">
@@ -7334,7 +7330,10 @@ function wClosePanel() {
   document.getElementById("wallet-panel").classList.remove("open");
 }
 function wShowScreen(id) {
-  document.querySelectorAll(".wp-screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".wp-screen").forEach(s => {
+    s.classList.remove("active");
+    s.style.display = "";
+  });
   const el = document.getElementById("wp-" + id);
   if (el) el.classList.add("active");
 }
@@ -7408,9 +7407,7 @@ async function wCreateFinish() {
 }
 
 function wShowBonusScreen() {
-  document.querySelectorAll(".wp-screen").forEach(s => s.style.display = "none");
-  const el = document.getElementById("wp-bonus");
-  if (el) el.style.display = "flex";
+  wShowScreen("bonus");
 }
 
 async function wClaimBonus() {
@@ -7505,8 +7502,8 @@ function _wGoMain() {
   const nb = document.getElementById("wm-net");
   const net = currentNetwork || NETWORKS[137];
   if (nb) { nb.textContent = net.name; nb.className = "wp-net-badge " + (net.testnet?"testnet":"mainnet"); }
-  const ethLbl = document.querySelector("#wp-main .wp-balance-card div:first-child");
-  if (ethLbl) ethLbl.textContent = "SALDO " + (net.currency || "MATIC");
+  const natLbl = document.getElementById("wm-nat-label");
+  if (natLbl) natLbl.textContent = "SALDO " + (net.currency || "MATIC");
   wShowScreen('main'); wLoadBal();
 }
 function wCopyAddr() {
@@ -7524,14 +7521,7 @@ const _POLYGON_RPCS = [
   "https://rpc.ankr.com/polygon",
 ];
 
-async function _wgetRpc() {
-  for (const url of _POLYGON_RPCS) {
-    try {
-      const p = new ethers.providers.JsonRpcProvider(url);
-      await p.getBlockNumber();
-      return p;
-    } catch(e) {}
-  }
+function _wgetRpc() {
   return new ethers.providers.JsonRpcProvider(_POLYGON_RPCS[0]);
 }
 
@@ -7544,32 +7534,34 @@ async function wRefreshBal(btn) {
 async function wLoadBal() {
   const addr = _wAddr || _wWallet?.address;
   if (!addr) { showToast("Desbloqueie a carteira primeiro", "error"); return; }
+  const cur = "MATIC";
+  const tkAddr = NETWORKS[137].token;
 
-  // Sempre usa RPC próprio da Polygon — não depende do MetaMask
-  const rpc  = await _wgetRpc();
-  const cur  = "MATIC";
+  for (const rpcUrl of _POLYGON_RPCS) {
+    try {
+      const rpc = new ethers.providers.JsonRpcProvider(rpcUrl);
+      const [balWei, bInc] = await Promise.all([
+        rpc.getBalance(addr),
+        new ethers.Contract(tkAddr, ERC20_MIN, rpc).balanceOf(addr),
+      ]);
+      const bal = parseFloat(ethers.utils.formatEther(balWei));
+      const inc = parseFloat(ethers.utils.formatUnits(bInc, 18));
 
-  try {
-    const balWei = await rpc.getBalance(addr);
-    const bal    = parseFloat(ethers.utils.formatEther(balWei));
-    const ethEl  = document.getElementById("wm-eth");
-    if (ethEl) ethEl.textContent = bal.toFixed(4) + " " + cur;
-    const px    = (typeof oraclePrices !== "undefined" && oraclePrices?.["MATIC"]?.price) || 0;
-    const usdEl = document.getElementById("wm-usd");
-    if (usdEl) usdEl.textContent = "≈ $" + (bal * px).toLocaleString("en-US", {maximumFractionDigits:2}) + " USD";
-    if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = bal.toFixed(6) + " " + cur; }
-  } catch(e) { console.warn("wLoadBal native:", e.message); }
+      const ethEl = document.getElementById("wm-eth");
+      if (ethEl) ethEl.textContent = bal.toFixed(4) + " " + cur;
+      const px    = (typeof oraclePrices !== "undefined" && oraclePrices?.["MATIC"]?.price) || 0;
+      const usdEl = document.getElementById("wm-usd");
+      if (usdEl) usdEl.textContent = "≈ $" + (bal * px).toLocaleString("en-US", {maximumFractionDigits:2}) + " USD";
+      if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = bal.toFixed(6) + " " + cur; }
 
-  try {
-    const tkAddr = NETWORKS[137].token;
-    const tok    = new ethers.Contract(tkAddr, ERC20_MIN, rpc);
-    const bInc   = await tok.balanceOf(addr);
-    const inc    = parseFloat(ethers.utils.formatUnits(bInc, 18));
-    const iEl    = document.getElementById("wm-inc");
-    if (iEl) iEl.textContent = inc.toLocaleString("en-US", {maximumFractionDigits:2}) + " INC";
-    try { localStorage.setItem("inc_last_balance", Math.floor(inc).toString()); } catch(e) {}
-    if (_wToken === 'inc') { const av = document.getElementById("ws-avail"); if (av) av.textContent = inc.toLocaleString("en-US", {maximumFractionDigits:2}) + " $INC"; }
-  } catch(e) { console.warn("wLoadBal INC:", e.message); }
+      const iEl = document.getElementById("wm-inc");
+      if (iEl) iEl.textContent = inc.toLocaleString("en-US", {maximumFractionDigits:2}) + " INC";
+      try { localStorage.setItem("inc_last_balance", Math.floor(inc).toString()); } catch(e) {}
+      if (_wToken === 'inc') { const av = document.getElementById("ws-avail"); if (av) av.textContent = inc.toLocaleString("en-US", {maximumFractionDigits:2}) + " $INC"; }
+      return; // sucesso — sai do loop
+    } catch(e) { console.warn("wLoadBal RPC falhou:", rpcUrl, e.message); }
+  }
+  showToast("Não foi possível carregar o saldo — tente novamente", "error");
 }
 
 // ══════════════════════════════════════════════
