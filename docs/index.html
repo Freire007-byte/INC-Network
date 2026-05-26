@@ -7629,10 +7629,11 @@ async function wLoadBal() {
       if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = bal.toFixed(6) + " " + cur; }
 
       const iEl = document.getElementById("wm-inc");
-      // Se INC on-chain é 0, tenta faucet 1x por sessão (var de sessão, não localStorage)
+      // Se INC on-chain é 0, dispara faucet e sai — wSilentFaucet cuida do display
       if (inc === 0 && !window._incFaucetDone) {
         window._incFaucetDone = true;
-        wSilentFaucet();
+        wSilentFaucet(); // já seta "100 INC" na tela e no cache
+        return;
       }
       const displayInc = (inc === 0 && cachedInc > 0) ? cachedInc : inc;
       if (iEl) iEl.textContent = displayInc.toLocaleString("pt-BR", {maximumFractionDigits:2}) + " INC";
