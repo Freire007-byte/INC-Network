@@ -7417,7 +7417,7 @@ async function wClaimBonus() {
   if (statusEl) statusEl.textContent = "Processando envio de 100 INC…";
   try {
     const chainId = (currentNetwork && currentNetwork.chainId) || 137;
-    const res = await fetch('https://incnetwork.vercel.app/api/faucet', {
+    const res = await fetch('/api/faucet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ address: _wAddr, chainId })
