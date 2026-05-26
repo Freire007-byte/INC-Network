@@ -7399,6 +7399,7 @@ async function wCreateFinish() {
     const enc = await _wEnc(_wNewWal.privateKey, pass);
     localStorage.setItem(W_KEY, JSON.stringify({ address: _wNewWal.address, enc, ts: Date.now() }));
     _wWallet = _wNewWal; _wAddr = _wNewWal.address; _wNewWal = null;
+    localStorage.setItem("inc_last_balance", "100");
     wShowBonusScreen();
     wClaimBonus();
   } catch(e) { showToast("Erro: " + e.message, "error"); btn.textContent = "Criar Carteira"; btn.disabled = false; }
@@ -7416,7 +7417,7 @@ async function wClaimBonus() {
   if (statusEl) statusEl.textContent = "Processando envio de 100 INC…";
   try {
     const chainId = (currentNetwork && currentNetwork.chainId) || 137;
-    const res = await fetch('/api/faucet', {
+    const res = await fetch('https://incnetwork.vercel.app/api/faucet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ address: _wAddr, chainId })
