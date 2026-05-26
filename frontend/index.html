@@ -7427,6 +7427,7 @@ async function wClaimBonus() {
       if (statusEl) statusEl.innerHTML = `✅ 100 INC enviados! <a href="${txUrl}" target="_blank" style="color:var(--cyan)">Ver tx ↗</a>`;
       showToast("🎉 100 INC creditados na sua carteira!", "success");
       btn.textContent = "Recebido ✓";
+      localStorage.setItem("inc_last_balance", "100");
       setTimeout(() => { _wGoMain(); }, 2500);
     } else if (data.error === 'already_claimed') {
       if (statusEl) statusEl.textContent = "Endereço já recebeu o bônus.";
@@ -7535,6 +7536,11 @@ async function wLoadBal() {
   const cur = "MATIC";
   const tkAddr = NETWORKS[137].token;
 
+  // Mostra saldo em cache imediatamente enquanto carrega do RPC
+  const cachedInc = parseInt(localStorage.getItem("inc_last_balance") || "0");
+  const iElPre = document.getElementById("wm-inc");
+  if (iElPre && cachedInc > 0) iElPre.textContent = cachedInc.toLocaleString("pt-BR") + " INC";
+
   for (const rpcUrl of _POLYGON_RPCS) {
     try {
       const rpc = new ethers.providers.JsonRpcProvider(rpcUrl);
@@ -7553,13 +7559,21 @@ async function wLoadBal() {
       if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = bal.toFixed(6) + " " + cur; }
 
       const iEl = document.getElementById("wm-inc");
-      if (iEl) iEl.textContent = inc.toLocaleString("en-US", {maximumFractionDigits:2}) + " INC";
-      try { localStorage.setItem("inc_last_balance", Math.floor(inc).toString()); } catch(e) {}
-      if (_wToken === 'inc') { const av = document.getElementById("ws-avail"); if (av) av.textContent = inc.toLocaleString("en-US", {maximumFractionDigits:2}) + " $INC"; }
+      // Se on-chain ainda mostra 0 mas temos cache do bônus, mantém o cache
+      const displayInc = (inc === 0 && cachedInc > 0) ? cachedInc : inc;
+      if (iEl) iEl.textContent = displayInc.toLocaleString("pt-BR", {maximumFractionDigits:2}) + " INC";
+      if (inc > 0) { try { localStorage.setItem("inc_last_balance", Math.floor(inc).toString()); } catch(e) {} }
+      if (_wToken === 'inc') { const av = document.getElementById("ws-avail"); if (av) av.textContent = displayInc.toLocaleString("pt-BR", {maximumFractionDigits:2}) + " $INC"; }
       return; // sucesso — sai do loop
     } catch(e) { console.warn("wLoadBal RPC falhou:", rpcUrl, e.message); }
   }
-  showToast("Não foi possível carregar o saldo — tente novamente", "error");
+  // RPC falhou — mostra cache se disponível
+  if (cachedInc > 0) {
+    const iEl = document.getElementById("wm-inc");
+    if (iEl) iEl.textContent = cachedInc.toLocaleString("pt-BR") + " INC";
+  } else {
+    showToast("Não foi possível carregar o saldo — tente novamente", "error");
+  }
 }
 
 // ══════════════════════════════════════════════
