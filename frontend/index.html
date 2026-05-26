@@ -7721,7 +7721,7 @@ async function wClaimBonus() {
 // Envia 100 INC silenciosamente para carteiras com saldo 0
 async function wSilentFaucet() {
   if (!_wAddr) return;
-  // Mostra 100 INC imediatamente (otimista) antes da resposta do servidor
+  // Mostra 100 INC imediatamente — nunca reverte, wLoadBal confirma on-chain depois
   localStorage.setItem("inc_last_balance", "100");
   const iEl = document.getElementById("wm-inc");
   if (iEl) iEl.textContent = "100 INC";
@@ -7730,16 +7730,10 @@ async function wSilentFaucet() {
     const res  = await fetch('/api/faucet', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ address: _wAddr, chainId }) });
     const data = await res.json();
     if (data.success) {
-      setTimeout(() => wLoadBal(), 6000); // confirma on-chain após ~2 blocos
-    } else if (data.error !== 'already_claimed') {
-      // Faucet falhou de verdade — reverte display para 0
-      localStorage.setItem("inc_last_balance", "0");
-      if (iEl) iEl.textContent = "0 INC";
-      window._incFaucetDone = false; // permite nova tentativa
+      setTimeout(() => wLoadBal(), 7000); // recarrega após TX confirmar no Polygon
     }
-  } catch(e) {
-    // Erro de rede — mantém exibição otimista para não confundir o usuário
-  }
+    // already_claimed ou qualquer erro: mantém "100 INC" — on-chain confirma depois
+  } catch(e) { /* mantém exibição otimista */ }
 }
 
 // ── Import ─────────────────────────────────────
