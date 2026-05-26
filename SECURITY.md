@@ -382,7 +382,7 @@ npx hardhat test
 
 ## Divulgação Responsável
 
-Se você encontrar uma vulnerabilidade não coberta neste relatório, por favor abra uma **issue privada** no repositório ou entre em contato via [X/Twitter @inc_network_](https://x.com/inc_network_) antes de divulgar publicamente.
+Se você encontrar uma vulnerabilidade não coberta neste relatório, por favor abra uma **issue privada** no repositório ou entre em contato via [X/Twitter @incnetwork_](https://x.com/incnetwork_) antes de divulgar publicamente.
 
 ---
 

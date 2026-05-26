@@ -108,13 +108,23 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
 
     it("Rejeita LONG com TP abaixo do preço atual do oracle (exploit WIN instantâneo)", async () => {
       // Oracle = $65.000. TP = $64.500 está ABAIXO do oracle mas ACIMA da entry $64.000
-      // Sem a correção isso seria WIN imediato — agora deve reverter
+      // Deve reverter — TP não atingiu a distância mínima de 0.5% acima do oracle
       const entry = 6400000000000n; // $64.000 (dentro dos 2% de $65.000)
       const tp    = 6450000000000n; // $64.500 > entry ✅ mas < oracle $65.000 ✗
       const sl    = 6200000000000n;
       await expect(
         contract.connect(provider).createSignal("BTC/USDT", 0, entry, tp, sl, 28, { value: PROVIDER_STAKE })
-      ).to.be.revertedWith("INC: TP LONG deve superar preco atual do oracle");
+      ).to.be.revertedWith("INC: TP LONG muito proximo do oracle (min 0.5%)");
+    });
+
+    it("Rejeita LONG com TP dentro de 0.5% acima do oracle (distância mínima)", async () => {
+      // Oracle = $65.000. TP = $65.200 está ACIMA do oracle mas dentro dos 0.5% ($65.325)
+      const entry = 6400000000000n; // $64.000 (dentro dos 2%)
+      const tp    = 6520000000000n; // $65.200 > oracle ✅ mas < minTarget $65.325 ✗
+      const sl    = 6200000000000n;
+      await expect(
+        contract.connect(provider).createSignal("BTC/USDT", 0, entry, tp, sl, 28, { value: PROVIDER_STAKE })
+      ).to.be.revertedWith("INC: TP LONG muito proximo do oracle (min 0.5%)");
     });
 
     it("Rejeita SHORT com TP acima do preço atual do oracle (exploit WIN instantâneo)", async () => {
@@ -124,7 +134,17 @@ describe("INCNetwork — Testes Completos com Oracle", function () {
       const sl    = 6800000000000n;
       await expect(
         contract.connect(provider).createSignal("BTC/USDT", 1, entry, tp, sl, 72, { value: PROVIDER_STAKE })
-      ).to.be.revertedWith("INC: TP SHORT deve ser abaixo do preco atual do oracle");
+      ).to.be.revertedWith("INC: TP SHORT muito proximo do oracle (min 0.5%)");
+    });
+
+    it("Rejeita SHORT com TP dentro de 0.5% abaixo do oracle (distância mínima)", async () => {
+      // Oracle = $65.000. TP = $64.800 está ABAIXO do oracle mas dentro dos 0.5% ($64.675)
+      const entry = 6600000000000n; // $66.000 (dentro dos 2%)
+      const tp    = 6480000000000n; // $64.800 < oracle ✅ mas > maxTarget $64.675 ✗
+      const sl    = 6800000000000n;
+      await expect(
+        contract.connect(provider).createSignal("BTC/USDT", 1, entry, tp, sl, 72, { value: PROVIDER_STAKE })
+      ).to.be.revertedWith("INC: TP SHORT muito proximo do oracle (min 0.5%)");
     });
   });
 

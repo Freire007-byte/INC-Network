@@ -139,6 +139,7 @@ contract INCToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable2Step {
 
     /// @notice Batch whitelist para múltiplos endereços (ex: vários pools de DEX)
     function batchWhitelist(address[] calldata addrs, bool status) external onlyOwner {
+        require(addrs.length <= 200, "INC: batch muito grande");
         for (uint256 i = 0; i < addrs.length; i++) {
             if (addrs[i] != address(0)) {
                 isWhitelisted[addrs[i]] = status;

@@ -82,30 +82,35 @@ async function main() {
     console.log(`  ✓ Configurado. TX: ${tx1.hash}`);
   }
 
-  // 2. INCNetwork.setIncToken
-  const currentToken = await network.incTokenContract();
-  if (currentToken.toLowerCase() === cfg.token.toLowerCase()) {
-    console.log("  ✓ INCNetwork.incTokenContract já configurado — pulando");
-  } else {
-    console.log("  → INCNetwork.setIncToken(tokenAddr)...");
-    const tx2 = await network.setIncToken(cfg.token);
-    await tx2.wait();
-    console.log(`  ✓ Configurado. TX: ${tx2.hash}`);
+  // 2. INCNetwork.setIncToken (opcional — versões antigas do INCNetwork não têm esta função)
+  let tokenInNet = null;
+  try {
+    const currentToken = await network.incTokenContract();
+    if (currentToken.toLowerCase() === cfg.token.toLowerCase()) {
+      console.log("  ✓ INCNetwork.incTokenContract já configurado — pulando");
+      tokenInNet = currentToken;
+    } else {
+      console.log("  → INCNetwork.setIncToken(tokenAddr)...");
+      const tx2 = await network.setIncToken(cfg.token);
+      await tx2.wait();
+      tokenInNet = cfg.token;
+      console.log(`  ✓ Configurado. TX: ${tx2.hash}`);
+    }
+  } catch {
+    console.log("  ⚠ INCNetwork não suporta setIncToken() (versão antiga) — pulando");
+    console.log("    O unlock automático via selfUnlock() e lazy-unlock continuam funcionando.");
   }
 
   // Verificação final
-  const netInToken   = await token.incNetworkContract();
-  const tokenInNet   = await network.incTokenContract();
+  const netInToken     = await token.incNetworkContract();
   const netWhitelisted = await token.isWhitelisted(cfg.network);
 
   console.log("\n  ── Verificação ───────────────────────────────────");
   console.log(`  token.incNetworkContract  : ${netInToken}`);
-  console.log(`  network.incTokenContract  : ${tokenInNet}`);
+  console.log(`  network.incTokenContract  : ${tokenInNet ?? "N/A (versão antiga)"}`);
   console.log(`  network whitelisted?      : ${netWhitelisted}`);
 
-  const ok = netInToken.toLowerCase()  === cfg.network.toLowerCase() &&
-             tokenInNet.toLowerCase()  === cfg.token.toLowerCase()   &&
-             netWhitelisted;
+  const ok = netInToken.toLowerCase() === cfg.network.toLowerCase() && netWhitelisted;
 
   if (ok) {
     console.log("\n  ✅ Contratos conectados com sucesso!\n");

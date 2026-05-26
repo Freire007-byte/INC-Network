@@ -1,7 +1,7 @@
 {
   "INCNetwork": {
     "treasury": "0x3f357a46E6202e0b28Ce0EEd7c2717ABF3d2c308",
-    "owner":    "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679",
+    "owner": "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679",
     "polygon": {
       "address": "0xf49841DF7726691D04D311BC4A0821C0AB9211f5",
       "chainlink_automation": null,
@@ -38,5 +38,20 @@
         "AVAX/USDT": "0x0A77230d17318075983913bC2145DB16C7366156"
       }
     }
+  },
+  "incchain": {
+    "network": "0x078cE5595677BF5699F941730485F9635f09aA2A",
+    "token": null,
+    "chainId": 19191,
+    "feeds": {
+      "BTC/USDT": "0xb4F8485E3a61fBE213712215221aDB3485ceFff8",
+      "ETH/USDT": "0x00D1896392BdE34e9Efb11054e35BcD1A674d245",
+      "SOL/USDT": "0x1de206f37320BB1C56DfdfC7cAbF72a24fa0e745",
+      "BNB/USDT": "0xf49841DF7726691D04D311BC4A0821C0AB9211f5",
+      "AVAX/USDT": "0x6EdC353A4A60d6D4B8Fc0C1E73a1ed3056D5F91b",
+      "MATIC/USDT": "0xD5DdE529F3B1bB0ab408063E64104709086c9f5B",
+      "XAU/USDT": "0x672CA0c46ED2E00a1bb8E57Cb1F6b3d74d7BAf54"
+    },
+    "timestamp": "2026-05-24T13:42:22.696Z"
   }
 }

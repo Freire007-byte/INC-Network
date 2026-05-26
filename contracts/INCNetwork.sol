@@ -116,6 +116,9 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     /// @notice Tolerância máxima entre entryPrice informado e preço atual do oracle (2%)
     uint256 public constant ENTRY_PRICE_TOLERANCE_BPS  = 200;
 
+    /// @notice Distância mínima obrigatória entre targetPrice e preço atual do oracle (0.5%)
+    uint256 public constant MIN_TARGET_DISTANCE_BPS     = 50;
+
     // ── ENUMS ─────────────────────────────────────────────────────────────────
 
     enum SignalDirection { LONG, SHORT }
@@ -189,6 +192,12 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     uint256[] private _openSignalIds;
     mapping(uint256 => uint256) private _openSignalIndex; // signalId => índice em _openSignalIds
 
+    /// @notice Endereço do registry do Chainlink Automation (address(0) = qualquer um pode chamar)
+    address public automationRegistry;
+
+    /// @notice Soma de todos os pendingWithdrawal ativos — usado para calcular dust acumulado
+    uint256 public totalPendingWithdrawals;
+
     // ── EVENTS ────────────────────────────────────────────────────────────────
 
     event SignalCreated(
@@ -215,6 +224,10 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     event EmergencyResolved(uint256 indexed signalId, bool won);
     event Paused(address account);
     event Unpaused(address account);
+    event EmergencyResolutionCancelled(uint256 indexed signalId);
+    event AutomationRegistrySet(address indexed registry);
+    event StakeRecovered(address indexed user, uint256 amount);
+    event DustRescued(address indexed to, uint256 amount);
 
     // ── CONSTRUCTOR ───────────────────────────────────────────────────────────
 
@@ -325,13 +338,15 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         if (direction == SignalDirection.LONG) {
             require(targetPrice > entryPrice,  "INC: TP deve ser maior que entry em LONG");
             require(stopPrice   < entryPrice,  "INC: SL deve ser menor que entry em LONG");
-            // TP deve estar acima do preço ATUAL — impede WIN instantâneo
-            require(targetPrice > oraclePrice, "INC: TP LONG deve superar preco atual do oracle");
+            // TP deve estar pelo menos 0.5% acima do preço atual — impede WIN quase-instantâneo
+            uint256 minTargetLong = oraclePrice + (oraclePrice * MIN_TARGET_DISTANCE_BPS) / BPS_BASE;
+            require(targetPrice >= minTargetLong, "INC: TP LONG muito proximo do oracle (min 0.5%)");
         } else {
             require(targetPrice < entryPrice,  "INC: TP deve ser menor que entry em SHORT");
             require(stopPrice   > entryPrice,  "INC: SL deve ser maior que entry em SHORT");
-            // TP deve estar abaixo do preço ATUAL — impede WIN instantâneo
-            require(targetPrice < oraclePrice, "INC: TP SHORT deve ser abaixo do preco atual do oracle");
+            // TP deve estar pelo menos 0.5% abaixo do preço atual — impede WIN quase-instantâneo
+            uint256 maxTargetShort = oraclePrice - (oraclePrice * MIN_TARGET_DISTANCE_BPS) / BPS_BASE;
+            require(targetPrice <= maxTargetShort, "INC: TP SHORT muito proximo do oracle (min 0.5%)");
         }
 
         uint256 fee      = (msg.value * NETWORK_FEE_BPS) / BPS_BASE;
@@ -372,6 +387,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
 
         // Pull-payment: treasury retira via withdraw() — evita falha se treasury não aceita ETH
         pendingWithdrawal[incTreasury] += fee;
+        totalPendingWithdrawals        += fee;
 
         emit SignalCreated(signalId, msg.sender, pair, direction, entryPrice, targetPrice, stopPrice, stakeNet, rsi, block.timestamp);
         emit FeeCollected(signalId, fee, incTreasury);
@@ -406,6 +422,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
 
         // Pull-payment: treasury retira via withdraw() — evita falha se treasury não aceita ETH
         pendingWithdrawal[incTreasury] += fee;
+        totalPendingWithdrawals        += fee;
 
         emit SignalFollowed(signalId, msg.sender, stakeNet, fee);
         emit FeeCollected(signalId, fee, incTreasury);
@@ -504,6 +521,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     function cancelEmergencyResolve(uint256 signalId) external onlyOwner {
         require(emergencyProposals[signalId].proposed, "INC: sem proposta pendente");
         delete emergencyProposals[signalId];
+        emit EmergencyResolutionCancelled(signalId);
     }
 
     /**
@@ -520,6 +538,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         sig.resolvedAt = block.timestamp;
 
         pendingWithdrawal[sig.provider] += sig.providerStake;
+        totalPendingWithdrawals         += sig.providerStake;
 
         _removeFromOpen(signalId);
 
@@ -588,9 +607,22 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     }
 
     /**
+     * @notice Define o endereço do registry do Chainlink Automation.
+     *         Se address(0), qualquer caller pode executar performUpkeep.
+     */
+    function setAutomationRegistry(address registry) external onlyOwner {
+        automationRegistry = registry;
+        emit AutomationRegistrySet(registry);
+    }
+
+    /**
      * @notice Chainlink Automation executa o upkeep identificado em checkUpkeep.
      */
     function performUpkeep(bytes calldata performData) external override {
+        require(
+            automationRegistry == address(0) || msg.sender == automationRegistry,
+            "INC: apenas Automation registry"
+        );
         (uint8 action, uint256 signalId) = abi.decode(performData, (uint8, uint256));
 
         if (action == 1) {
@@ -615,6 +647,7 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         pos.claimed = true;
         uint256 reward = (pos.amount * sig.totalPoolAtResolution) / sig.followersStake;
         pendingWithdrawal[msg.sender] += reward;
+        totalPendingWithdrawals       += reward;
 
         emit RewardClaimed(msg.sender, reward);
     }
@@ -630,8 +663,9 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
 
         pos.claimed = true;
         pendingWithdrawal[msg.sender] += pos.amount;
+        totalPendingWithdrawals       += pos.amount;
 
-        emit RewardClaimed(msg.sender, pos.amount);
+        emit StakeRecovered(msg.sender, pos.amount);
     }
 
     /// @notice Saca todo o saldo disponível do chamador
@@ -639,8 +673,18 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
         uint256 amount = pendingWithdrawal[msg.sender];
         require(amount > 0, "INC: sem saldo para sacar");
         pendingWithdrawal[msg.sender] = 0;
+        totalPendingWithdrawals      -= amount;
         _sendETH(msg.sender, amount);
         emit Withdrawn(msg.sender, amount);
+    }
+
+    /// @notice Resgata ETH preso por arredondamento de divisão inteira (dust)
+    function rescueDust(address to) external onlyOwner {
+        require(to != address(0), "INC: zero address");
+        uint256 dust = address(this).balance - totalPendingWithdrawals;
+        require(dust > 0, "INC: sem dust");
+        _sendETH(to, dust);
+        emit DustRescued(to, dust);
     }
 
     // ── VIEWS ─────────────────────────────────────────────────────────────────
@@ -697,10 +741,12 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
 
         if (won) {
             pendingWithdrawal[sig.provider] += sig.totalPoolAtResolution;
+            totalPendingWithdrawals         += sig.totalPoolAtResolution;
             providerWins[sig.provider]++;
         } else if (sig.followersStake == 0) {
             // Sem followers: devolve stake ao provider — não há ninguém para receber o pool
             pendingWithdrawal[sig.provider] += sig.providerStake;
+            totalPendingWithdrawals         += sig.providerStake;
         }
         // LOSS com followers: cada follower chama claimReward() individualmente — sem loop
 
@@ -726,8 +772,10 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
      *      Reverte se o preço for inválido ou estiver desatualizado.
      */
     function _getPrice(address feed) internal view returns (uint256) {
-        (, int256 answer, , uint256 updatedAt, ) = AggregatorV3Interface(feed).latestRoundData();
-        require(answer > 0, "INC: preco invalido do oracle");
+        (uint80 roundId, int256 answer, , uint256 updatedAt, uint80 answeredInRound) =
+            AggregatorV3Interface(feed).latestRoundData();
+        require(answer > 0,                  "INC: preco invalido do oracle");
+        require(answeredInRound >= roundId,   "INC: round de oracle incompleto");
         require(
             updatedAt <= block.timestamp &&
             block.timestamp - updatedAt <= PRICE_STALENESS_THRESHOLD,
@@ -745,9 +793,10 @@ contract INCNetwork is ReentrancyGuard, Ownable2Step, AutomationCompatibleInterf
     /// @dev Versão segura de _getPrice para checkUpkeep — nunca reverte
     function _tryGetPrice(address feed) internal view returns (bool ok, uint256 price) {
         try AggregatorV3Interface(feed).latestRoundData() returns (
-            uint80, int256 answer, uint256, uint256 updatedAt, uint80
+            uint80 roundId, int256 answer, uint256, uint256 updatedAt, uint80 answeredInRound
         ) {
             if (answer <= 0) return (false, 0);
+            if (answeredInRound < roundId) return (false, 0);
             if (updatedAt > block.timestamp || block.timestamp - updatedAt > PRICE_STALENESS_THRESHOLD) return (false, 0);
 
             uint8 dec = AggregatorV3Interface(feed).decimals();

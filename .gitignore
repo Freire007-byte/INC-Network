@@ -1,6 +1,13 @@
 node_modules/
 .env
+.env.*
 artifacts/
 cache/
 node.log
 vault-bot.log
+backups/
+*.zip
+server/server.env
+C:Temp*
+frontend/.netlify/
+frontend/.gitignore

@@ -23,6 +23,8 @@ module.exports = {
     avalanche: { url: "https://api.avax.network/ext/bc/C/rpc",         chainId: 43114,  accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     rootstock: { url: "https://public-node.rsk.co",                    chainId: 30,     accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
     sepolia:   { url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.eth.gateway.fm", chainId: 11155111, accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [] },
+    // ── INC Network — chain própria (Chain ID 19191) ──
+    incchain:  { url: process.env.INC_RPC_URL || "http://localhost:8545", chainId: 19191, accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [], gasPrice: 1000000000 },
   },
   etherscan: {
     // Etherscan v2 — uma única chave universal
