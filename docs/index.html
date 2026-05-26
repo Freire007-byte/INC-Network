@@ -7479,6 +7479,22 @@ async function wClaimBonus() {
   }
 }
 
+// Retenta o faucet silenciosamente (sem mostrar tela de bônus)
+async function wSilentFaucet() {
+  if (!_wAddr) return;
+  try {
+    const chainId = (currentNetwork && currentNetwork.chainId) || 137;
+    const res  = await fetch('/api/faucet', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ address: _wAddr, chainId }) });
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem("inc_last_balance", "100");
+      setTimeout(() => wLoadBal(), 4000); // recarrega saldo após 4s (TX confirmada)
+    } else if (data.error === 'already_claimed') {
+      localStorage.setItem("inc_last_balance", "100");
+    }
+  } catch(e) { /* silencioso */ }
+}
+
 // ── Import ─────────────────────────────────────
 function wImpTab(type) {
   document.querySelectorAll(".wp-imp-tab").forEach(t => t.classList.remove("active"));
@@ -7602,7 +7618,15 @@ async function wLoadBal() {
       if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = bal.toFixed(6) + " " + cur; }
 
       const iEl = document.getElementById("wm-inc");
-      // Se on-chain ainda mostra 0 mas temos cache do bônus, mantém o cache
+      // Se on-chain é 0 mas cache diz 100, pode ser TX pendente ou faucet falhou — retenta
+      if (inc === 0 && cachedInc >= 100) {
+        const retryKey = "inc_faucet_retry_" + (_wAddr || "").toLowerCase();
+        const retried  = localStorage.getItem(retryKey);
+        if (!retried) {
+          localStorage.setItem(retryKey, "1");
+          wSilentFaucet(); // retenta sem mostrar tela de bonus
+        }
+      }
       const displayInc = (inc === 0 && cachedInc > 0) ? cachedInc : inc;
       if (iEl) iEl.textContent = displayInc.toLocaleString("pt-BR", {maximumFractionDigits:2}) + " INC";
       if (inc > 0) { try { localStorage.setItem("inc_last_balance", Math.floor(inc).toString()); } catch(e) {} }
