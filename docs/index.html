@@ -5425,7 +5425,7 @@ function switchTab(name) {
   const tabEl = document.getElementById(`tab-${name}`);
   if (tabEl) tabEl.classList.add("active");
   if (name === "sinais")   loadSignals();
-  if (name === "criar")    updateFormOracle();
+  if (name === "criar")    _autoFillForm();
   if (name === "posicoes") loadPositions();
   if (name === "sacar")    loadWithdrawal();
   if (name === "resgatar") loadClaim();
@@ -6183,6 +6183,17 @@ async function confirmFollow() {
 // ══════════════════════════════════════════════
 function getFormSym() {
   return (document.getElementById("f-pair")?.value || "BTC/USDT").replace("/USDT","");
+}
+
+// Tenta preencher o form — se oracle ainda não carregou, tenta de novo a cada 400ms (máx 10x)
+function _autoFillForm(attempt) {
+  attempt = attempt || 0;
+  const sym = getFormSym();
+  if (!oraclePrices[sym] && attempt < 10) {
+    setTimeout(() => _autoFillForm(attempt + 1), 400);
+    return;
+  }
+  updateFormOracle();
 }
 
 function updateFormOracle() {
