@@ -1336,6 +1336,10 @@
       .wf-bub-hdr > div:last-child::-webkit-scrollbar { display: none; }
       .wf-bub-canvas-wrap { height: 280px; overflow: hidden; }
       #hl-bubble-canvas { height: 280px; }
+      @media (max-width: 480px) {
+        .wf-bub-canvas-wrap { height: 240px; }
+        #hl-bubble-canvas { height: 240px; }
+      }
       .hl-pos-list { max-height: 180px; }
       .hl-pi-pnl { display: none; }
       .hl-pi-addr { width: 68px; }
@@ -8407,13 +8411,15 @@ function hlFilterCoin(coin, btn) {
 }
 
 // ── Bubble helpers ──
-function hlBubblePos(i, total) {
+function hlBubblePos(i, total, mX, mY) {
+  mX = mX !== undefined ? mX : 5;
+  mY = mY !== undefined ? mY : 7;
   const phi = 2.39996323;
   const r = Math.sqrt((i + 0.5) / total) * 46;
   const a = i * phi;
   return [
-    Math.max(5, Math.min(95, 50 + r * Math.cos(a))).toFixed(1) + '%',
-    Math.max(5, Math.min(93, 50 + r * Math.sin(a) * 0.85)).toFixed(1) + '%'
+    Math.max(mX, Math.min(100 - mX, 50 + r * Math.cos(a))).toFixed(1) + '%',
+    Math.max(mY, Math.min(100 - mY, 50 + r * Math.sin(a) * 0.85)).toFixed(1) + '%'
   ];
 }
 
@@ -8433,6 +8439,12 @@ function hlBuildBubble(left, top, size, color, delay, html) {
 function hlRenderBubbles() {
   const c = document.getElementById('hl-bubble-canvas');
   if (!c) return;
+  const cw = c.offsetWidth || 400;
+  const ch = c.offsetHeight || 420;
+  const scale = Math.min(1, cw / 500);
+  const maxPxSize = Math.round((22 + 76) * scale);
+  const mPctX = Math.ceil(maxPxSize / 2 / cw * 100) + 2;
+  const mPctY = Math.ceil(maxPxSize / 2 / ch * 100) + 2;
   let data = hlWhales;
   if (hlCoinFilter !== 'all') {
     // Mostra TODAS as baleias no filtro — as que têm a moeda real ficam em destaque,
@@ -8454,7 +8466,7 @@ function hlRenderBubbles() {
   const maxUsd = Math.max(...data.map(w => w.totalUsd), 1);
   c.innerHTML = '';
   data.slice(0, 50).forEach((w, i) => {
-    const size = Math.round(22 + Math.pow(w.totalUsd / maxUsd, 0.5) * 76);
+    const size = Math.round((22 + Math.pow(w.totalUsd / maxUsd, 0.5) * 76) * scale);
     const baseColor = w.netDir === 'long' ? '#00ffaa' : '#ff3d57';
     const color = (hlCoinFilter !== 'all' && w._highlight === false)
       ? (w.netDir === 'long' ? '#00ffaa44' : '#ff3d5744')
@@ -8474,7 +8486,7 @@ function hlRenderBubbles() {
         ? (pos ? `<span style="font:bold ${Math.min(11,size*.28)}px 'JetBrains Mono',monospace;color:${color}">${pos.isLong?'▲':'▼'} ${pos.coin}</span>` : '')
           + `<span style="font:bold ${Math.min(9,size*.2)}px 'JetBrains Mono',monospace;color:#ffffffbb;margin-top:1px">${hlFmtUSD(w.totalUsd)}</span>`
         : '';
-    const [lp, tp] = hlBubblePos(i, Math.min(data.length, 50));
+    const [lp, tp] = hlBubblePos(i, Math.min(data.length, 50), mPctX, mPctY);
     c.appendChild(hlBuildBubble(lp, tp, size, color, (i * 0.3) % 2.4, inner));
   });
 }
@@ -8482,6 +8494,12 @@ function hlRenderBubbles() {
 function hlDrawSeedBubbles(coinFilter) {
   const c = document.getElementById('hl-bubble-canvas');
   if (!c) return;
+  const cw = c.offsetWidth || 400;
+  const ch = c.offsetHeight || 420;
+  const scale = Math.min(1, cw / 500);
+  const maxPxSize = Math.round((28 + 90) * scale);
+  const mPctX = Math.ceil(maxPxSize / 2 / cw * 100) + 2;
+  const mPctY = Math.ceil(maxPxSize / 2 / ch * 100) + 2;
   const seeds = [
     {addr:'0x0903…49d', sym:'BTC', dir:'long',  usd:2400000000},
     {addr:'0x4b11…29a', sym:'ETH', dir:'short', usd:1800000000},
@@ -8524,7 +8542,7 @@ function hlDrawSeedBubbles(coinFilter) {
   const maxUsd = filtered.reduce((m, s) => Math.max(m, s.usd), 0);
   c.innerHTML = '';
   filtered.forEach((s, i) => {
-    const size = Math.round(28 + Math.pow(s.usd / maxUsd, 0.5) * 90);
+    const size = Math.round((28 + Math.pow(s.usd / maxUsd, 0.5) * 90) * scale);
     const color = s.dir === 'long' ? '#00ffaa' : '#ff3d57';
     const f1 = Math.min(9, size * .15);
     const f2 = Math.min(11, size * .20);
@@ -8537,7 +8555,7 @@ function hlDrawSeedBubbles(coinFilter) {
         ? `<span style="font:bold ${Math.min(11,size*.26)}px 'JetBrains Mono',monospace;color:${color}">${s.dir==='long'?'▲':'▼'} ${s.sym}</span>`
           + `<span style="font:bold ${Math.min(9,size*.18)}px 'JetBrains Mono',monospace;color:#ffffffbb;margin-top:1px">${hlFmtUSD(s.usd)}</span>`
         : `<span style="font:bold ${Math.min(9,size*.28)}px 'JetBrains Mono',monospace;color:${color}">${s.sym}</span>`;
-    const [lp, tp] = hlBubblePos(i, filtered.length);
+    const [lp, tp] = hlBubblePos(i, filtered.length, mPctX, mPctY);
     c.appendChild(hlBuildBubble(lp, tp, size, color, (i * 0.35) % 2.4, inner));
   });
 }
@@ -8611,6 +8629,7 @@ function hlRenderPosList() {
 // ── Resize ──
 window.addEventListener('resize', () => {
   if (hlWhales.length > 0) hlRenderBubbles();
+  else hlDrawSeedBubbles(hlCoinFilter);
 });
 
 // ══════════════════════════════════════════════
