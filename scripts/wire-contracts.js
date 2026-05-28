@@ -34,6 +34,10 @@ const ADDRESSES = {
     network: process.env.INC_CONTRACT_SEPOLIA  || "0x99ABa0D947367ABC96dDc612C6e407954aC46836",
     token:   process.env.INC_TOKEN_SEPOLIA     || "",
   },
+  incchain: {
+    network: process.env.INC_CONTRACT_INCCHAIN || "0x078cE5595677BF5699F941730485F9635f09aA2A",
+    token:   process.env.INC_TOKEN_INCCHAIN    || "0x528c7a78d5a171063C6043d1872dDa2c887a17E7",
+  },
 };
 
 const NETWORK_ABI = [
