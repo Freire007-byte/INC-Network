@@ -5070,7 +5070,7 @@ const NETWORKS = {
     contract:    "0x078cE5595677BF5699F941730485F9635f09aA2A",
     token:       "",
     testnet:     false,
-    rpcUrl:      "https://www.incnetwork.online/rpc",
+    rpcUrl:      "https://incnetwork.online/rpc",
     wsUrl:       "wss://ws.incnetwork.io",
     explorerUrl: "https://scan.incnetwork.io",
     isNative:    true,
@@ -5414,7 +5414,7 @@ function openAppReadOnly() {
   if (!contract) {
     try {
       currentNetwork = NETWORKS[19191];
-      var roProv = new ethers.providers.JsonRpcProvider("https://www.incnetwork.online/rpc");
+      var roProv = new ethers.providers.JsonRpcProvider("https://incnetwork.online/rpc");
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       try { updateCurrencyLabels(); } catch(e) {}
     } catch(e) {
@@ -5466,7 +5466,7 @@ async function initReadOnlyContract() {
   if (contract) return;
   // INC Network (nativa) como primária
   const incRpcs = [
-    { chainId: 19191, rpc: "https://www.incnetwork.online/rpc" },
+    { chainId: 19191, rpc: "https://incnetwork.online/rpc" },
     { chainId: 11155111, rpc: "https://ethereum-sepolia-rpc.publicnode.com" },
     { chainId: 11155111, rpc: "https://sepolia.drpc.org" },
     { chainId: 11155111, rpc: "https://1rpc.io/sepolia" },
@@ -9667,7 +9667,7 @@ async function addIncNetwork() {
     chainId:           "0x4AF7",          // 19191 em hex
     chainName:         "INC Network",
     nativeCurrency:    { name: "Ethereum", symbol: "ETH", decimals: 18 },
-    rpcUrls:           ["https://www.incnetwork.online/rpc"],
+    rpcUrls:           ["https://incnetwork.online/rpc"],
     blockExplorerUrls: ["https://scan.incnetwork.io"],
     iconUrls:          [],
   }];

@@ -2,7 +2,7 @@
 
 **Publique sinais de trading com stake real. Followers apostam junto. O protocolo resolve automaticamente via Chainlink Price Feeds.**
 
-Site: **https://www.incnetwork.online**
+Site: **https://incnetwork.online**
 
 ---
 
@@ -72,7 +72,7 @@ Taxa do protocolo: **3,5%** sobre posições lucrativas.
 
 ### Servidor (VPS)
 - **IP:** 153.75.224.178
-- **Domínio:** www.incnetwork.online
+- **Domínio:** incnetwork.online
 - **Stack:** nginx + PM2 + Node.js
 - **DDoS Protection:** nginx rate limiting (30 req/min global, 5 req/min faucet) + fail2ban (3 jails)
 - **HTTPS:** SSL via Let's Encrypt
