@@ -8,6 +8,7 @@ vault-bot.log
 backups/
 *.zip
 server/server.env
+incchain/password.txt
 C:Temp*
 frontend/.netlify/
 frontend/.gitignore
