@@ -4292,7 +4292,15 @@
 
       <div class="rk-header">
         <div class="rk-title">🏆 Ranking de Traders</div>
-        <span class="rk-net-badge" id="rk-net-badge">Polygon</span>
+        <button class="rk-sort-btn" id="rk-refresh-btn" onclick="rkRefresh()" style="font-size:11px;padding:5px 12px">↻ Atualizar</button>
+      </div>
+
+      <!-- Seletor de rede -->
+      <div class="rk-sort" id="rk-net-tabs" style="margin-bottom:10px">
+        <button class="rk-sort-btn active" onclick="rkSetNet(137,this)">Polygon</button>
+        <button class="rk-sort-btn" onclick="rkSetNet(42161,this)">Arbitrum</button>
+        <button class="rk-sort-btn" onclick="rkSetNet(43114,this)">Avalanche</button>
+        <button class="rk-sort-btn" onclick="rkSetNet(11155111,this)">Sepolia</button>
       </div>
 
       <!-- Resumo protocolo -->
@@ -5573,82 +5581,124 @@ function switchTab(name) {
 // ══════════════════════════════════════════════
 const RK_ABI = [
   "function totalSignals() view returns (uint256)",
-  "function totalVolumeETH() view returns (uint256)",
+  "function networkStats() view returns (uint256,uint256,uint256,uint256,uint256)",
   "function getSignal(uint256) view returns (tuple(uint256 id,address provider,string pair,uint8 direction,uint256 entryPrice,uint256 targetPrice,uint256 stopPrice,uint256 providerStake,uint256 followersStake,uint256 createdAt,uint256 resolvedAt,uint8 status,uint256 rsi,uint256 totalPoolAtResolution,address priceFeed))",
 ];
 
-let _rkData     = [];   // array de stats por provider
+// RPCs por chain para o ranking (independente do provider conectado)
+const RK_RPCS = {
+  137:      ["https://polygon-bor-rpc.publicnode.com", "https://polygon-rpc.com"],
+  42161:    ["https://arb1.arbitrum.io/rpc", "https://arbitrum-one-rpc.publicnode.com"],
+  43114:    ["https://api.avax.network/ext/bc/C/rpc", "https://avalanche-c-chain-rpc.publicnode.com"],
+  11155111: ["https://ethereum-sepolia-rpc.publicnode.com"],
+};
+
+let _rkData     = [];
 let _rkSortKey  = "winrate";
-let _rkLoaded   = false;
+let _rkChainId  = 137;
+let _rkCache    = {}; // chainId -> { data, ts }
+
+function rkSetNet(chainId, btn) {
+  _rkChainId = chainId;
+  document.querySelectorAll("#rk-net-tabs .rk-sort-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  loadRanking();
+}
+
+function rkRefresh() {
+  delete _rkCache[_rkChainId];
+  loadRanking();
+}
 
 async function loadRanking() {
-  const net = currentNetwork || NETWORKS[137];
-  const badge = document.getElementById("rk-net-badge");
-  if (badge) badge.textContent = net.name;
+  const chainId = _rkChainId;
+  const net     = NETWORKS[chainId] || NETWORKS[137];
+  const cur     = net.currency || "ETH";
+  const listEl  = document.getElementById("rk-list");
 
-  if (_rkLoaded) { rkRender(); return; } // usa cache
+  // Cache de 2 minutos
+  const cached = _rkCache[chainId];
+  if (cached && Date.now() - cached.ts < 120000) {
+    _rkData = cached.data;
+    rkRender();
+    return;
+  }
 
-  const listEl = document.getElementById("rk-list");
-  if (listEl) listEl.innerHTML = '<div class="rk-loading">⏳ Lendo blockchain…</div>';
+  if (listEl) listEl.innerHTML = '<div class="rk-loading">⏳ Lendo blockchain ' + net.name + '…</div>';
+
+  const rpcs = RK_RPCS[chainId] || RK_RPCS[137];
+  let rkContract = null;
+  for (const rpcUrl of rpcs) {
+    try {
+      const rpc = new ethers.providers.JsonRpcProvider(rpcUrl);
+      rkContract = new ethers.Contract(net.contract, RK_ABI, rpc);
+      await rkContract.totalSignals(); // testa conexão
+      break;
+    } catch { rkContract = null; }
+  }
+
+  if (!rkContract) {
+    if (listEl) listEl.innerHTML = '<div class="rk-empty">Sem conexão com ' + net.name + '. Tente novamente.</div>';
+    return;
+  }
 
   try {
-    const rpc      = new ethers.providers.JsonRpcProvider(net.rpc);
-    const contract = new ethers.Contract(net.address, RK_ABI, rpc);
+    const total = (await rkContract.totalSignals()).toNumber();
+    const stats = await rkContract.networkStats().catch(() => null);
+    const volWei = stats ? stats[1] : ethers.BigNumber.from(0);
 
-    const total = (await contract.totalSignals()).toNumber();
-    const volWei = await contract.totalVolumeETH().catch(() => ethers.BigNumber.from(0));
-
-    // Atualiza resumo
     const elSig = document.getElementById("rk-total-signals");
     const elVol = document.getElementById("rk-total-volume");
     if (elSig) elSig.textContent = total.toLocaleString("pt-BR");
-    if (elVol) elVol.textContent = parseFloat(ethers.utils.formatEther(volWei)).toFixed(2) + " " + (net.currency || "ETH");
+    if (elVol) elVol.textContent = parseFloat(ethers.utils.formatEther(volWei)).toFixed(2) + " " + cur;
 
     if (total === 0) {
-      if (listEl) listEl.innerHTML = '<div class="rk-empty">Nenhum sinal ainda — seja o primeiro trader!</div>';
+      if (listEl) listEl.innerHTML = '<div class="rk-empty">Nenhum sinal ainda em ' + net.name + ' — seja o primeiro!</div>';
+      const elTrd = document.getElementById("rk-total-traders");
+      if (elTrd) elTrd.textContent = "0";
       return;
     }
 
     // Busca sinais em lotes de 20
-    const providers = {}; // addr -> { wins, losses, total, stake, pairs:{} }
+    const providers = {};
     const BATCH = 20;
     for (let i = 1; i <= total; i += BATCH) {
-      const ids    = Array.from({length: Math.min(BATCH, total - i + 1)}, (_, k) => i + k);
-      const calls  = ids.map(id => contract.getSignal(id).catch(() => null));
-      const sigs   = await Promise.all(calls);
+      const ids  = Array.from({length: Math.min(BATCH, total - i + 1)}, (_, k) => i + k);
+      const sigs = await Promise.all(ids.map(id => rkContract.getSignal(id).catch(() => null)));
 
       sigs.forEach(sig => {
         if (!sig || !sig.provider || sig.provider === ethers.constants.AddressZero) return;
-        const addr   = sig.provider.toLowerCase();
-        const status = sig.status; // 0=open, 1=win, 2=loss, 3=expired
+        const addr = sig.provider.toLowerCase();
         if (!providers[addr]) providers[addr] = { wins:0, losses:0, total:0, stake: ethers.BigNumber.from(0), pairs:{} };
         const p = providers[addr];
         p.total++;
-        if (status === 1) p.wins++;
-        if (status === 2) p.losses++;
+        if (sig.status === 1) p.wins++;
+        if (sig.status === 2) p.losses++;
         p.stake = p.stake.add(sig.providerStake || 0);
         const pair = sig.pair || "?";
         p.pairs[pair] = (p.pairs[pair] || 0) + 1;
       });
     }
 
-    // Converte para array
     _rkData = Object.entries(providers).map(([addr, p]) => {
       const resolved = p.wins + p.losses;
       const winRate  = resolved > 0 ? Math.round((p.wins / resolved) * 100) : 0;
+      // Mostra todos os pares operados
+      const allPairs = Object.entries(p.pairs).sort((a,b) => b[1]-a[1]).map(([pair]) => pair.replace("/USDT","")).join(", ");
       const topPair  = Object.entries(p.pairs).sort((a,b) => b[1]-a[1])[0]?.[0] || "—";
-      return { addr, wins: p.wins, losses: p.losses, total: p.total, winRate, stake: p.stake, topPair };
+      return { addr, wins: p.wins, losses: p.losses, total: p.total, winRate, stake: p.stake, topPair, allPairs };
     }).filter(p => p.total > 0);
+
+    _rkCache[chainId] = { data: _rkData, ts: Date.now() };
 
     const elTrd = document.getElementById("rk-total-traders");
     if (elTrd) elTrd.textContent = _rkData.length.toLocaleString("pt-BR");
 
-    _rkLoaded = true;
     rkRender();
 
   } catch(e) {
     console.error("loadRanking:", e);
-    if (listEl) listEl.innerHTML = `<div class="rk-empty">Erro ao carregar: ${e.message?.substring(0,80)}</div>`;
+    if (listEl) listEl.innerHTML = `<div class="rk-empty">Erro: ${e.message?.substring(0,80)}</div>`;
   }
 }
 
@@ -5664,7 +5714,7 @@ function rkRender() {
   if (!listEl || !_rkData.length) return;
 
   const myAddr = (_wAddr || "").toLowerCase();
-  const net    = currentNetwork || NETWORKS[137];
+  const net    = NETWORKS[_rkChainId] || NETWORKS[137];
   const cur    = net.currency || "ETH";
 
   const sorted = [..._rkData].sort((a, b) => {
@@ -5696,7 +5746,7 @@ function rkRender() {
       <div class="rk-rank ${typeof medal === 'number' ? 'num' : ''}">${medal}</div>
       <div class="rk-info">
         <div class="rk-addr">${addrShort}${isMe ? '<span class="rk-me-badge">VOCÊ</span>' : ''}</div>
-        <div class="rk-pair">${p.topPair} · ${p.total} sinal${p.total !== 1 ? 'is' : ''}</div>
+        <div class="rk-pair">${p.allPairs || p.topPair} · ${p.total} sinal${p.total !== 1 ? 'is' : ''}</div>
       </div>
       <div class="rk-stats">
         <div class="rk-stat">
