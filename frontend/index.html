@@ -3190,7 +3190,7 @@
 
         <a href="https://app.uniswap.org/#/swap?outputCurrency=0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51&chain=polygon" target="_blank" class="buy-card">
           <div class="buy-card-net" style="color:#8247e5">⬡ Polygon</div>
-          <div class="buy-card-pair">INC / WMATIC</div>
+          <div class="buy-card-pair">INC / WPOL</div>
           <div class="buy-card-info">
             <span class="buy-card-addr">0x4EC0…51</span>
             <span class="buy-card-fee">Fee 1%</span>
@@ -3318,7 +3318,7 @@
           <div class="func-param"><span>direction</span> — LONG | SHORT</div>
           <div class="func-param"><span>entryPrice</span> — validado pelo oracle ±2%</div>
           <div class="func-param"><span>takeProfit</span> / <span>stopLoss</span> — alvos em USD</div>
-          <div class="func-param"><span>msg.value</span> — stake em ETH / MATIC / AVAX</div>
+          <div class="func-param"><span>msg.value</span> — stake em ETH / POL / AVAX</div>
         </div>
       </div>
 
@@ -3330,7 +3330,7 @@
         <div class="func-desc">Qualquer usuário pode seguir um sinal aberto com stake real. O pool cresce a cada follower. Máximo de 500 followers por sinal. Taxa de 3.5% debitada automaticamente.</div>
         <div class="func-params">
           <div class="func-param"><span>signalId</span> — ID do sinal aberto</div>
-          <div class="func-param"><span>msg.value</span> — stake (mín. 0.001 ETH/MATIC/AVAX)</div>
+          <div class="func-param"><span>msg.value</span> — stake (mín. 0.001 ETH/POL/AVAX)</div>
         </div>
       </div>
 
@@ -3411,7 +3411,7 @@
           <span class="func-badge reward">REWARD</span>
           <span class="func-name">withdraw()</span>
         </div>
-        <div class="func-desc">Saca o ETH/MATIC/AVAX acumulado em pendingWithdrawal. Padrão pull-payment — o usuário saca quando quiser, nunca automático. ReentrancyGuard ativo para segurança total.</div>
+        <div class="func-desc">Saca o ETH/POL/AVAX acumulado em pendingWithdrawal. Padrão pull-payment — o usuário saca quando quiser, nunca automático. ReentrancyGuard ativo para segurança total.</div>
         <div class="func-params">
           <div class="func-param">Chamável por <span>qualquer endereço</span></div>
           <div class="func-param">Transfere <span>pendingWithdrawal[msg.sender]</span></div>
@@ -3547,7 +3547,7 @@
           <span class="func-badge read">LEITURA</span>
           <span class="func-name">pendingWithdrawal()</span>
         </div>
-        <div class="func-desc">Consulta o saldo de ETH/MATIC/AVAX disponível para saque de um endereço. Após claimReward(), o valor fica em pendingWithdrawal até o usuário chamar withdraw() explicitamente — padrão pull-payment.</div>
+        <div class="func-desc">Consulta o saldo de ETH/POL/AVAX disponível para saque de um endereço. Após claimReward(), o valor fica em pendingWithdrawal até o usuário chamar withdraw() explicitamente — padrão pull-payment.</div>
         <div class="func-params">
           <div class="func-param"><span>address</span> — carteira a consultar</div>
           <div class="func-param">Retorna: <span>uint256</span> em wei</div>
@@ -3783,8 +3783,8 @@
           <div class="wrt-chip" id="wrt-avaxusdt">
             <span class="wrt-sym">AVAX</span><span class="wrt-px" id="wrp-avaxusdt">—</span><span class="wrt-chg flat" id="wrc-avaxusdt">—</span>
           </div>
-          <div class="wrt-chip" id="wrt-maticusdt">
-            <span class="wrt-sym">POL</span><span class="wrt-px" id="wrp-maticusdt">—</span><span class="wrt-chg flat" id="wrc-maticusdt">—</span>
+          <div class="wrt-chip" id="wrt-polusdt">
+            <span class="wrt-sym">POL</span><span class="wrt-px" id="wrp-polusdt">—</span><span class="wrt-chg flat" id="wrc-polusdt">—</span>
           </div>
           <div class="wrt-chip" id="wrt-inc" style="border-color:#7c6dff40;background:#7c6dff08">
             <span class="wrt-sym" style="color:#a09bff">$INC</span><span class="wrt-px" id="wrp-inc">$0.01</span><span class="wrt-chg flat" id="wrc-inc">—</span>
@@ -3852,7 +3852,7 @@
               <option value="SOL/USDT">SOL/USDT</option>
               <option value="BNB/USDT">BNB/USDT</option>
               <option value="AVAX/USDT">AVAX/USDT</option>
-              <option value="MATIC/USDT">MATIC/USDT</option>
+              <option value="MATIC/USDT">POL/USDT</option>
               <option value="XAU/USDT">OURO/USDT</option>
             </select>
           </div>
@@ -4745,7 +4745,7 @@
     </div>
     <div class="onramp-disclaimer">
       Os provedores acima são serviços de terceiros. As taxas e disponibilidade variam por país.<br>
-      Após comprar ETH/MATIC/AVAX, use o swap acima para obter $INC.
+      Após comprar ETH/POL/AVAX, use o swap acima para obter $INC.
     </div>
   </div>
 </div>
@@ -5172,7 +5172,7 @@ const TOKEN_EXPLORER = {
 // Uniswap V3 pool links
 const POOL_LINKS = {
   42161: { label: "Arbitrum · INC/WETH",  url: "https://app.uniswap.org/explore/pools/arbitrum/0x8770e3B0aE902092dE06F821ff59b48F961F098D" },
-  137:   { label: "Polygon · INC/WMATIC",  url: "https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1" },
+  137:   { label: "Polygon · INC/WPOL",  url: "https://app.uniswap.org/explore/pools/polygon/0xc15de19035399A2FF2b987fAfe8392F4DBccc2D1" },
   43114: { label: "Avalanche · INC/WAVAX", url: "https://app.uniswap.org/explore/pools/avalanche/0xa04A83aD438866788f54b67e6e9BB96E569C3061" },
 };
 
@@ -5231,7 +5231,7 @@ async function quoteSwap(amount) {
 
   // Fallback: cotação via preço oracle (funciona sempre, com ou sem carteira)
   const currency  = net?.currency || 'ETH';
-  const nativeSym = currency === 'MATIC' ? 'MATIC' : currency === 'AVAX' ? 'AVAX' : 'ETH';
+  const nativeSym = (currency === 'MATIC' || currency === 'POL') ? 'MATIC' : currency === 'AVAX' ? 'AVAX' : 'ETH';
   const nativePx  = oraclePrices[nativeSym]?.price || oraclePrices['ETH']?.price || 2450;
   const incPx     = oraclePrices['INC']?.price || 0.01;
   const usdValue  = amount * nativePx;
@@ -8093,8 +8093,10 @@ async function wLoadBal() {
 
       if (ethEl) ethEl.textContent = nativeBal.toFixed(4) + " " + cur;
       localStorage.setItem("inc_nat_bal_" + chainId, nativeBal.toFixed(6));
-      const pxKey = (cur === 'POL' || cur === 'MATIC') ? 'MATIC' : cur === 'AVAX' ? 'AVAX' : 'ETH';
-      const px = (typeof oraclePrices !== "undefined" && oraclePrices?.[pxKey]?.price) || 0;
+      const px = (cur === 'POL' || cur === 'MATIC')
+        ? (wrPrev['polusdt']?.price || wrPrev['maticusdt']?.price || 0)
+        : cur === 'AVAX' ? (oraclePrices?.['AVAX']?.price || 0)
+        : (oraclePrices?.['ETH']?.price || 0);
       if (usdEl) usdEl.textContent = "≈ $" + (nativeBal * px).toLocaleString("en-US", {maximumFractionDigits:2}) + " USD";
       if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = nativeBal.toFixed(6) + " " + cur; }
       break;
@@ -8196,7 +8198,7 @@ function _wTokList() {
   const CG    = 'https://assets.coingecko.com/coins/images';
   const _li   = (src, alt) => `<img src="${src}" alt="${alt}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;display:block">`;
   const NATI  = {
-    MATIC: _li(`${CG}/4713/small/polygon.png`,                             'MATIC'),
+    POL:   _li(`${CG}/4713/small/polygon.png`,                             'POL'),
     ETH:   _li(`${CG}/279/small/ethereum.png`,                             'ETH'),
     AVAX:  _li(`${CG}/12559/small/Avalanche_Circle_RedWhite_Trans.png`,    'AVAX'),
   };
@@ -8467,7 +8469,7 @@ function updateRRCalc() {
 // Posições reais de baleias via API pública HL
 // ══════════════════════════════════════════════
 const HL_API = 'https://api.hyperliquid.xyz/info';
-const HL_COINS = ['BTC','ETH','SOL','BNB','ARB','OP','AVAX','MATIC','DOGE','PEPE','WIF','TIA','INJ','SEI','SUI','LINK','DOT','ADA','XRP','LTC'];
+const HL_COINS = ['BTC','ETH','SOL','BNB','ARB','OP','AVAX','POL','DOGE','PEPE','WIF','TIA','INJ','SEI','SUI','LINK','DOT','ADA','XRP','LTC'];
 let hlWhales = [];       // [{addr, positions:[{coin,szi,usdVal,entryPx,pnl,liqPx}], netDir, totalUsd}]
 let hlCoinFilter = 'all';
 let hlBubbleAnim = null;
@@ -8788,7 +8790,7 @@ function hlDrawSeedBubbles(coinFilter) {
     {addr:'0xd1e0…e2',  sym:'JUP', dir:'short', usd:9500000},
     {addr:'0xe7f6…f8',  sym:'NEAR',dir:'long',  usd:7800000},
     {addr:'0xf3a2…a4',  sym:'OP',  dir:'short', usd:6200000},
-    {addr:'0xa8b7…b9',  sym:'MATIC',dir:'long', usd:5100000},
+    {addr:'0xa8b7…b9',  sym:'POL',  dir:'long', usd:5100000},
     {addr:'0xb4c3…c5',  sym:'DOT', dir:'short', usd:4300000},
     {addr:'0xa1b2…b0',  sym:'LTC', dir:'long',  usd:3600000},
     {addr:'0xb9c8…c0',  sym:'APT', dir:'short', usd:2900000},
@@ -9159,8 +9161,8 @@ setTimeout(() => {
 // WHALE FLOW — Liquidações Binance Futures (fstream)
 // Fluxo Web3 em tempo real — sem API key
 // ══════════════════════════════════════════════
-const WF_SYMS = ['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','AVAXUSDT','MATICUSDT'];
-const WF_LABELS = { BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL',BNBUSDT:'BNB',AVAXUSDT:'AVAX',MATICUSDT:'MATIC' };
+const WF_SYMS = ['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','AVAXUSDT','POLUSDT'];
+const WF_LABELS = { BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL',BNBUSDT:'BNB',AVAXUSDT:'AVAX',POLUSDT:'POL' };
 let wfLongTotal = 0, wfShortTotal = 0, wfEventCount = 0, wfBiggest = 0, wfBiggestStr = '—';
 let wfWs = null, wfFilterMode = 'all';
 
@@ -9388,8 +9390,8 @@ function setWfBubbleFilter(filter, btn) {
 }
 
 // Seed with initial simulated positions (antes dos dados reais chegarem)
-const WF_SEED_SYMS = ['BTC','ETH','SOL','BNB','AVAX','MATIC','ARB','OP','LINK','DOT','ADA','XRP','DOGE','PEPE','WIF','BONK','TIA','INJ','SEI','SUI'];
-const WF_SEED_PRICES = {BTC:67000,ETH:3400,SOL:145,BNB:580,AVAX:35,MATIC:0.85,ARB:1.1,OP:2.4,LINK:14,DOT:7,ADA:0.45,XRP:0.52,DOGE:0.13,PEPE:0.000011,WIF:2.1,BONK:0.000025,TIA:8.5,INJ:24,SEI:0.55,SUI:1.2};
+const WF_SEED_SYMS = ['BTC','ETH','SOL','BNB','AVAX','POL','ARB','OP','LINK','DOT','ADA','XRP','DOGE','PEPE','WIF','BONK','TIA','INJ','SEI','SUI'];
+const WF_SEED_PRICES = {BTC:67000,ETH:3400,SOL:145,BNB:580,AVAX:35,POL:0.50,ARB:1.1,OP:2.4,LINK:14,DOT:7,ADA:0.45,XRP:0.52,DOGE:0.13,PEPE:0.000011,WIF:2.1,BONK:0.000025,TIA:8.5,INJ:24,SEI:0.55,SUI:1.2};
 
 (function seedBubbles() {
   WF_SEED_SYMS.forEach(sym => {
@@ -9424,7 +9426,7 @@ function wfSeedLiquidations() {
     {sym:'SOLUSDT', isLong:true,  usd:156000,  price:sol*1.001},
     {sym:'BTCUSDT', isLong:false, usd:1240000, price:btc*1.0003},
     {sym:'ETHUSDT', isLong:true,  usd:538000,  price:eth*1.002},
-    {sym:'MATICUSDT',isLong:false,usd:68000,   price:0.22},
+    {sym:'POLUSDT',  isLong:false,usd:68000,   price:0.50},
     {sym:'BNBUSDT', isLong:true,  usd:211000,  price:bnb*1.001},
   ];
   // Adiciona do mais antigo ao mais novo (insertBefore inverte)
@@ -9529,9 +9531,9 @@ setTimeout(() => { try { initWhaleFlow(); } catch(e) {} }, 5000);
 // ══════════════════════════════════════════════
 // WHALE RADAR — Binance WebSocket em tempo real
 // ══════════════════════════════════════════════
-const WR_SYMS = ['btcusdt','ethusdt','solusdt','bnbusdt','avaxusdt','maticusdt'];
+const WR_SYMS = ['btcusdt','ethusdt','solusdt','bnbusdt','avaxusdt','polusdt'];
 const WR_LABELS = { btcusdt:'BTC/USDT', ethusdt:'ETH/USDT', solusdt:'SOL/USDT',
-                    bnbusdt:'BNB/USDT', avaxusdt:'AVAX/USDT', maticusdt:'MATIC/USDT',
+                    bnbusdt:'BNB/USDT', avaxusdt:'AVAX/USDT', polusdt:'POL/USDT',
                     xauusdt:'OURO/USDT (XAU)' };
 let wrPrev = {}, wrWs = null, wrAlertCount = 0;
 
@@ -9607,12 +9609,12 @@ let _wrtmLiveInterval = null;
 
 const WRTM_PAIR_MAP = {
   btcusdt:'BTC/USDT', ethusdt:'ETH/USDT', solusdt:'SOL/USDT',
-  bnbusdt:'BNB/USDT', avaxusdt:'AVAX/USDT', maticusdt:'MATIC/USDT',
+  bnbusdt:'BNB/USDT', avaxusdt:'AVAX/USDT', polusdt:'POL/USDT',
   xauusdt:'OURO/USDT'
 };
 const WRTM_OKEY = {
   btcusdt:'BTC', ethusdt:'ETH', solusdt:'SOL',
-  bnbusdt:'BNB', xauusdt:'XAU', avaxusdt:'ETH', maticusdt:'ETH'
+  bnbusdt:'BNB', xauusdt:'XAU', avaxusdt:'ETH', polusdt:'ETH'
 };
 
 function wrtmGetLivePx(sym) {
@@ -9881,13 +9883,13 @@ setTimeout(() => {
 setTimeout(() => {
   const WHALE_COIN_SYM = {
     BTC:'btcusdt', ETH:'ethusdt', SOL:'solusdt', BNB:'bnbusdt',
-    AVAX:'avaxusdt', MATIC:'maticusdt',
+    AVAX:'avaxusdt', POL:'polusdt', MATIC:'polusdt',
     ARB:'ethusdt',  OP:'ethusdt',   LINK:'ethusdt',
     DOGE:'bnbusdt', ADA:'bnbusdt',  XRP:'bnbusdt', DOT:'bnbusdt',
     PEPE:'btcusdt', WIF:'solusdt',  SUI:'solusdt', SEI:'solusdt',
     INJ:'solusdt',  TIA:'solusdt',
   };
-  const WHALE_OKEY = { btcusdt:'BTC', ethusdt:'ETH', solusdt:'SOL', bnbusdt:'BNB', avaxusdt:'BTC', maticusdt:'SOL' };
+  const WHALE_OKEY = { btcusdt:'BTC', ethusdt:'ETH', solusdt:'SOL', bnbusdt:'BNB', avaxusdt:'BTC', polusdt:'SOL' };
   let _whlIdx = 0;
   setInterval(() => {
     try {
