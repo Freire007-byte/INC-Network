@@ -11,6 +11,9 @@ server/server.env
 incchain/password.txt
 C:Temp*
 frontend/.netlify/
+frontend/.vercel/
+frontend/netlify.toml
+frontend/vercel.json
 frontend/.gitignore
 RESUMO_PROJETO.md
 scripts/wire-contracts.backup*.js
