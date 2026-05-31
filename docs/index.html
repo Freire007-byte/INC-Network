@@ -4936,9 +4936,12 @@
         <div class="wp-addr-mono" id="wm-addr">—</div>
         <button class="btn-copy" id="wm-cpbtn" onclick="wCopyAddr()">COPIAR</button>
       </div>
-      <!-- ETH Balance -->
+      <!-- Native Balance (POL/ETH) -->
       <div class="wp-balance-card">
-        <div id="wm-nat-label" style="font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:8px">SALDO MATIC</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <svg id="wm-net-icon" width="20" height="20" viewBox="0 0 38 33" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M29.4 9.59l-10-5.78a3 3 0 00-3 0l-10 5.78A3 3 0 005 12.18v11.56a3 3 0 001.5 2.6l10 5.78a3 3 0 003 0l10-5.78a3 3 0 001.5-2.6V12.18a3 3 0 00-1.6-2.59z" fill="#8247E5"/><path d="M25.5 16.53a1 1 0 000-1.73l-6.5-3.75a1 1 0 00-1 0l-6.5 3.75a1 1 0 000 1.73l6.5 3.75a1 1 0 001 0l6.5-3.75z" fill="white"/></svg>
+          <div id="wm-nat-label" style="font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:'JetBrains Mono',monospace">SALDO POL · POLYGON</div>
+        </div>
         <div class="wp-bal-eth" id="wm-eth">0.0000</div>
         <div class="wp-bal-usd" id="wm-usd">≈ $0.00 USD</div>
       </div>
@@ -4966,6 +4969,7 @@
           <div class="wp-act-lbl">Receber</div>
         </div>
       </div>
+      <button class="wp-btn wp-btn-primary wp-btn-center" onclick="wClosePanel();openAppReadOnly();setTimeout(()=>switchTab('criar'),200)" style="margin-bottom:6px">⚡ Operar na Polygon</button>
       <button class="wp-btn wp-btn-outline wp-btn-center" id="wm-refresh-btn" onclick="wRefreshBal(this)">↻ Atualizar saldos</button>
     </div>
   </div>
@@ -7886,6 +7890,7 @@ async function wCreateFinish() {
     const enc = await _wEnc(_wNewWal.privateKey, pass);
     localStorage.setItem(W_KEY, JSON.stringify({ address: _wNewWal.address, enc, ts: Date.now() }));
     _wWallet = _wNewWal; _wAddr = _wNewWal.address; _wNewWal = null;
+    currentNetwork = NETWORKS[137]; // nova carteira → Polygon por padrão
     localStorage.setItem("inc_last_balance", "100"); // nova carteira — bônus garantido
     wShowBonusScreen();
     wClaimBonus();
@@ -7998,12 +8003,15 @@ function wForget() {
 // ── Main screen ────────────────────────────────
 function _wGoMain() {
   const addr = _wAddr || _wWallet?.address; if (!addr) return;
+  if (!currentNetwork) currentNetwork = NETWORKS[137]; // INC Wallet usa Polygon por padrão
   document.getElementById("wm-addr").textContent = addr.slice(0,10) + "…" + addr.slice(-8);
   const nb = document.getElementById("wm-net");
   const net = currentNetwork || NETWORKS[137];
   if (nb) { nb.textContent = net.name; nb.className = "wp-net-badge " + (net.testnet?"testnet":"mainnet"); }
   const natLbl = document.getElementById("wm-nat-label");
-  if (natLbl) natLbl.textContent = "SALDO " + (net.currency || "MATIC");
+  if (natLbl) natLbl.textContent = "SALDO " + (net.currency || "POL") + " · " + net.name.toUpperCase();
+  const netIcon = document.getElementById("wm-net-icon");
+  if (netIcon) netIcon.style.display = net.chainId === 137 ? "inline" : "none";
 
   const net2 = currentNetwork || NETWORKS[137];
   const cur2 = net2.currency || "MATIC";
