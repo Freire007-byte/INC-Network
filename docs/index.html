@@ -7914,7 +7914,7 @@ async function wClaimBonus() {
   const autoRedirect = setTimeout(() => { _wGoMain(); }, 12000);
 
   try {
-    const chainId = (currentNetwork && currentNetwork.chainId) || 137;
+    const chainId = 137; // faucet é sempre Polygon
     const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 10000));
     const res = await Promise.race([
       fetch('/api/faucet', {
