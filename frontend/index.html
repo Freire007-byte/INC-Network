@@ -4958,8 +4958,12 @@
           <div class="wp-act-ico">↓</div>
           <div class="wp-act-lbl">Receber</div>
         </div>
+        <div class="wp-act" onclick="openTransakDirect()">
+          <div class="wp-act-ico">💳</div>
+          <div class="wp-act-lbl">Comprar</div>
+        </div>
       </div>
-      <button class="wp-btn wp-btn-primary wp-btn-center" onclick="wClosePanel();openAppReadOnly();setTimeout(()=>switchTab('criar'),200)" style="margin-bottom:6px">⚡ Operar na Polygon</button>
+      <button class="wp-btn wp-btn-primary wp-btn-center" onclick="wClosePanel();connectWithBuiltinWallet();setTimeout(()=>switchTab('criar'),200)" style="margin-bottom:6px">⚡ Operar na Polygon</button>
       <button class="wp-btn wp-btn-outline wp-btn-center" id="wm-refresh-btn" onclick="wRefreshBal(this)">↻ Atualizar saldos</button>
     </div>
   </div>
