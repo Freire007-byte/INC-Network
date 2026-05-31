@@ -7,11 +7,14 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="apple-touch-icon" href="logo.svg"/>
   <meta property="og:title" content="INC Network — Proof of Signal"/>
-  <meta property="og:description" content="Sinais on-chain com stake real. Powered by Chainlink Oracle."/>
-  <meta property="og:image" content="logo.svg"/>
-  <meta name="twitter:card" content="summary"/>
-  <meta name="twitter:title" content="INC Network — $INC"/>
-  <meta name="twitter:description" content="Proof-of-Signal Protocol · Arbitrum · Polygon · Avalanche"/>
+  <meta property="og:description" content="Post trading signals with real stake. Chainlink resolves automatically. No intermediaries. Earn $INC."/>
+  <meta property="og:image" content="https://www.incnetwork.online/logo.png"/>
+  <meta property="og:url" content="https://www.incnetwork.online"/>
+  <meta property="og:type" content="website"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="INC Network — $INC · Proof of Signal"/>
+  <meta name="twitter:description" content="Post trading signals with real stake. Chainlink resolves automatically. Earn $INC on Polygon, Arbitrum & Avalanche."/>
+  <meta name="twitter:image" content="https://www.incnetwork.online/logo.png"/>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
@@ -3258,8 +3261,8 @@
       <div class="how-conn"></div>
       <div class="how-step">
         <div class="how-ico">🤝</div>
-        <div class="how-stitle">Followers Apostam</div>
-        <div class="how-sdesc">Até 500 followers fazem stake no mesmo sinal multiplicando o pool</div>
+        <div class="how-stitle">Followers Apostam Contra</div>
+        <div class="how-sdesc">Até 500 followers fazem stake apostando que o provider está ERRADO — se errar (SL), eles ganham</div>
       </div>
       <div class="how-conn"></div>
       <div class="how-step">
@@ -3270,8 +3273,8 @@
       <div class="how-conn"></div>
       <div class="how-step">
         <div class="how-ico">💰</div>
-        <div class="how-stitle">Vencedores Sacam</div>
-        <div class="how-sdesc">Pool inteiro vai para o lado vencedor via claimReward()</div>
+        <div class="how-stitle">Vencedor Saca</div>
+        <div class="how-sdesc">WIN → provider fica com todo o pool. LOSS → followers dividem o pool proporcionalmente</div>
       </div>
     </div>
     <a class="how-docs-btn" href="#funcs-section" onclick="document.getElementById('funcs-section').scrollIntoView({behavior:'smooth'});return false;">
@@ -3336,7 +3339,7 @@
           <span class="func-badge oracle">ORACLE</span>
           <span class="func-name">resolveByOracle()</span>
         </div>
-        <div class="func-desc">Resolve o sinal quando o preço Chainlink atinge TP ou SL. Qualquer endereço pode chamar. WIN: TP atingido → provider + followers vencem. LOSS: SL atingido → followers vencem, provider perde o stake.</div>
+        <div class="func-desc">Resolve o sinal quando o preço Chainlink atinge TP ou SL. Qualquer endereço pode chamar (requer gas). WIN: TP atingido → provider vence e fica com todo o pool (followers perdem o stake). LOSS: SL atingido → followers dividem o pool proporcionalmente, provider perde o stake.</div>
         <div class="func-params">
           <div class="func-param"><span>signalId</span> — ID do sinal a resolver</div>
           <div class="func-param">Chamável por <span>qualquer endereço</span></div>
@@ -4184,7 +4187,7 @@
           <div style="background:#ffffff10;border-radius:6px;height:8px;overflow:hidden">
             <div id="gov-p1-bar" style="background:linear-gradient(90deg,var(--green),#00ffaa);height:100%;border-radius:6px;width:73%"></div>
           </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace">73% a favor · Encerra em 4 dias</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace">73% a favor · Encerra em 2026-06-14</div>
         </div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="govVote(1,'yes')">✅ Votar SIM</button>
@@ -4213,7 +4216,7 @@
           <div style="background:#ffffff10;border-radius:6px;height:8px;overflow:hidden">
             <div id="gov-p2-bar" style="background:linear-gradient(90deg,var(--green),#00ffaa);height:100%;border-radius:6px;width:94%"></div>
           </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace">94% a favor · Encerra em 6 dias</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace">94% a favor · Encerra em 2026-06-16</div>
         </div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="govVote(2,'yes')">✅ Votar SIM</button>
@@ -4242,7 +4245,7 @@
           <div style="background:#ffffff10;border-radius:6px;height:8px;overflow:hidden">
             <div id="gov-p3-bar" style="background:linear-gradient(90deg,var(--green),#00ffaa);height:100%;border-radius:6px;width:76%"></div>
           </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace">76% a favor · Encerra em 2 dias</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace">76% a favor · Encerra em 2026-06-12</div>
         </div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="govVote(3,'yes')">✅ Votar SIM</button>
@@ -4757,6 +4760,9 @@
     <div class="form-row">
       <label id="label-follower-stake">Stake — mínimo 0.001</label>
       <input type="number" id="modal-stake" placeholder="0.01" step="0.001" min="0.001" />
+    </div>
+    <div style="background:#ff3d5712;border:1px solid #ff3d5732;border-radius:9px;padding:10px 13px;margin:10px 0 8px;font-size:11px;color:#ff6b7d;line-height:1.55">
+      ⚠️ <b>Risco:</b> Se o sinal atingir o Take Profit (<b>WIN</b>), o provider ganha e <b>você perde seu stake</b>. Você vence apenas se o sinal atingir o Stop Loss (<b>LOSS</b>).
     </div>
     <div class="fee-banner" style="margin-bottom:0">
       <span>⚡</span> Taxa de <b>3.5%</b> deduzida automaticamente.
@@ -6459,6 +6465,18 @@ function closeModal() {
 async function confirmFollow() {
   const stake = document.getElementById("modal-stake").value;
   if (!stake || parseFloat(stake) < 0.001) return showAlert("Stake mínimo: 0.001", "error");
+  const stakeF = parseFloat(stake);
+  const cur = currentNetwork?.currency || 'ETH';
+  // Verifica saldo antes de enviar
+  try {
+    const balWei = await provider.getBalance(userAddress);
+    const bal = parseFloat(ethers.utils.formatEther(balWei));
+    if (bal < stakeF + 0.002) {
+      showAlert(`Saldo insuficiente. Tens ${bal.toFixed(4)} ${cur}, precisas de ≈${(stakeF+0.002).toFixed(4)} ${cur} (stake + gas).`, "error");
+      setTimeout(() => checkDepositBanner(), 100);
+      return;
+    }
+  } catch {}
   closeModal();
   await followSignal(pendingFollowId, stake);
 }
@@ -6630,8 +6648,21 @@ async function createSignal() {
   const stake     = document.getElementById("f-stake").value;
 
   if (!entry||!tp||!sl||isNaN(rsi)||!stake) return showAlert("Preencha todos os campos", "error");
-  if (parseFloat(stake)<0.005) return showAlert(`Stake mínimo: 0.005 ${currentNetwork?.currency}`, "error");
+  const stakeF = parseFloat(stake);
+  const cur = currentNetwork?.currency || 'ETH';
+  if (stakeF < 0.005) return showAlert(`Stake mínimo: 0.005 ${cur}`, "error");
   if (rsi<0||rsi>100) return showAlert("RSI deve ser entre 0 e 100", "error");
+
+  // Verifica se tem saldo suficiente para stake + gas estimado
+  try {
+    const balWei = await provider.getBalance(userAddress);
+    const bal = parseFloat(ethers.utils.formatEther(balWei));
+    if (bal < stakeF + 0.003) {
+      showAlert(`Saldo insuficiente. Tens ${bal.toFixed(4)} ${cur}, precisas de ≈${(stakeF+0.003).toFixed(4)} ${cur} (stake + gas).`, "error");
+      setTimeout(() => checkDepositBanner(), 100);
+      return;
+    }
+  } catch {}
 
   if (direction===0) {
     if (tp<=entry) return showAlert("LONG: Take Profit deve ser maior que a entrada", "error");
@@ -6714,6 +6745,19 @@ async function followSignal(signalId, stake) {
 // RESOLVER
 // ══════════════════════════════════════════════
 async function resolveOracle(signalId) {
+  // Verifica saldo de gas antes de enviar TX
+  try {
+    if (provider && userAddress) {
+      const balWei = await provider.getBalance(userAddress);
+      const bal = parseFloat(ethers.utils.formatEther(balWei));
+      if (bal < 0.0005) {
+        const cur = currentNetwork?.currency || 'ETH';
+        showToast(`Saldo insuficiente para gas. Precisas de pelo menos 0.001 ${cur}.`, "error");
+        setTimeout(() => checkDepositBanner(), 100);
+        return;
+      }
+    }
+  } catch {}
   try {
     showToast(`Verificando Chainlink para o sinal #${signalId}…`, "info");
     const tx = await contract.resolveByOracle(signalId);
@@ -6723,6 +6767,11 @@ async function resolveOracle(signalId) {
   } catch(e) {
     const msg = e.reason||e.message||"";
     if (msg.includes("nao atingido")) showToast("TP/SL ainda não atingido — sinal continua aberto.", "info");
+    else if (msg.includes("insufficient funds") || msg.includes("INSUFFICIENT_FUNDS") || msg.includes("gas required exceeds")) {
+      const cur = currentNetwork?.currency || 'ETH';
+      showToast(`Saldo insuficiente para pagar o gas. Deposita ${cur} para continuar.`, "error");
+      setTimeout(() => checkDepositBanner(), 100);
+    }
     else showToast(msg||"Erro ao verificar oracle", "error");
   }
 }
@@ -9511,6 +9560,16 @@ async function wrtmSubmit() {
   const rsi   = 50;
   if (!entry || !tp || !sl || !stake) return showToast("Preencha todos os campos", "error");
   if (stake < 0.005) return showToast("Stake mínimo: 0.005 ETH", "error");
+  const cur = currentNetwork?.currency || 'ETH';
+  try {
+    const balWei = await provider.getBalance(userAddress);
+    const bal = parseFloat(ethers.utils.formatEther(balWei));
+    if (bal < stake + 0.003) {
+      showToast(`Saldo insuficiente (${bal.toFixed(4)} ${cur}). Deposita para operar.`, "error");
+      setTimeout(() => checkDepositBanner(), 100);
+      return;
+    }
+  } catch {}
   const toPrice = v => ethers.BigNumber.from(Math.round(v * 1e8));
   const btn = document.getElementById('wrtm-submit-btn');
   if (btn) btn.classList.add('loading');
