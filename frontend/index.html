@@ -7890,7 +7890,6 @@ async function wCreateFinish() {
     const enc = await _wEnc(_wNewWal.privateKey, pass);
     localStorage.setItem(W_KEY, JSON.stringify({ address: _wNewWal.address, enc, ts: Date.now() }));
     _wWallet = _wNewWal; _wAddr = _wNewWal.address; _wNewWal = null;
-    currentNetwork = NETWORKS[137]; // nova carteira → Polygon por padrão
     localStorage.setItem("inc_last_balance", "100"); // nova carteira — bônus garantido
     wShowBonusScreen();
     wClaimBonus();
@@ -8003,21 +8002,19 @@ function wForget() {
 // ── Main screen ────────────────────────────────
 function _wGoMain() {
   const addr = _wAddr || _wWallet?.address; if (!addr) return;
-  if (!currentNetwork) currentNetwork = NETWORKS[137]; // INC Wallet usa Polygon por padrão
+  // INC Wallet é sempre Polygon — independente de currentNetwork (app pode estar em outra rede)
+  const wNet = NETWORKS[137];
   document.getElementById("wm-addr").textContent = addr.slice(0,10) + "…" + addr.slice(-8);
   const nb = document.getElementById("wm-net");
-  const net = currentNetwork || NETWORKS[137];
-  if (nb) { nb.textContent = net.name; nb.className = "wp-net-badge " + (net.testnet?"testnet":"mainnet"); }
+  if (nb) { nb.textContent = "Polygon"; nb.className = "wp-net-badge mainnet"; }
   const natLbl = document.getElementById("wm-nat-label");
-  if (natLbl) natLbl.textContent = "SALDO " + (net.currency || "POL") + " · " + net.name.toUpperCase();
+  if (natLbl) natLbl.textContent = "SALDO POL · POLYGON";
   const netIcon = document.getElementById("wm-net-icon");
-  if (netIcon) netIcon.style.display = net.chainId === 137 ? "inline" : "none";
+  if (netIcon) netIcon.style.display = "inline";
 
-  const net2 = currentNetwork || NETWORKS[137];
-  const cur2 = net2.currency || "MATIC";
   const ethElMain = document.getElementById("wm-eth");
-  const cachedNat = parseFloat(localStorage.getItem("inc_nat_bal_" + net2.chainId) || "0");
-  if (ethElMain) ethElMain.textContent = cachedNat.toFixed(4) + " " + cur2;
+  const cachedNat = parseFloat(localStorage.getItem("inc_nat_bal_137") || "0");
+  if (ethElMain) ethElMain.textContent = cachedNat.toFixed(4) + " POL";
 
   const cachedInc = parseInt(localStorage.getItem("inc_last_balance") || "0");
   const iElMain = document.getElementById("wm-inc");
@@ -8059,11 +8056,11 @@ async function wLoadBal() {
   const ethEl = document.getElementById("wm-eth");
   const usdEl = document.getElementById("wm-usd");
 
-  // Rede ativa: usa a conectada ou Polygon como padrão
-  const net    = currentNetwork || NETWORKS[137];
-  const chainId = net.chainId || 137;
-  const cur    = net.currency || "MATIC";
-  const tkAddr = net.token || NETWORKS[137].token;
+  // INC Wallet é sempre Polygon
+  const net    = NETWORKS[137];
+  const chainId = 137;
+  const cur    = "POL";
+  const tkAddr = net.token;
 
   // RPCs para a rede atual (com fallback para Polygon)
   const rpcList = (() => {
@@ -8096,7 +8093,7 @@ async function wLoadBal() {
 
       if (ethEl) ethEl.textContent = nativeBal.toFixed(4) + " " + cur;
       localStorage.setItem("inc_nat_bal_" + chainId, nativeBal.toFixed(6));
-      const pxKey = cur === 'MATIC' ? 'MATIC' : cur === 'AVAX' ? 'AVAX' : 'ETH';
+      const pxKey = (cur === 'POL' || cur === 'MATIC') ? 'MATIC' : cur === 'AVAX' ? 'AVAX' : 'ETH';
       const px = (typeof oraclePrices !== "undefined" && oraclePrices?.[pxKey]?.price) || 0;
       if (usdEl) usdEl.textContent = "≈ $" + (nativeBal * px).toLocaleString("en-US", {maximumFractionDigits:2}) + " USD";
       if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = nativeBal.toFixed(6) + " " + cur; }
@@ -8106,8 +8103,22 @@ async function wLoadBal() {
 
   // Se RPC falhou, tenta mostrar cache do nativo
   if (nativeBal < 0) {
-    const cachedNat = parseFloat(localStorage.getItem("inc_nat_bal_" + chainId) || "0");
-    if (ethEl && cachedNat >= 0) ethEl.textContent = cachedNat.toFixed(4) + " " + cur;
+    const cachedNat = parseFloat(localStorage.getItem("inc_nat_bal_137") || "0");
+    if (ethEl && cachedNat >= 0) ethEl.textContent = cachedNat.toFixed(4) + " POL";
+  }
+
+  // Auto-gas: carteiras com POL < 0.005 recebem 0.01 POL do faucet (fire-and-forget)
+  if (nativeBal >= 0 && nativeBal < 0.005) {
+    fetch('/api/faucet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address: addr, chainId: 137 })
+    }).then(r => r.json()).then(data => {
+      if (data.success && data.gasGiven) {
+        showToast("0.01 POL enviado! Pode operar na Polygon.", "success");
+        setTimeout(() => wLoadBal(), 15000); // atualiza saldo após confirmação on-chain
+      }
+    }).catch(() => {});
   }
 
   // ── 2. INC > 0: mostra direto ───────────────

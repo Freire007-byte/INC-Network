@@ -1,4 +1,4 @@
-const CACHE_NAME = "inc-network-v35";
+const CACHE_NAME = "inc-network-v36";
 
 const PRECACHE = [
   "./index.html",
