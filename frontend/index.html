@@ -5070,8 +5070,8 @@ const NETWORKS = {
     contract:    "0x078cE5595677BF5699F941730485F9635f09aA2A",
     token:       "",
     testnet:     false,
-    rpcUrl:      "https://incnetwork.online/rpc",
-    wsUrl:       "wss://ws.incnetwork.io",
+    rpcUrl:      "https://www.incnetwork.online/rpc",
+    wsUrl:       "wss://www.incnetwork.online/ws",
     explorerUrl: "https://scan.incnetwork.io",
     isNative:    true,
   },
@@ -5414,7 +5414,7 @@ function openAppReadOnly() {
   if (!contract) {
     try {
       currentNetwork = NETWORKS[19191];
-      var roProv = new ethers.providers.JsonRpcProvider("https://incnetwork.online/rpc");
+      var roProv = new ethers.providers.JsonRpcProvider("https://www.incnetwork.online/rpc");
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       try { updateCurrencyLabels(); } catch(e) {}
     } catch(e) {
@@ -5466,7 +5466,7 @@ async function initReadOnlyContract() {
   if (contract) return;
   // INC Network (nativa) como primária
   const incRpcs = [
-    { chainId: 19191, rpc: "https://incnetwork.online/rpc" },
+    { chainId: 19191, rpc: "https://www.incnetwork.online/rpc" },
     { chainId: 11155111, rpc: "https://ethereum-sepolia-rpc.publicnode.com" },
     { chainId: 11155111, rpc: "https://sepolia.drpc.org" },
     { chainId: 11155111, rpc: "https://1rpc.io/sepolia" },
@@ -8440,7 +8440,7 @@ function hlRenderBubbles() {
   const c = document.getElementById('hl-bubble-canvas');
   if (!c) return;
   const cw = c.offsetWidth || 400;
-  const ch = c.offsetHeight || 420;
+  const ch = c.offsetHeight || (window.innerWidth < 600 ? 240 : window.innerWidth < 900 ? 280 : 420);
   const scale = Math.min(1, cw / 500);
   const maxPxSize = Math.round((22 + 76) * scale);
   const mPctX = Math.ceil(maxPxSize / 2 / cw * 100) + 2;
@@ -8495,7 +8495,7 @@ function hlDrawSeedBubbles(coinFilter) {
   const c = document.getElementById('hl-bubble-canvas');
   if (!c) return;
   const cw = c.offsetWidth || 400;
-  const ch = c.offsetHeight || 420;
+  const ch = c.offsetHeight || (window.innerWidth < 600 ? 240 : window.innerWidth < 900 ? 280 : 420);
   const scale = Math.min(1, cw / 500);
   const maxPxSize = Math.round((28 + 90) * scale);
   const mPctX = Math.ceil(maxPxSize / 2 / cw * 100) + 2;
@@ -9667,7 +9667,7 @@ async function addIncNetwork() {
     chainId:           "0x4AF7",          // 19191 em hex
     chainName:         "INC Network",
     nativeCurrency:    { name: "Ethereum", symbol: "ETH", decimals: 18 },
-    rpcUrls:           ["https://incnetwork.online/rpc"],
+    rpcUrls:           ["https://www.incnetwork.online/rpc"],
     blockExplorerUrls: ["https://scan.incnetwork.io"],
     iconUrls:          [],
   }];
@@ -9711,7 +9711,7 @@ function openOnramp(provider) {
   const URLS = {
     transak:  `https://global.transak.com/?defaultCryptoCurrency=${crypto}&walletAddress=${addr}&networks=${netName}&disableWalletAddressForm=${addr?'true':'false'}&productsAvailed=buy`,
     moonpay:  `https://buy.moonpay.com/?currencyCode=${crypto.toLowerCase()}_${netName}&walletAddress=${addr}`,
-    ramp:     `https://app.ramp.network/?swapAsset=${crypto}&userAddress=${addr}&hostAppName=INC+Network&hostLogoUrl=https://inc-protocol.netlify.app/logo.png`,
+    ramp:     `https://app.ramp.network/?swapAsset=${crypto}&userAddress=${addr}&hostAppName=INC+Network&hostLogoUrl=https://www.incnetwork.online/logo.png`,
     coinbase:  `https://pay.coinbase.com/buy/select-asset?appId=inc-network&destinationWallets=[{"address":"${addr}","assets":["${crypto}"],"supportedNetworks":["${netName}"]}]`,
   };
 

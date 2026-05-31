@@ -1,4 +1,4 @@
-const CACHE_NAME = "inc-network-v27";
+const CACHE_NAME = "inc-network-v28";
 
 const PRECACHE = [
   "./index.html",
@@ -46,6 +46,9 @@ self.addEventListener("fetch", event => {
     url.hostname.includes("binance.com") ||
     url.hostname.includes("coingecko.com") ||
     url.hostname.includes("cryptocompare.com") ||
+    url.hostname.includes("cloudflare.com") ||
+    url.hostname.includes("tradingview.com") ||
+    url.pathname.startsWith("/api/") ||
     url.protocol === "chrome-extension:"
   ) {
     return; // deixa o browser lidar normalmente
