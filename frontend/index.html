@@ -3823,8 +3823,15 @@
               <span class="oracle-price-val" id="form-oracle-val">—</span>
               <span class="oracle-price-chg" id="form-oracle-chg"></span>
             </div>
+            <div id="form-chainlink-row" style="font-size:10px;color:var(--muted);margin-top:4px;display:none">
+              Chainlink: <span id="form-chainlink-val" style="color:var(--cyan);font-family:monospace">—</span>
+              <span id="form-chainlink-diff" style="margin-left:6px"></span>
+            </div>
           </div>
-          <button class="btn-chart-sm" onclick="openChartFromForm()">📈 Gráfico</button>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <button class="btn-chart-sm" onclick="openChartFromForm()">📈 Gráfico</button>
+            <button class="btn-chart-sm" id="btn-test-chainlink" onclick="testChainlinkOracle()" style="font-size:10px;padding:5px 10px">🔗 Testar Chainlink</button>
+          </div>
         </div>
 
         <!-- Par + Direção -->
@@ -6498,6 +6505,35 @@ function _autoFillForm(attempt) {
   updateFormOracle();
 }
 
+async function testChainlinkOracle() {
+  const btn  = document.getElementById("btn-test-chainlink");
+  const row  = document.getElementById("form-chainlink-row");
+  const valEl = document.getElementById("form-chainlink-val");
+  const diffEl = document.getElementById("form-chainlink-diff");
+  const pair = document.getElementById("f-pair")?.value || "BTC/USDT";
+  if (btn) { btn.textContent = "⏳ Lendo..."; btn.disabled = true; }
+  try {
+    const raw = await Promise.race([
+      contract.getCurrentPrice(pair),
+      new Promise((_, r) => setTimeout(() => r(new Error("timeout")), 8000))
+    ]);
+    const chainlinkPrice = Number(raw) / 1e8;
+    const sym = getFormSym();
+    const cexPrice = oraclePrices[sym]?.price || 0;
+    const diff = cexPrice ? ((chainlinkPrice - cexPrice) / cexPrice * 100) : 0;
+    const diffColor = Math.abs(diff) > 2 ? "var(--red)" : "var(--green)";
+    if (valEl) valEl.textContent = "$" + chainlinkPrice.toLocaleString("en-US", {maximumFractionDigits: 2});
+    if (diffEl) diffEl.innerHTML = `<span style="color:${diffColor}">${diff >= 0 ? "+" : ""}${diff.toFixed(2)}% vs CEX</span>`;
+    if (row) row.style.display = "block";
+    if (Math.abs(diff) > 2) showToast(`Atenção: preço CEX e Chainlink diferem ${Math.abs(diff).toFixed(1)}% — entrada pode ser rejeitada!`, "error", 7000);
+    else showToast(`Chainlink OK: $${chainlinkPrice.toLocaleString("en-US", {maximumFractionDigits:2})} — dentro da tolerância de ±2%`, "success");
+  } catch(e) {
+    showToast("Erro ao consultar Chainlink: " + (e.message||e), "error");
+  } finally {
+    if (btn) { btn.textContent = "🔗 Testar Chainlink"; btn.disabled = false; }
+  }
+}
+
 function updateFormOracle() {
   const sym  = getFormSym();
   const d    = oraclePrices[sym];
@@ -7792,7 +7828,7 @@ async function wCreateFinish() {
     const enc = await _wEnc(_wNewWal.privateKey, pass);
     localStorage.setItem(W_KEY, JSON.stringify({ address: _wNewWal.address, enc, ts: Date.now() }));
     _wWallet = _wNewWal; _wAddr = _wNewWal.address; _wNewWal = null;
-    localStorage.removeItem("inc_last_balance"); // limpa cache de sessão anterior
+    localStorage.setItem("inc_last_balance", "100"); // nova carteira — bônus garantido
     wShowBonusScreen();
     wClaimBonus();
   } catch(e) { showToast("Erro: " + e.message, "error"); btn.textContent = "Criar Carteira"; btn.disabled = false; }
@@ -7844,8 +7880,8 @@ async function wClaimBonus() {
   } catch(e) {
     clearTimeout(autoRedirect);
     if (statusEl) statusEl.textContent = "Seus 100 INC serão creditados em breve.";
-    btn.textContent = "Ir para carteira →"; btn.disabled = false;
-    btn.onclick = () => _wGoMain();
+    // Auto-redirect após 2s mesmo com erro — inc_last_balance já está como "100"
+    setTimeout(() => { _wGoMain(); }, 2000);
   }
 }
 
@@ -8026,21 +8062,24 @@ async function wLoadBal() {
     // Nunca recebeu — chama faucet
     if (iEl) iEl.textContent = "Enviando 100 INC…";
     try {
-      const res  = await fetch('/api/faucet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: addr, chainId: 137 }) // faucet sempre em Polygon
-      });
+      const fTimeout = new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 8000));
+      const res = await Promise.race([
+        fetch('/api/faucet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: addr, chainId: 137 })
+        }),
+        fTimeout
+      ]);
       const data = await res.json();
       if (data.success || data.error === 'already_claimed') {
         localStorage.setItem("inc_last_balance", "100");
         if (iEl) iEl.textContent = "100 INC";
-        if (data.success) setTimeout(() => wLoadBal(), 10000); // reconfirma após TX
+        if (data.success) setTimeout(() => wLoadBal(), 10000);
       } else {
         if (iEl) iEl.textContent = "0 INC";
       }
     } catch(e) {
-      // Faucet indisponível — mostra cache ou 0
       const fb = parseInt(localStorage.getItem("inc_last_balance") || "0");
       if (iEl) iEl.textContent = fb > 0 ? fb.toLocaleString("pt-BR") + " INC" : "0 INC";
     }
