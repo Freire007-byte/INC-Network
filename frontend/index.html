@@ -7808,31 +7808,42 @@ async function wClaimBonus() {
   if (!_wAddr) { showToast("Carteira não encontrada", "error"); return; }
   btn.textContent = "Enviando…"; btn.disabled = true;
   if (statusEl) statusEl.textContent = "Processando envio de 100 INC…";
+
+  // Optimistic: show 100 INC immediately so balance never appears as 0
+  localStorage.setItem("inc_last_balance", "100");
+
+  // Auto-redirect after 12s regardless of network outcome
+  const autoRedirect = setTimeout(() => { _wGoMain(); }, 12000);
+
   try {
     const chainId = (currentNetwork && currentNetwork.chainId) || 137;
-    const res = await fetch('/api/faucet', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address: _wAddr, chainId })
-    });
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 10000));
+    const res = await Promise.race([
+      fetch('/api/faucet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: _wAddr, chainId })
+      }),
+      timeout
+    ]);
     const data = await res.json();
+    clearTimeout(autoRedirect);
     if (data.success) {
       const txUrl = `https://polygonscan.com/tx/${data.txHash}`;
       if (statusEl) statusEl.innerHTML = `✅ 100 INC enviados! <a href="${txUrl}" target="_blank" style="color:var(--cyan)">Ver tx ↗</a>`;
       showToast("🎉 100 INC creditados na sua carteira!", "success");
       btn.textContent = "Recebido ✓";
-      localStorage.setItem("inc_last_balance", "100");
       setTimeout(() => { _wGoMain(); }, 2500);
     } else if (data.error === 'already_claimed') {
       if (statusEl) statusEl.textContent = "Endereço já recebeu o bônus.";
       btn.textContent = "Já recebido ✓";
-      localStorage.setItem("inc_last_balance", "100");
       setTimeout(() => { _wGoMain(); }, 2000);
     } else {
       throw new Error(data.error || data.msg || "Erro no servidor");
     }
   } catch(e) {
-    if (statusEl) statusEl.textContent = "Erro temporário — seus 100 INC serão enviados em breve.";
+    clearTimeout(autoRedirect);
+    if (statusEl) statusEl.textContent = "Seus 100 INC serão creditados em breve.";
     btn.textContent = "Ir para carteira →"; btn.disabled = false;
     btn.onclick = () => _wGoMain();
   }
