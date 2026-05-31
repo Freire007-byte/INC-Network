@@ -7708,8 +7708,7 @@ function wOpenPanel() {
   if (!stored) {
     wShowScreen('setup');
   } else if (_wWallet) {
-    wShowScreen('main');
-    wLoadBal();
+    _wGoMain();
   } else {
     _wAddr = stored.address;
     const p = document.getElementById("wu-preview");
@@ -7901,8 +7900,15 @@ function _wGoMain() {
   const natLbl = document.getElementById("wm-nat-label");
   if (natLbl) natLbl.textContent = "SALDO " + (net.currency || "MATIC");
 
+  const net2 = currentNetwork || NETWORKS[137];
+  const cur2 = net2.currency || "MATIC";
+  const ethElMain = document.getElementById("wm-eth");
+  const cachedNat = parseFloat(localStorage.getItem("inc_nat_bal_" + net2.chainId) || "0");
+  if (ethElMain) ethElMain.textContent = cachedNat.toFixed(4) + " " + cur2;
+
+  const cachedInc = parseInt(localStorage.getItem("inc_last_balance") || "0");
   const iElMain = document.getElementById("wm-inc");
-  if (iElMain) iElMain.textContent = "Carregando…";
+  if (iElMain) iElMain.textContent = cachedInc > 0 ? cachedInc.toLocaleString("pt-BR") + " INC" : "Carregando…";
 
   wShowScreen('main');
   wLoadBal();
@@ -7936,29 +7942,59 @@ async function wLoadBal() {
   const addr = _wAddr || _wWallet?.address;
   if (!addr) return;
 
-  const iEl    = document.getElementById("wm-inc");
-  const ethEl  = document.getElementById("wm-eth");
-  const usdEl  = document.getElementById("wm-usd");
-  const tkAddr = NETWORKS[137].token;
+  const iEl   = document.getElementById("wm-inc");
+  const ethEl = document.getElementById("wm-eth");
+  const usdEl = document.getElementById("wm-usd");
 
-  // ── 1. Busca saldo on-chain ──────────────────
+  // Rede ativa: usa a conectada ou Polygon como padrão
+  const net    = currentNetwork || NETWORKS[137];
+  const chainId = net.chainId || 137;
+  const cur    = net.currency || "MATIC";
+  const tkAddr = net.token || NETWORKS[137].token;
+
+  // RPCs para a rede atual (com fallback para Polygon)
+  const rpcList = (() => {
+    const base = {
+      137:      _POLYGON_RPCS,
+      42161:    ["https://arb1.arbitrum.io/rpc", "https://arbitrum-one-rpc.publicnode.com", "https://arbitrum.llamarpc.com"],
+      43114:    ["https://api.avax.network/ext/bc/C/rpc", "https://avalanche-c-chain-rpc.publicnode.com"],
+      11155111: ["https://ethereum-sepolia-rpc.publicnode.com"],
+    };
+    return base[chainId] || _POLYGON_RPCS;
+  })();
+
+  // ── 1. Busca saldo on-chain com timeout de 6s ──
+  const withTimeout = (promise, ms) => Promise.race([
+    promise,
+    new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))
+  ]);
+
   let inc = -1; // -1 = RPC falhou
-  for (const rpcUrl of _POLYGON_RPCS) {
+  let nativeBal = -1;
+  for (const rpcUrl of rpcList) {
     try {
       const rpc = new ethers.providers.JsonRpcProvider(rpcUrl);
-      const [balWei, bInc] = await Promise.all([
-        rpc.getBalance(addr),
-        new ethers.Contract(tkAddr, ERC20_MIN, rpc).balanceOf(addr),
-      ]);
-      const bal = parseFloat(ethers.utils.formatEther(balWei));
-      inc = parseFloat(ethers.utils.formatUnits(bInc, 18));
+      const calls = [withTimeout(rpc.getBalance(addr), 6000)];
+      if (tkAddr) calls.push(withTimeout(new ethers.Contract(tkAddr, ERC20_MIN, rpc).balanceOf(addr), 6000));
+      const [balWei, bInc] = await Promise.all(calls);
 
-      if (ethEl) ethEl.textContent = bal.toFixed(4) + " MATIC";
-      const px = (typeof oraclePrices !== "undefined" && oraclePrices?.["MATIC"]?.price) || 0;
-      if (usdEl) usdEl.textContent = "≈ $" + (bal * px).toLocaleString("en-US", {maximumFractionDigits:2}) + " USD";
-      if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = bal.toFixed(6) + " MATIC"; }
+      nativeBal = parseFloat(ethers.utils.formatEther(balWei));
+      inc = tkAddr ? parseFloat(ethers.utils.formatUnits(bInc, 18)) : 0;
+
+      if (ethEl) ethEl.textContent = nativeBal.toFixed(4) + " " + cur;
+      localStorage.setItem("inc_nat_bal_" + chainId, nativeBal.toFixed(6));
+      const pxKey = cur === 'MATIC' ? 'MATIC' : cur === 'AVAX' ? 'AVAX' : 'ETH';
+      const px = (typeof oraclePrices !== "undefined" && oraclePrices?.[pxKey]?.price) || 0;
+      if (usdEl) usdEl.textContent = "≈ $" + (nativeBal * px).toLocaleString("en-US", {maximumFractionDigits:2}) + " USD";
+      if (_wToken === 'eth') { const av = document.getElementById("ws-avail"); if (av) av.textContent = nativeBal.toFixed(6) + " " + cur; }
       break;
     } catch(e) { /* tenta próximo RPC */ }
+  }
+
+  // Se RPC falhou, tenta mostrar cache do nativo
+  if (nativeBal < 0) {
+    const cachedNat = parseFloat(localStorage.getItem("inc_nat_bal_" + chainId) || "0");
+    if (ethEl && cachedNat >= 0) ethEl.textContent = cachedNat.toFixed(4) + " " + cur;
   }
 
   // ── 2. INC > 0: mostra direto ───────────────
@@ -7972,39 +8008,37 @@ async function wLoadBal() {
   // ── 3. INC = 0 na blockchain ────────────────
   if (inc === 0) {
     const cached = parseInt(localStorage.getItem("inc_last_balance") || "0");
-
-    // Cache já tem 100 = faucet enviou, TX ainda pendente — só mostra do cache
     if (cached >= 100) {
-      if (iEl) iEl.textContent = "100 INC";
+      if (iEl) iEl.textContent = cached.toLocaleString("pt-BR") + " INC";
       return;
     }
-
-    // Cache = 0 = nunca recebeu — chama faucet agora
+    // Nunca recebeu — chama faucet
     if (iEl) iEl.textContent = "Enviando 100 INC…";
     try {
       const res  = await fetch('/api/faucet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: addr, chainId: 137 })
+        body: JSON.stringify({ address: addr, chainId: 137 }) // faucet sempre em Polygon
       });
       const data = await res.json();
-
       if (data.success || data.error === 'already_claimed') {
         localStorage.setItem("inc_last_balance", "100");
         if (iEl) iEl.textContent = "100 INC";
-        if (data.success) setTimeout(() => wLoadBal(), 8000); // reconfirma após TX
+        if (data.success) setTimeout(() => wLoadBal(), 10000); // reconfirma após TX
       } else {
         if (iEl) iEl.textContent = "0 INC";
       }
     } catch(e) {
-      if (iEl) iEl.textContent = "0 INC";
+      // Faucet indisponível — mostra cache ou 0
+      const fb = parseInt(localStorage.getItem("inc_last_balance") || "0");
+      if (iEl) iEl.textContent = fb > 0 ? fb.toLocaleString("pt-BR") + " INC" : "0 INC";
     }
     return;
   }
 
-  // ── 4. RPC falhou — mostra último cache ─────
+  // ── 4. RPC falhou — mostra último cache INC ─
   const cached = parseInt(localStorage.getItem("inc_last_balance") || "0");
-  if (iEl) iEl.textContent = cached > 0 ? cached.toLocaleString("pt-BR") + " INC" : "— INC";
+  if (iEl) iEl.textContent = cached > 0 ? cached.toLocaleString("pt-BR") + " INC" : "↺ Toque para atualizar";
 }
 
 // ══════════════════════════════════════════════
