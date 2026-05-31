@@ -4678,26 +4678,26 @@
 <div id="onramp-modal-overlay" onclick="handleOnrampOverlay(event)">
   <div class="onramp-modal">
     <div class="onramp-modal-hdr">
-      <div class="onramp-modal-title">💳 Comprar $INC com Fiat</div>
+      <div class="onramp-modal-title">💳 Comprar cripto com Fiat</div>
       <button class="onramp-modal-close" onclick="closeOnramp()">✕</button>
     </div>
-    <div class="onramp-modal-sub">Pague com banco, PIX, PayPal, cartão ou cripto. Seu $INC chega direto na carteira.</div>
+    <div class="onramp-modal-sub">Escolha o provedor e pague com PIX, cartão ou banco. A cripto chega direto na sua carteira.</div>
     <div class="onramp-providers">
 
-      <button class="onramp-provider" onclick="openOnramp('transak')">
+      <button class="onramp-provider" onclick="openOnramp('transak')" style="border-color:#00e5ff40;background:linear-gradient(135deg,rgba(0,229,255,.06),transparent)">
         <div class="onramp-prov-icon">🏦</div>
         <div class="onramp-prov-info">
-          <div class="onramp-prov-name">Transak</div>
-          <div class="onramp-prov-desc">Mais de 120 formas de pagamento em 150 países</div>
+          <div class="onramp-prov-name" style="color:var(--cyan)">Transak <span style="font-size:9px;background:#00e5ff20;color:var(--cyan);border:1px solid #00e5ff40;padding:1px 6px;border-radius:6px;margin-left:6px;font-weight:700">RECOMENDADO</span></div>
+          <div class="onramp-prov-desc">Regulado · 150 países · sem conta necessária</div>
           <div class="onramp-prov-tags">
             <span class="onramp-tag">PIX</span>
             <span class="onramp-tag">BANCO</span>
-            <span class="onramp-tag">PAYPAL</span>
             <span class="onramp-tag">CARTÃO</span>
+            <span class="onramp-tag">PAYPAL</span>
             <span class="onramp-tag">APPLE PAY</span>
           </div>
         </div>
-        <div class="onramp-prov-arrow">↗</div>
+        <div class="onramp-prov-arrow" style="color:var(--cyan)">↗</div>
       </button>
 
       <button class="onramp-provider" onclick="openOnramp('moonpay')">
@@ -4718,7 +4718,7 @@
         <div class="onramp-prov-icon">🏛️</div>
         <div class="onramp-prov-info">
           <div class="onramp-prov-name">Ramp Network</div>
-          <div class="onramp-prov-desc">Transferência bancária local, SEPA, cartão de débito</div>
+          <div class="onramp-prov-desc">Transferência bancária, SEPA, cartão de débito</div>
           <div class="onramp-prov-tags">
             <span class="onramp-tag">TED/DOC</span>
             <span class="onramp-tag">SEPA</span>
@@ -4728,24 +4728,10 @@
         <div class="onramp-prov-arrow">↗</div>
       </button>
 
-      <button class="onramp-provider" onclick="openOnramp('coinbase')">
-        <div class="onramp-prov-icon">🔵</div>
-        <div class="onramp-prov-info">
-          <div class="onramp-prov-name">Coinbase Pay</div>
-          <div class="onramp-prov-desc">Compra direta com saldo Coinbase, PayPal ou cartão</div>
-          <div class="onramp-prov-tags">
-            <span class="onramp-tag">PAYPAL</span>
-            <span class="onramp-tag">CARTÃO</span>
-            <span class="onramp-tag">COINBASE</span>
-          </div>
-        </div>
-        <div class="onramp-prov-arrow">↗</div>
-      </button>
-
     </div>
     <div class="onramp-disclaimer">
-      Os provedores acima são serviços de terceiros. As taxas e disponibilidade variam por país.<br>
-      Após comprar ETH/POL/AVAX, use o swap acima para obter $INC.
+      Serviços regulados de terceiros. Compram POL/ETH e enviam direto para sua carteira.<br>
+      Taxas e disponibilidade variam por país. A INC Network não processa pagamentos.
     </div>
   </div>
 </div>
@@ -9972,20 +9958,21 @@ function handleOnrampOverlay(e) {
 
 function openOnramp(provider) {
   closeOnramp();
-  const addr     = userAddress || '';
-  const net      = currentNetwork;
-  const chainId  = net?.chainId ?? 137;
-  // Escolhe a rede e cripto nativa da rede atual para comprar
-  const netMap   = { 137:'polygon', 42161:'arbitrum', 43114:'avalanche', 11155111:'ethereum' };
-  const cryptoMap= { 137:'POL',     42161:'ETH',       43114:'AVAX',       11155111:'ETH'     };
-  const netName  = netMap[chainId]  || 'polygon';
-  const crypto   = cryptoMap[chainId] || 'POL';
+  // Usa o endereço da INC Wallet ou da carteira externa conectada
+  const addr    = _wAddr || userAddress || '';
+  // INC Wallet opera sempre em Polygon; carteira externa usa rede atual
+  const chainId = (_wAddr ? 137 : currentNetwork?.chainId) ?? 137;
+  const netMap  = { 137:'polygon', 42161:'arbitrum', 43114:'avalanche', 11155111:'ethereum' };
+  const cryptoMap = { 137:'POL', 42161:'ETH', 43114:'AVAX', 11155111:'ETH' };
+  const netName = netMap[chainId]   || 'polygon';
+  const crypto  = cryptoMap[chainId] || 'POL';
+
+  const addrParam = addr ? `&walletAddress=${encodeURIComponent(addr)}&disableWalletAddressForm=true` : '';
 
   const URLS = {
-    transak:  `https://global.transak.com/?defaultCryptoCurrency=${crypto}&walletAddress=${addr}&networks=${netName}&disableWalletAddressForm=${addr?'true':'false'}&productsAvailed=buy`,
-    moonpay:  `https://buy.moonpay.com/?currencyCode=${crypto.toLowerCase()}_${netName}&walletAddress=${addr}`,
-    ramp:     `https://app.ramp.network/?swapAsset=${crypto}&userAddress=${addr}&hostAppName=INC+Network&hostLogoUrl=https://www.incnetwork.online/logo.png`,
-    coinbase:  `https://pay.coinbase.com/buy/select-asset?appId=inc-network&destinationWallets=[{"address":"${addr}","assets":["${crypto}"],"supportedNetworks":["${netName}"]}]`,
+    transak: `https://global.transak.com/?defaultCryptoCurrency=${crypto}&networks=${netName}&productsAvailed=buy${addrParam}`,
+    moonpay: `https://buy.moonpay.com/?currencyCode=${crypto.toLowerCase()}_${netName}${addr ? '&walletAddress=' + encodeURIComponent(addr) : ''}`,
+    ramp:    `https://app.ramp.network/?swapAsset=${netName.toUpperCase()}_${crypto}&hostAppName=INC+Network&hostLogoUrl=https%3A%2F%2Fwww.incnetwork.online%2Flogo.png${addr ? '&userAddress=' + encodeURIComponent(addr) : ''}`,
   };
 
   const url = URLS[provider];
