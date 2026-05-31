@@ -2960,7 +2960,7 @@
               <button class="wf-fbtn" onclick="hlFilterCoin('BNB',this)">BNB</button>
               <button class="wf-fbtn" onclick="hlFilterCoin('ARB',this)">ARB</button>
               <button class="wf-fbtn" onclick="hlFilterCoin('AVAX',this)">AVAX</button>
-              <button class="wf-fbtn" onclick="hlFilterCoin('MATIC',this)">MATIC</button>
+              <button class="wf-fbtn" onclick="hlFilterCoin('POL',this)">POL</button>
               <button class="wf-fbtn" onclick="hlFilterCoin('DOGE',this)">DOGE</button>
               <button class="wf-fbtn" onclick="hlFilterCoin('PEPE',this)">PEPE</button>
               <button class="wf-fbtn" onclick="hlFilterCoin('WIF',this)">WIF</button>
@@ -3659,7 +3659,7 @@
     <span class="dep-ico">⚠️</span>
     <div class="dep-text">
       <div class="dep-title">Saldo insuficiente para operar</div>
-      <div class="dep-sub">Tens <b id="dep-bal-current">0 ETH</b> — precisas de pelo menos <b id="dep-min-needed">0.01 MATIC</b> para criar sinais. Deposita agora para começar.</div>
+      <div class="dep-sub">Tens <b id="dep-bal-current">0 POL</b> — precisas de pelo menos <b id="dep-min-needed">0.01 POL</b> para criar sinais. Deposita agora para começar.</div>
     </div>
     <div class="dep-actions">
       <button class="dep-btn-primary" onclick="showOnramp()">💳 Depositar Agora</button>
@@ -3784,7 +3784,7 @@
             <span class="wrt-sym">AVAX</span><span class="wrt-px" id="wrp-avaxusdt">—</span><span class="wrt-chg flat" id="wrc-avaxusdt">—</span>
           </div>
           <div class="wrt-chip" id="wrt-maticusdt">
-            <span class="wrt-sym">MATIC</span><span class="wrt-px" id="wrp-maticusdt">—</span><span class="wrt-chg flat" id="wrc-maticusdt">—</span>
+            <span class="wrt-sym">POL</span><span class="wrt-px" id="wrp-maticusdt">—</span><span class="wrt-chg flat" id="wrc-maticusdt">—</span>
           </div>
           <div class="wrt-chip" id="wrt-inc" style="border-color:#7c6dff40;background:#7c6dff08">
             <span class="wrt-sym" style="color:#a09bff">$INC</span><span class="wrt-px" id="wrp-inc">$0.01</span><span class="wrt-chg flat" id="wrc-inc">—</span>
@@ -3867,10 +3867,10 @@
         <!-- Entrada rápida: 1 clique entra na posição -->
         <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚡ Escolha o valor e entre agora</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
-          <button class="quick-entry-btn" id="qe-001" onclick="quickEnter(0.01)">0.01<span class="qe-cur">MATIC</span></button>
-          <button class="quick-entry-btn" id="qe-005" onclick="quickEnter(0.05)">0.05<span class="qe-cur">MATIC</span></button>
-          <button class="quick-entry-btn" id="qe-01"  onclick="quickEnter(0.1)">0.1<span class="qe-cur">MATIC</span></button>
-          <button class="quick-entry-btn" id="qe-05"  onclick="quickEnter(0.5)">0.5<span class="qe-cur">MATIC</span></button>
+          <button class="quick-entry-btn" id="qe-001" onclick="quickEnter(0.01)">0.01<span class="qe-cur">POL</span></button>
+          <button class="quick-entry-btn" id="qe-005" onclick="quickEnter(0.05)">0.05<span class="qe-cur">POL</span></button>
+          <button class="quick-entry-btn" id="qe-01"  onclick="quickEnter(0.1)">0.1<span class="qe-cur">POL</span></button>
+          <button class="quick-entry-btn" id="qe-05"  onclick="quickEnter(0.5)">0.5<span class="qe-cur">POL</span></button>
         </div>
         <button class="btn-submit" onclick="createSignal()" style="margin-top:10px;opacity:.5;font-size:12px;padding:10px">ou inserir valor personalizado ↓</button>
         <input type="number" id="f-stake-custom" placeholder="valor personalizado" step="0.001" min="0.005" style="margin-top:6px;width:100%;box-sizing:border-box;background:#ffffff08;border:1px solid #ffffff15;border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none" oninput="document.getElementById('f-stake').value=this.value;updateRRCalc()" />
@@ -5067,7 +5067,7 @@ const NETWORKS = {
   137: {
     chainId:  137,
     name:     "Polygon",
-    currency: "MATIC",
+    currency: "POL",
     contract: "0xf49841DF7726691D04D311BC4A0821C0AB9211f5",
     token:    "0x4EC0c1c9C708A51712fD6cCaFd107299bBe30a51",
     faucet:   "",
@@ -6610,7 +6610,7 @@ function setStakePreset(v) {
 
 // 1 clique → define stake → publica sinal imediatamente
 async function quickEnter(v) {
-  const cur = currentNetwork?.currency || 'MATIC';
+  const cur = currentNetwork?.currency || 'POL';
   // Destaca botão
   document.querySelectorAll('.quick-entry-btn').forEach(b => {
     b.style.borderColor = '';  b.style.background = ''; b.style.boxShadow = '';
@@ -6628,7 +6628,7 @@ async function quickEnter(v) {
 
 // Atualiza label MATIC/ETH/AVAX nos botões de entrada rápida
 function updateQuickEntryLabels() {
-  const cur = currentNetwork?.currency || 'MATIC';
+  const cur = currentNetwork?.currency || 'POL';
   document.querySelectorAll('.quick-entry-btn .qe-cur').forEach(el => { el.textContent = cur; });
 }
 
@@ -9898,9 +9898,9 @@ function openOnramp(provider) {
   const chainId  = net?.chainId ?? 137;
   // Escolhe a rede e cripto nativa da rede atual para comprar
   const netMap   = { 137:'polygon', 42161:'arbitrum', 43114:'avalanche', 11155111:'ethereum' };
-  const cryptoMap= { 137:'MATIC',   42161:'ETH',       43114:'AVAX',       11155111:'ETH'     };
+  const cryptoMap= { 137:'POL',     42161:'ETH',       43114:'AVAX',       11155111:'ETH'     };
   const netName  = netMap[chainId]  || 'polygon';
-  const crypto   = cryptoMap[chainId] || 'MATIC';
+  const crypto   = cryptoMap[chainId] || 'POL';
 
   const URLS = {
     transak:  `https://global.transak.com/?defaultCryptoCurrency=${crypto}&walletAddress=${addr}&networks=${netName}&disableWalletAddressForm=${addr?'true':'false'}&productsAvailed=buy`,
