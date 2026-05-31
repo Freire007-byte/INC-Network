@@ -4963,7 +4963,7 @@
           <div class="wp-act-lbl">Comprar</div>
         </div>
       </div>
-      <button class="wp-btn wp-btn-primary wp-btn-center" onclick="wClosePanel();connectWithBuiltinWallet();setTimeout(()=>switchTab('criar'),200)" style="margin-bottom:6px">⚡ Operar na Polygon</button>
+      <button class="wp-btn wp-btn-primary wp-btn-center" onclick="wClosePanel();(async()=>{currentNetwork=null;await connectWithBuiltinWallet();if(userAddress)switchTab('criar');})();" style="margin-bottom:6px">⚡ Operar na Polygon</button>
       <button class="wp-btn wp-btn-outline wp-btn-center" id="wm-refresh-btn" onclick="wRefreshBal(this)">↻ Atualizar saldos</button>
     </div>
   </div>
@@ -9959,7 +9959,13 @@ function showOnramp() {
 }
 // Abre Transak diretamente (sem modal de escolha)
 function openTransakDirect() {
-  openOnramp('transak');
+  var addr = (_wAddr || userAddress || '');
+  var url  = 'https://global.transak.com/?defaultCryptoCurrency=POL&networks=polygon&productsAvailed=BUY';
+  if (addr) url += '&walletAddress=' + encodeURIComponent(addr) + '&disableWalletAddressForm=true';
+  var a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ try { document.body.removeChild(a); } catch(e){} }, 200);
 }
 function closeOnramp() {
   document.getElementById('onramp-modal-overlay').classList.remove('open');
@@ -9987,8 +9993,12 @@ function openOnramp(provider) {
     ramp:    `https://app.ramp.network/?swapAsset=POLYGON_${crypto}&hostAppName=INC+Network&hostLogoUrl=https%3A%2F%2Fwww.incnetwork.online%2Flogo.png${addr ? '&userAddress=' + encodeURIComponent(addr) : ''}`,
   };
 
-  const url = URLS[provider];
-  if (url) window.open(url, '_blank', 'noopener,noreferrer');
+  var url = URLS[provider];
+  if (!url) return;
+  var a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ try { document.body.removeChild(a); } catch(e){} }, 200);
 }
 
 // ══════════════════════════════════════════════
