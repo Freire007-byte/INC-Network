@@ -2739,6 +2739,65 @@
     .rk-summary { grid-template-columns: repeat(3,1fr); gap: 6px; }
     .rk-sum-val { font-size: 16px; }
   }
+  /* ─── BOT LIVE PANEL ───────────────────────────────────── */
+  .blw-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .blw-id{display:flex;align-items:center;gap:8px}
+  .blw-hex{font-size:26px;color:var(--primary);text-shadow:0 0 12px var(--primary);line-height:1}
+  .blw-name{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--cyan);letter-spacing:3px}
+  .blw-live-badge{display:flex;align-items:center;gap:4px;background:rgba(0,255,170,.08);border:1px solid rgba(0,255,170,.25);border-radius:20px;padding:2px 8px;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--green);letter-spacing:1px}
+  .blw-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blw-pulse 1.2s ease-in-out infinite}
+  @keyframes blw-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+  .blw-chain{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:1px;background:rgba(22,25,40,.8);padding:2px 7px;border-radius:6px;border:1px solid var(--border)}
+  .blw-meta{display:flex;gap:8px}
+  .blw-meta-item{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);background:rgba(8,10,18,.8);border:1px solid var(--border);padding:2px 8px;border-radius:6px}
+  .blw-chart-wrap{position:relative;width:100%;height:320px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:linear-gradient(180deg,#040609,#03040a);box-shadow:0 0 40px rgba(0,229,255,.06);margin-bottom:8px}
+  #blw-canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+  .blw-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;gap:8px}
+  .blw-ring{width:52px;height:52px;border-radius:50%;border:2px solid rgba(0,229,255,.35);position:relative;animation:blw-spin 3s linear infinite;transition:border-color .5s}
+  .blw-ring::after{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  @keyframes blw-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .blw-state-txt{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-align:center;transition:color .5s;color:rgba(0,229,255,.7)}
+  .blw-pair-txt{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:rgba(255,255,255,.1);letter-spacing:4px}
+  .blw-burst{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:3;gap:6px}
+  @keyframes blw-burst-in{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
+  .blw-burst-dir{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:900;letter-spacing:4px;text-shadow:0 0 30px currentColor}
+  .blw-burst-sym{font-family:'JetBrains Mono',monospace;font-size:14px;color:rgba(255,255,255,.5);letter-spacing:2px}
+  .blw-burst-px{font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--cyan);font-weight:600}
+  .blw-burst-sub{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:2px;margin-top:4px}
+  .blw-pos{display:flex;align-items:center;gap:12px;background:rgba(8,10,18,.95);border:1px solid rgba(0,229,255,.12);border-radius:12px;padding:10px 16px;margin-bottom:8px}
+  .blw-pos-l{display:flex;flex-direction:column;gap:4px;min-width:84px}
+  .blw-badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;text-align:center;letter-spacing:1px}
+  .blw-badge.long{background:rgba(0,255,170,.1);color:var(--green);border:1px solid rgba(0,255,170,.3)}
+  .blw-badge.short{background:rgba(255,61,87,.1);color:var(--red);border:1px solid rgba(255,61,87,.3)}
+  .blw-sym{font-size:11px;color:var(--text);font-family:'JetBrains Mono',monospace}
+  .blw-sigid{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .blw-pos-m{flex:1;min-width:0}
+  .blw-prices{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap}
+  .blw-pl{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+  .blw-pv{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text)}
+  .blw-arrow{color:var(--muted);font-size:10px}
+  .blw-pbar-row{display:flex;align-items:center;gap:6px}
+  .blw-pbar-lbl{font-size:8px;font-family:'JetBrains Mono',monospace;white-space:nowrap;min-width:28px}
+  .blw-pbar-lbl.red{color:var(--red);text-align:right}
+  .blw-pbar-lbl.green{color:var(--green)}
+  .blw-pbar-bg{flex:1;height:6px;background:rgba(22,25,40,.9);border-radius:3px;position:relative;overflow:visible}
+  .blw-pbar-fill{height:100%;border-radius:3px;transition:width .5s ease,background .5s}
+  .blw-pbar-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border:2px solid #03040a;transition:left .5s ease}
+  .blw-pos-r{text-align:right;min-width:68px}
+  .blw-pnl{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;transition:color .3s}
+  .blw-age{font-size:9px;color:var(--muted);margin-top:3px}
+  .blw-hist{background:rgba(8,10,18,.6);border:1px solid var(--border);border-radius:10px;padding:10px 14px}
+  .blw-hist-hdr{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:8px}
+  .blw-hist-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(22,25,40,.6);font-family:'JetBrains Mono',monospace;font-size:11px}
+  .blw-hist-row:last-child{border-bottom:none}
+  .blw-hist-id{color:var(--muted);min-width:40px}
+  .blw-hist-pair{min-width:70px}
+  .blw-hist-dir{min-width:42px;font-weight:700;font-size:10px}
+  .blw-hist-dir.long{color:var(--green)}
+  .blw-hist-dir.short{color:var(--red)}
+  .blw-hist-st{flex:1;font-size:10px}
+  .blw-hist-age{color:var(--muted);font-size:9px;white-space:nowrap}
+  @media(max-width:480px){.blw-chart-wrap{height:240px}.blw-pos{flex-wrap:wrap}.blw-pos-r{margin-left:auto}}
   </style>
 </head>
 <body>
@@ -2956,28 +3015,78 @@
   </div>
 
   <!-- ══════════════════════════════════════════ -->
-  <!-- GRÁFICO REAL-TIME (TradingView inline)    -->
+  <!-- INC BOT LIVE — BOT OPERANDO AO VIVO      -->
   <!-- ══════════════════════════════════════════ -->
-  <div id="hero-chart-wrap" style="width:100%;max-width:900px;margin:0 auto 32px;padding:0 16px;box-sizing:border-box">
-    <!-- Tabs de par -->
-    <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;justify-content:center">
-      <button class="hc-tab active" onclick="heroChart('BTC')" id="hct-BTC">BTC/USDT</button>
-      <button class="hc-tab" onclick="heroChart('ETH')" id="hct-ETH">ETH/USDT</button>
-      <button class="hc-tab" onclick="heroChart('SOL')" id="hct-SOL">SOL/USDT</button>
-      <button class="hc-tab" onclick="heroChart('BNB')" id="hct-BNB">BNB/USDT</button>
-      <button class="hc-tab" onclick="heroChart('XAU')" id="hct-XAU">OURO</button>
+  <div id="bot-live-wrap" style="width:100%;max-width:900px;margin:0 auto 32px;padding:0 16px;box-sizing:border-box">
+
+    <!-- Header -->
+    <div class="blw-hdr">
+      <div class="blw-id">
+        <span class="blw-hex">⬡</span>
+        <span class="blw-name">INC BOT</span>
+        <span class="blw-live-badge"><span class="blw-dot"></span>LIVE</span>
+        <span class="blw-chain">POLYGON</span>
+      </div>
+      <div class="blw-meta">
+        <span class="blw-meta-item" id="blw-wr">WR —%</span>
+        <span class="blw-meta-item" id="blw-cnt">— sinais</span>
+      </div>
     </div>
-    <!-- iframe TradingView -->
-    <div style="border-radius:14px;overflow:hidden;border:1px solid #161928;box-shadow:0 0 40px rgba(0,229,255,.06)">
-      <iframe id="hero-tv-iframe"
-        src="https://s.tradingview.com/widgetembed/?frameElementId=hero_tv&symbol=BINANCE%3ABTCUSDT&interval=60&hidesidetoolbar=0&symboledit=0&saveimage=0&toolbarbg=0d0e14&theme=dark&style=1&timezone=America%2FSao_Paulo&locale=pt_BR&hide_top_toolbar=0&hide_legend=0&withdateranges=1"
-        style="width:100%;height:420px;border:none;display:block"
-        allowtransparency="true" frameborder="0" scrolling="no"
-        allowfullscreen></iframe>
+
+    <!-- Chart + overlays -->
+    <div class="blw-chart-wrap" id="blw-chart-wrap">
+      <canvas id="blw-canvas"></canvas>
+
+      <!-- Phase overlay (always visible) -->
+      <div class="blw-overlay" id="blw-overlay">
+        <div class="blw-ring" id="blw-ring"></div>
+        <div class="blw-state-txt" id="blw-state-txt">SCANNING MARKET...</div>
+        <div class="blw-pair-txt" id="blw-pair-txt">BTC/USDT</div>
+      </div>
+
+      <!-- Signal burst (shown 3s when signal detected) -->
+      <div id="blw-burst" style="display:none" class="blw-burst">
+        <div class="blw-burst-dir" id="blw-burst-dir">▲ LONG</div>
+        <div class="blw-burst-sym" id="blw-burst-sym">BTC/USDT</div>
+        <div class="blw-burst-px"  id="blw-burst-px">$104,200</div>
+        <div class="blw-burst-sub">SINAL ABERTO NO CONTRATO</div>
+      </div>
     </div>
-    <div style="text-align:center;font-size:10px;color:var(--muted);margin-top:6px;font-family:'JetBrains Mono',monospace">
-      Dados em tempo real · TradingView · Clique nos cards acima para trocar
+
+    <!-- Active position bar -->
+    <div id="blw-pos" class="blw-pos" style="display:none">
+      <div class="blw-pos-l">
+        <span class="blw-badge" id="blw-badge">LONG</span>
+        <span class="blw-sym"   id="blw-sym">BTC/USDT</span>
+        <span class="blw-sigid" id="blw-sigid">#—</span>
+      </div>
+      <div class="blw-pos-m">
+        <div class="blw-prices">
+          <span class="blw-pl">ENTRADA</span><b class="blw-pv" id="blw-entry">—</b>
+          <span class="blw-arrow">›</span>
+          <span class="blw-pl">ATUAL</span><b class="blw-pv" id="blw-cur" style="color:var(--cyan)">—</b>
+        </div>
+        <div class="blw-pbar-row">
+          <span class="blw-pbar-lbl red"   id="blw-sl-l">SL</span>
+          <div class="blw-pbar-bg">
+            <div class="blw-pbar-fill" id="blw-pbar-fill"></div>
+            <div class="blw-pbar-dot"  id="blw-pbar-dot"></div>
+          </div>
+          <span class="blw-pbar-lbl green" id="blw-tp-l">TP</span>
+        </div>
+      </div>
+      <div class="blw-pos-r">
+        <div class="blw-pnl" id="blw-pnl">+0.00%</div>
+        <div class="blw-age" id="blw-age">há 0min</div>
+      </div>
     </div>
+
+    <!-- Signal history -->
+    <div class="blw-hist">
+      <div class="blw-hist-hdr">HISTÓRICO DO BOT</div>
+      <div id="blw-hist-rows"></div>
+    </div>
+
   </div>
 
   <!-- ══════════════════════════════════════════ -->
@@ -10630,6 +10739,304 @@ document.addEventListener('click', e => {
         .catch(err => console.warn("[SW] falha:", err));
     });
   }
+</script>
+
+<!-- INC BOT LIVE PANEL -->
+<script>
+(function() {
+  'use strict';
+  const BOT_ADDR = "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679";
+  const CTR      = "0xf49841DF7726691D04D311BC4A0821C0AB9211f5";
+  const RPC      = "https://polygon-bor-rpc.publicnode.com";
+  const RPC2     = "https://polygon-rpc.com";
+  const ABI      = [
+    "function totalSignals() view returns (uint256)",
+    "function getSignal(uint256) view returns (tuple(uint256 id,address provider,string pair,uint8 direction,uint256 entryPrice,uint256 targetPrice,uint256 stopPrice,uint256 providerStake,uint256 followersStake,uint256 createdAt,uint256 resolvedAt,uint8 status,uint256 rsi,uint256 totalPoolAtResolution,address priceFeed))"
+  ];
+
+  // Phase machine: SCANNING → ANALYZING → DETECTED → TRACKING
+  const PHASES = [
+    { dur:9000,  txt:'SCANNING MARKET...',             color:'rgba(0,229,255,.7)', ring:'rgba(0,229,255,.35)', spd:'3s'  },
+    { dur:5000,  txt:'ANALISANDO RSI · MACD · VOL...', color:'#ffcc00',            ring:'rgba(255,204,0,.5)',  spd:'1.2s'},
+    { dur:3000,  txt:'⚡ SINAL DETECTADO!',             color:'#00ffaa',            ring:'rgba(0,255,170,.7)',  spd:'.6s' },
+    { dur:4000,  txt:'POSIÇÃO ABERTA · MONITORANDO...', color:'rgba(0,229,255,.7)', ring:'rgba(0,229,255,.25)', spd:'3s' },
+  ];
+  const SCAN_PAIRS = ['BTC','ETH','SOL','BNB'];
+
+  let ctr = null;
+  let botSigs  = [];
+  let activeSig = null;
+  let pairIdx  = 0;
+  let phase    = 0;
+  let phaseSince = Date.now();
+  let canvas, ctx;
+
+  const $  = id => document.getElementById(id);
+  const st = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+
+  const fmtV = v => {
+    if (v > 999) return '$' + Math.round(v).toLocaleString('en');
+    if (v >= 10) return '$' + v.toFixed(2);
+    return '$' + v.toFixed(4);
+  };
+
+  // ── Canvas ────────────────────────────────────
+  function initCanvas() {
+    canvas = $('blw-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+    resize();
+    window.addEventListener('resize', resize);
+    requestAnimationFrame(loop);
+  }
+
+  function resize() {
+    const w = $('blw-chart-wrap');
+    if (w && canvas) { canvas.width = w.clientWidth; canvas.height = w.clientHeight; }
+  }
+
+  function loop() { if (ctx) draw(); requestAnimationFrame(loop); }
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const sym  = activeSig ? activeSig.pair.split('/')[0] : SCAN_PAIRS[pairIdx];
+    const hist = (window.priceHistory && window.priceHistory[sym]) || [];
+    if (hist.length < 3) { drawWait(W, H); return; }
+
+    const pts = hist.slice(-150);
+    let lo = Infinity, hi = -Infinity;
+    for (const p of pts) { if (p < lo) lo = p; if (p > hi) hi = p; }
+    const pad = (hi - lo) * 0.18 || 1;
+    lo -= pad; hi += pad;
+    const rng = hi - lo;
+
+    const pL = 10, pR = 72, pT = 16, pB = 22;
+    const W2 = W - pL - pR, H2 = H - pT - pB;
+    const px  = i => pL + (i / (pts.length - 1)) * W2;
+    const py  = v => pT + (1 - (v - lo) / rng) * H2;
+
+    // Grid + price labels
+    ctx.strokeStyle = 'rgba(22,25,40,.55)'; ctx.lineWidth = 1;
+    for (let g = 0; g <= 4; g++) {
+      const y = pT + (g / 4) * H2;
+      ctx.beginPath(); ctx.moveTo(pL, y); ctx.lineTo(W - pR, y); ctx.stroke();
+      const lbl = lo + (1 - g / 4) * rng;
+      ctx.fillStyle = 'rgba(74,78,106,.45)'; ctx.font = '9px JetBrains Mono,monospace';
+      ctx.fillText(fmtV(lbl), W - pR + 4, y + 3);
+    }
+
+    // TP / SL / Entry lines
+    if (activeSig) {
+      const entry = Number(activeSig.entryPrice)  / 1e8;
+      const tp    = Number(activeSig.targetPrice) / 1e8;
+      const sl    = Number(activeSig.stopPrice)   / 1e8;
+      const dLine = (price, col, lbl) => {
+        if (price < lo || price > hi) return;
+        const y = py(price);
+        ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(pL, y); ctx.lineTo(W - pR, y); ctx.stroke();
+        ctx.setLineDash([]); ctx.fillStyle = col; ctx.font = 'bold 9px JetBrains Mono,monospace';
+        ctx.fillText(lbl, W - pR + 4, y + 3);
+      };
+      dLine(tp,    'rgba(0,255,170,.65)', 'TP '  + fmtV(tp));
+      dLine(sl,    'rgba(255,61,87,.65)', 'SL '  + fmtV(sl));
+      dLine(entry, 'rgba(0,229,255,.45)', 'IN '  + fmtV(entry));
+    }
+
+    const isUp = pts[pts.length - 1] >= pts[0];
+    const lc   = isUp ? '#00ffaa' : '#ff3d57';
+
+    // Fill gradient
+    const gr = ctx.createLinearGradient(0, pT, 0, pT + H2);
+    gr.addColorStop(0, isUp ? 'rgba(0,255,170,.14)' : 'rgba(255,61,87,.11)');
+    gr.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(pts[0]));
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(px(i), py(pts[i]));
+    ctx.lineTo(px(pts.length - 1), pT + H2); ctx.lineTo(pL, pT + H2);
+    ctx.closePath(); ctx.fillStyle = gr; ctx.fill();
+
+    // Price line
+    ctx.beginPath(); ctx.strokeStyle = lc; ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 8; ctx.shadowColor = lc;
+    ctx.moveTo(px(0), py(pts[0]));
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(px(i), py(pts[i]));
+    ctx.stroke(); ctx.shadowBlur = 0;
+
+    // Live dot
+    const ex = px(pts.length - 1), ey = py(pts[pts.length - 1]);
+    ctx.beginPath(); ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+    ctx.fillStyle = lc; ctx.shadowBlur = 14; ctx.shadowColor = lc; ctx.fill(); ctx.shadowBlur = 0;
+
+    // Scanning crosshair (phase 0/1)
+    if (phase < 2) {
+      const t  = Date.now() / 1000;
+      const sx = pL + (0.15 + (Math.sin(t * 0.55) * 0.5 + 0.5) * 0.65) * W2;
+      ctx.strokeStyle = 'rgba(0,229,255,.22)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(sx, pT); ctx.lineTo(sx, pT + H2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(sx, ey, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,229,255,.35)'; ctx.fill();
+    }
+  }
+
+  function drawWait(W, H) {
+    ctx.fillStyle = 'rgba(74,78,106,.3)'; ctx.font = '11px JetBrains Mono,monospace';
+    ctx.textAlign = 'center'; ctx.fillText('AGUARDANDO DADOS...', W / 2, H / 2); ctx.textAlign = 'left';
+  }
+
+  // ── Phase machine ─────────────────────────────
+  function tickPhase() {
+    if (Date.now() - phaseSince < PHASES[phase].dur) return;
+    phaseSince = Date.now();
+    phase = (phase + 1) % PHASES.length;
+    const p = PHASES[phase];
+    const stEl = $('blw-state-txt'), rEl = $('blw-ring'), pEl = $('blw-pair-txt');
+    if (stEl) { stEl.textContent = p.txt; stEl.style.color = p.color; }
+    if (rEl)  { rEl.style.borderColor = p.ring; rEl.style.animationDuration = p.spd; }
+
+    if (phase === 0) {
+      pairIdx = (pairIdx + 1) % SCAN_PAIRS.length;
+      if (pEl) pEl.textContent = SCAN_PAIRS[pairIdx] + '/USDT';
+      hideBurst();
+    } else if (phase === 2) {
+      if (activeSig) showBurst(activeSig);
+      if (pEl && activeSig) pEl.textContent = activeSig.pair;
+    } else if (phase === 3) {
+      hideBurst();
+      if (pEl && activeSig) pEl.textContent = activeSig.pair;
+    }
+  }
+
+  function showBurst(sig) {
+    const b = $('blw-burst'); if (!b) return;
+    const isL = sig.direction === 0;
+    const dEl = $('blw-burst-dir'), sEl = $('blw-burst-sym'), pEl = $('blw-burst-px');
+    if (dEl) { dEl.textContent = isL ? '▲ LONG' : '▼ SHORT'; dEl.style.color = isL ? '#00ffaa' : '#ff3d57'; }
+    if (sEl) sEl.textContent = sig.pair;
+    if (pEl) pEl.textContent = fmtV(Number(sig.entryPrice) / 1e8);
+    b.style.display = 'flex'; b.style.animation = 'none';
+    void b.offsetWidth;
+    b.style.animation = 'blw-burst-in .4s cubic-bezier(.22,1,.36,1)';
+  }
+
+  function hideBurst() { const b = $('blw-burst'); if (b) b.style.display = 'none'; }
+
+  // ── Position bar ──────────────────────────────
+  function updatePos() {
+    const posEl = $('blw-pos');
+    if (!activeSig) { if (posEl) posEl.style.display = 'none'; return; }
+    const s = activeSig;
+    const isL   = s.direction === 0;
+    const sym   = s.pair.split('/')[0];
+    const entry = Number(s.entryPrice)  / 1e8;
+    const tp    = Number(s.targetPrice) / 1e8;
+    const sl    = Number(s.stopPrice)   / 1e8;
+    const cur   = window.oraclePrices?.[sym]?.price || entry;
+    const pnl   = isL ? (cur - entry) / entry * 100 : (entry - cur) / entry * 100;
+    const tpD   = isL ? tp - entry : entry - tp;
+    const slD   = isL ? entry - sl : sl - entry;
+    const rng   = tpD + slD;
+    const prog  = rng > 0 ? Math.max(0, Math.min(1, (slD + pnl / 100 * entry) / rng)) : 0.5;
+
+    const badge = $('blw-badge');
+    if (badge) { badge.textContent = isL ? 'LONG' : 'SHORT'; badge.className = 'blw-badge ' + (isL ? 'long' : 'short'); }
+    st('blw-sym',   s.pair);
+    st('blw-sigid', '#' + (s.id?.toString() || '?'));
+    st('blw-entry', fmtV(entry));
+    st('blw-cur',   fmtV(cur));
+    st('blw-sl-l',  'SL ' + fmtV(sl));
+    st('blw-tp-l',  'TP ' + fmtV(tp));
+
+    const fill = $('blw-pbar-fill'), dot = $('blw-pbar-dot');
+    if (fill) {
+      fill.style.width = (prog * 100) + '%';
+      fill.style.background = pnl >= 0
+        ? 'linear-gradient(90deg,rgba(0,255,170,.12),rgba(0,255,170,.5))'
+        : 'linear-gradient(90deg,rgba(255,61,87,.12),rgba(255,61,87,.5))';
+    }
+    if (dot) dot.style.left = (prog * 100) + '%';
+
+    const pnlEl = $('blw-pnl');
+    if (pnlEl) { pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + '%'; pnlEl.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)'; }
+
+    const age = Math.floor((Date.now() - Number(s.createdAt) * 1000) / 60000);
+    st('blw-age', 'há ' + age + 'min');
+    if (posEl) posEl.style.display = 'flex';
+  }
+
+  // ── History ───────────────────────────────────
+  function renderHist() {
+    const rows = $('blw-hist-rows'); if (!rows) return;
+    if (!botSigs.length) { rows.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:8px 0">Aguardando sinais do bot...</div>'; return; }
+    const icons  = [' 🔄 ATIVO', ' ✅ WIN', ' ❌ LOSS', ' ⏳ EXP'];
+    const colors = ['var(--cyan)', 'var(--green)', 'var(--red)', 'var(--muted)'];
+    rows.innerHTML = botSigs.slice(0, 7).map(s => {
+      const isL = s.direction === 0;
+      const st2 = Math.min(Number(s.status), 3);
+      const age = s.createdAt ? Math.floor((Date.now() - Number(s.createdAt) * 1000) / 60000) : 0;
+      const id  = s.id?.toString() || '?';
+      const cta = (st2 === 0 && window.botFollowSignal)
+        ? `<span onclick="botFollowSignal('${id}')" style="background:linear-gradient(90deg,#7c6dff,#00e5ff);color:#000;font-size:9px;font-weight:900;padding:1px 7px;border-radius:4px;cursor:pointer;flex-shrink:0">⚡</span>` : '';
+      return `<div class="blw-hist-row">
+        <span class="blw-hist-id">#${id}</span>
+        <span class="blw-hist-pair">${s.pair}</span>
+        <span class="blw-hist-dir ${isL ? 'long' : 'short'}">${isL ? '▲ LONG' : '▼ SHORT'}</span>
+        <span class="blw-hist-st" style="color:${colors[st2]}">${icons[st2]}</span>
+        <span class="blw-hist-age">${age}min</span>
+        ${cta}
+      </div>`;
+    }).join('');
+  }
+
+  function updateStats() {
+    const res  = botSigs.filter(s => s.status === 1 || s.status === 2);
+    const wins = botSigs.filter(s => s.status === 1).length;
+    const wr   = res.length ? Math.round(wins / res.length * 100) : 0;
+    st('blw-wr',  'WR ' + wr + '%');
+    st('blw-cnt', botSigs.length + ' sinais');
+  }
+
+  // ── Fetch from Polygon ────────────────────────
+  async function fetchSigs() {
+    let prov;
+    try { prov = new ethers.providers.JsonRpcProvider(RPC); await prov.getNetwork(); }
+    catch  { prov = new ethers.providers.JsonRpcProvider(RPC2); }
+    if (!ctr) ctr = new ethers.Contract(CTR, ABI, prov);
+
+    const total = (await ctr.totalSignals()).toNumber();
+    if (!total) return;
+    const n = Math.min(50, total);
+    const res = await Promise.all(
+      Array.from({length: n}, (_, i) => ctr.getSignal(total - i).catch(() => null))
+    );
+    const all = res.filter(s => s && s.provider.toLowerCase() === BOT_ADDR.toLowerCase());
+    botSigs   = all.slice(0, 8);
+    activeSig = all.find(s => Number(s.status) === 0) || null;
+
+    renderHist();
+    updateStats();
+    updatePos();
+
+    if (activeSig) {
+      const sym  = activeSig.pair.split('/')[0];
+      const idx2 = SCAN_PAIRS.indexOf(sym);
+      if (idx2 >= 0) pairIdx = idx2;
+      const pEl = $('blw-pair-txt');
+      if (pEl) pEl.textContent = activeSig.pair;
+    }
+  }
+
+  // ── Boot ─────────────────────────────────────
+  setTimeout(() => {
+    initCanvas();
+    setInterval(tickPhase,  400);
+    setInterval(updatePos, 2000);
+    fetchSigs().catch(() => {});
+    setInterval(() => fetchSigs().catch(() => {}), 25000);
+  }, 3500);
+})();
 </script>
 </body>
 </html>
