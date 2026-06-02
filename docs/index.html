@@ -5486,17 +5486,17 @@ function openAppReadOnly() {
     return;
   }
 
-  // Inicializa contrato read-only (INC Network nativa)
+  // Inicializa contrato read-only (Polygon — rede principal com sinais ao vivo)
   if (!contract) {
     try {
-      currentNetwork = NETWORKS[19191];
-      var roProv = new ethers.providers.JsonRpcProvider("https://www.incnetwork.online/rpc");
+      currentNetwork = NETWORKS[137];
+      var roProv = new ethers.providers.JsonRpcProvider("https://polygon-bor-rpc.publicnode.com");
       contract = new ethers.Contract(currentNetwork.contract, ABI, roProv);
       try { updateCurrencyLabels(); } catch(e) {}
     } catch(e) {
       try {
-        currentNetwork = NETWORKS[11155111];
-        var roProv2 = new ethers.providers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
+        currentNetwork = NETWORKS[19191];
+        var roProv2 = new ethers.providers.JsonRpcProvider("https://www.incnetwork.online/rpc");
         contract = new ethers.Contract(currentNetwork.contract, ABI, roProv2);
         try { updateCurrencyLabels(); } catch(e2) {}
       } catch(e2) {}
@@ -5537,16 +5537,15 @@ function goBack() {
   window.scrollTo(0, 0);
 }
 
-// Inicializa contrato read-only — tenta INC Network primeiro, depois Sepolia
+// Inicializa contrato read-only — Polygon primeiro (sinais ao vivo do bot), depois INC Network, depois Sepolia
 async function initReadOnlyContract() {
   if (contract) return;
-  // INC Network (nativa) como primária
   const incRpcs = [
-    { chainId: 19191, rpc: "https://www.incnetwork.online/rpc" },
+    { chainId: 137,     rpc: "https://polygon-bor-rpc.publicnode.com" },
+    { chainId: 137,     rpc: "https://polygon-rpc.com" },
+    { chainId: 19191,   rpc: "https://www.incnetwork.online/rpc" },
     { chainId: 11155111, rpc: "https://ethereum-sepolia-rpc.publicnode.com" },
     { chainId: 11155111, rpc: "https://sepolia.drpc.org" },
-    { chainId: 11155111, rpc: "https://1rpc.io/sepolia" },
-    { chainId: 11155111, rpc: "https://rpc.sepolia.org" },
   ];
   for (const { chainId, rpc } of incRpcs) {
     try {
