@@ -2431,6 +2431,15 @@
     .wra-trade-btn.long:hover  { background:#00ffaa30; box-shadow:0 0 8px #00ffaa40; }
     .wra-trade-btn.short { background:#ff3d5718; color:var(--red); border:1px solid #ff3d5735; }
     .wra-trade-btn.short:hover { background:#ff3d5730; box-shadow:0 0 8px #ff3d5740; }
+    .wra-conf { font-size:9px; font-family:'JetBrains Mono',monospace; margin-top:1px; }
+    .wrtm-conf-panel { background:#ffffff04; border:1px solid #ffffff0d; border-radius:10px; padding:9px 12px; margin-bottom:12px; }
+    .wrtm-conf-row { display:flex; align-items:center; justify-content:space-between; padding:2px 0; font-size:10px; font-family:'JetBrains Mono',monospace; }
+    .wrtm-conf-lbl { color:var(--muted); }
+    .wrtm-conf-val { font-weight:700; }
+    .wrtm-conf-sep { border:none; border-top:1px solid #ffffff0d; margin:5px 0; }
+    .wrtm-conf-total { display:flex; align-items:center; justify-content:space-between; font-size:11px; font-weight:800; font-family:'JetBrains Mono',monospace; }
+    .wrtm-conf-bar-wrap { height:3px; background:#ffffff10; border-radius:2px; overflow:hidden; margin-top:5px; }
+    .wrtm-conf-bar { height:100%; border-radius:2px; transition:width .5s, background .5s; }
     /* ── Whale Radar Quick-Trade Modal ── */
     #wr-trade-overlay {
       position:fixed; inset:0; background:#00000099; z-index:8500;
@@ -4571,6 +4580,15 @@
       <div class="wrtm-timer">
         <div class="wrtm-timer-bar-wrap"><div class="wrtm-timer-bar" id="wrtm-timer-bar" style="width:100%;background:#00ffaa"></div></div>
         <div class="wrtm-timer-txt" id="wrtm-timer-txt" style="color:var(--green)">5:00</div>
+      </div>
+      <div class="wrtm-conf-panel">
+        <div class="wrtm-conf-row"><span class="wrtm-conf-lbl">RSI(14)</span><span class="wrtm-conf-val" id="wrtm-ci-rsi">—</span></div>
+        <div class="wrtm-conf-row"><span class="wrtm-conf-lbl">EMA 9/21</span><span class="wrtm-conf-val" id="wrtm-ci-ema">—</span></div>
+        <div class="wrtm-conf-row"><span class="wrtm-conf-lbl">EMA 50</span><span class="wrtm-conf-val" id="wrtm-ci-e50">—</span></div>
+        <div class="wrtm-conf-row"><span class="wrtm-conf-lbl">MACD</span><span class="wrtm-conf-val" id="wrtm-ci-macd">—</span></div>
+        <hr class="wrtm-conf-sep">
+        <div class="wrtm-conf-total"><span style="color:var(--muted)">Confluência</span><span id="wrtm-conf-score" style="color:var(--muted)">Analisando…</span></div>
+        <div class="wrtm-conf-bar-wrap"><div class="wrtm-conf-bar" id="wrtm-conf-bar" style="width:0%"></div></div>
       </div>
       <div class="wrtm-oracle">
         <div>
@@ -9821,6 +9839,98 @@ let _wrtmCountdownInterval = null, _wrtmSecsLeft = 300;
 const WRTM_COUNTDOWN_SECS = 300;
 let _wrtmChartTF = '5';
 
+// ── Confluence Engine ─────────────────────────────────
+const _wrKlinesCache = {};
+
+async function _fetchKlines(sym) {
+  const key = sym;
+  const now = Date.now();
+  if (_wrKlinesCache[key] && now - _wrKlinesCache[key].ts < 60000)
+    return _wrKlinesCache[key].data;
+  try {
+    const r = await fetch(`https://api.binance.com/api/v3/klines?symbol=${sym.toUpperCase()}USDT&interval=5m&limit=55`);
+    const d = await r.json();
+    if (!Array.isArray(d)) return null;
+    const data = d.map(c => parseFloat(c[4]));
+    _wrKlinesCache[key] = { ts: now, data };
+    return data;
+  } catch { return null; }
+}
+
+function _confEMA(arr, p) {
+  if (arr.length < p) return arr[arr.length-1];
+  const k = 2/(p+1);
+  let v = arr.slice(0,p).reduce((a,b)=>a+b,0)/p;
+  for (let i=p; i<arr.length; i++) v = arr[i]*k+v*(1-k);
+  return v;
+}
+
+function _confRSI(c, p=14) {
+  if (c.length < p+1) return 50;
+  let g=0, l=0;
+  for (let i=c.length-p; i<c.length; i++) {
+    const d=c[i]-c[i-1]; d>0 ? g+=d : l-=d;
+  }
+  const al=l/p; return al===0 ? 100 : 100-(100/(1+g/p/al));
+}
+
+function _confMACDBull(c) {
+  if (c.length < 36) return null;
+  const ml=[];
+  for (let i=26; i<=c.length; i++) {
+    const s=c.slice(0,i); ml.push(_confEMA(s,12)-_confEMA(s,26));
+  }
+  if (ml.length < 9) return null;
+  return ml[ml.length-1] > _confEMA(ml,9);
+}
+
+async function calcConfluence(baseSym, dir) {
+  const sym = baseSym.toLowerCase()
+    .replace('/usdt','').replace('pol','matic').replace('ouro','xau');
+  const c = await _fetchKlines(sym);
+  if (!c || c.length < 36) return null;
+  const isLong = dir === 'LONG';
+  const px  = c[c.length-1];
+  const rsi = _confRSI(c);
+  const e9  = _confEMA(c, 9);
+  const e21 = _confEMA(c, 21);
+  const e50 = _confEMA(c, 50);
+  const mb  = _confMACDBull(c);
+  const indics = [
+    { id:'rsi',  label:'RSI(14)',  bull: rsi>50,  val: `${rsi.toFixed(0)} ${rsi>50?'▲':'▼'}` },
+    { id:'ema',  label:'EMA 9/21', bull: e9>e21,  val: e9>e21?'9>21 ▲':'9<21 ▼' },
+    { id:'e50',  label:'EMA 50',   bull: px>e50,  val: px>e50?'Acima ▲':'Abaixo ▼' },
+  ];
+  if (mb !== null) indics.push({ id:'macd', label:'MACD', bull: mb, val: mb?'BULL ▲':'BEAR ▼' });
+  indics.forEach(i => { i.agree = isLong ? i.bull : !i.bull; });
+  const score = indics.filter(i=>i.agree).length;
+  const total = indics.length;
+  const pct   = Math.round(score/total*100);
+  return { score, total, pct, ok: pct>=70, indics };
+}
+
+function _wrtmShowConf(conf) {
+  ['rsi','ema','e50','macd'].forEach(id => {
+    const el=document.getElementById('wrtm-ci-'+id);
+    if(el){el.textContent='—';el.style.color='var(--muted)';}
+  });
+  const sc=document.getElementById('wrtm-conf-score');
+  const bar=document.getElementById('wrtm-conf-bar');
+  if (!conf) {
+    if(sc){sc.textContent='Analisando…';sc.style.color='var(--muted)';}
+    if(bar){bar.style.width='0%';}
+    return;
+  }
+  conf.indics.forEach(i => {
+    const el=document.getElementById('wrtm-ci-'+i.id); if(!el)return;
+    el.textContent=i.val;
+    el.style.color=i.agree?'var(--green)':'var(--red)';
+  });
+  if(sc){sc.textContent=`${conf.score}/${conf.total} · ${conf.pct}%`;sc.style.color=conf.ok?'var(--green)':conf.pct>=50?'#f0a500':'var(--red)';}
+  if(bar){bar.style.width=conf.pct+'%';bar.style.background=conf.pct>=70?'#00ffaa':conf.pct>=50?'#f0a500':'#ff3d57';}
+}
+// ─────────────────────────────────────────────────────
+
 function _loadWrtmChart(sym, tf) {
   const container = document.getElementById('wrtm-chart-container');
   if (!container) return;
@@ -9937,6 +10047,10 @@ function wrOpenTrade(sym, dir, livePrice) {
   _wrtmChartTF = '5';
   document.querySelectorAll('#wrtm-chart-tfs .chart-tf').forEach((b,i) => b.classList.toggle('active', i===0));
   setTimeout(() => _loadWrtmChart(base, _wrtmChartTF), 120);
+
+  // Confluência automática dos indicadores
+  _wrtmShowConf(null);
+  calcConfluence(base, dir).then(c => _wrtmShowConf(c));
 }
 
 function closeWrTrade() {
@@ -10063,6 +10177,7 @@ function wrFireAlert(sym, price, chg24, tick, dir, strength, vol) {
   const strCls = 's' + strength;
   const ico    = isLong ? '🟢' : '🔴';
 
+  const cid = 'wrc' + Date.now();
   const card = document.createElement('div');
   card.className = 'wr-alert ' + (isLong ? 'long' : 'short');
   card.innerHTML = `
@@ -10076,17 +10191,29 @@ function wrFireAlert(sym, price, chg24, tick, dir, strength, vol) {
         <span class="wra-price">${pxStr}</span>
         <span class="wra-chg" style="color:${isLong ? 'var(--green)' : 'var(--red)'}">${chgStr}${tickStr}</span>
         <span class="wra-vol">Vol $${volStr}</span>
+        <span class="wra-conf" id="${cid}" style="color:var(--muted)">···</span>
       </div>
     </div>
     <div class="wra-right">
       <span class="wra-str ${strCls}">${strTxt}</span>
       <span class="wra-time">${now}</span>
-      <button class="wra-trade-btn ${isLong ? 'long' : 'short'}" onclick="wrOpenTrade('${sym}','${dir}',${price})">⚡ Operar</button>
+      <button class="wra-trade-btn ${isLong ? 'long' : 'short'}" id="${cid}-btn" onclick="wrOpenTrade('${sym}','${dir}',${price})">⚡ Operar</button>
     </div>`;
 
   feed.insertBefore(card, feed.firstChild);
   while (feed.children.length > 10) feed.removeChild(feed.lastChild);
   requestAnimationFrame(() => card.classList.add('in'));
+
+  // Análise automática de confluência
+  const confBase = (WR_LABELS[sym]||'BTC/USDT').split('/')[0];
+  calcConfluence(confBase, dir).then(c => {
+    const el = document.getElementById(cid); if (!el) return;
+    if (!c) { el.textContent=''; return; }
+    const col = c.ok ? 'var(--green)' : c.pct>=50 ? '#f0a500' : 'var(--red)';
+    el.innerHTML = `<span style="color:${col}">${c.ok?'✅':'⚠'} ${c.pct}%</span>`;
+    const btn = document.getElementById(cid+'-btn');
+    if (btn && !c.ok) btn.style.opacity = '0.45';
+  });
 
   // Explosão visual para sinais fortes
   if (strength >= 2) wrExplode(isLong, strength);
