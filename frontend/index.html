@@ -2181,9 +2181,51 @@
       flex-shrink: 0; animation: pulse 2s infinite;
     }
 
+    /* ── BOT TICKER ── */
+    .bot-ticker-wrap {
+      max-width: 720px; margin: 24px auto 0;
+      background: linear-gradient(90deg, rgba(0,200,83,.08), rgba(0,200,83,.04));
+      border: 1px solid rgba(0,200,83,.28); border-radius: 12px;
+      display: flex; align-items: center; overflow: hidden; height: 42px;
+    }
+    .bot-ticker-label {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 14px; white-space: nowrap; flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      color: #00c853; border-right: 1px solid rgba(0,200,83,.25);
+      height: 100%;
+    }
+    .bot-ticker-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #00c853; box-shadow: 0 0 8px #00c853;
+      animation: pulse 1.2s infinite;
+    }
+    .bot-ticker-scroll {
+      flex: 1; overflow: hidden; position: relative; height: 100%;
+    }
+    .bot-ticker-inner {
+      display: flex; align-items: center; height: 100%;
+      white-space: nowrap;
+      animation: ticker-scroll 30s linear infinite;
+    }
+    .bot-ticker-item {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      padding: 0 20px; color: var(--muted);
+    }
+    .bot-ticker-item .ti-pair { color: var(--text); font-weight: 600; }
+    .bot-ticker-item .ti-long { color: #00c853; font-weight: 700; }
+    .bot-ticker-item .ti-short { color: var(--red); font-weight: 700; }
+    .bot-ticker-item .ti-price { color: var(--cyan); }
+    .bot-ticker-sep { color: rgba(255,255,255,.15); padding: 0 4px; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
     /* ── ORACLE STRIP ── */
     .oracle-strip {
-      display: flex; gap: 12px; margin: 36px auto 0;
+      display: flex; gap: 12px; margin: 14px auto 0;
       max-width: 720px; flex-wrap: wrap; justify-content: center;
     }
     .oracle-card {
@@ -2831,6 +2873,24 @@
     </div>
     <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,193,7,.07);border:1px solid rgba(255,193,7,.3);border-radius:20px;padding:7px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#ffc107">
       🔐 Auditado · Open Source
+    </div>
+  </div>
+
+  <!-- BOT TICKER -->
+  <div class="bot-ticker-wrap" id="bot-ticker-wrap">
+    <div class="bot-ticker-label">
+      <span class="bot-ticker-dot"></span>
+      🤖 BOT ATIVO
+    </div>
+    <div class="bot-ticker-scroll">
+      <div class="bot-ticker-inner" id="bot-ticker-inner">
+        <span class="bot-ticker-item"><span class="ti-pair">BTC/USDT</span><span class="ti-long">▲ LONG</span><span class="ti-price">$67,190</span></span>
+        <span class="bot-ticker-sep">|</span>
+        <span class="bot-ticker-item"><span class="ti-pair">ETH/USDT</span><span class="ti-long">▲ LONG</span><span class="ti-price">$1,903</span></span>
+        <span class="bot-ticker-sep">|</span>
+        <span class="bot-ticker-item">carregando sinais ao vivo…</span>
+        <span class="bot-ticker-sep">|</span>
+      </div>
     </div>
   </div>
 
@@ -10113,12 +10173,110 @@ setTimeout(async () => {
   try {
     await initReadOnlyContract();
     await loadStats();
-    // Refresca stats a cada 15s mesmo na landing
     setInterval(async () => {
       try { await loadStats(); } catch {}
     }, 15000);
   } catch {}
 }, 1500);
+
+// ── BOT TICKER — sinais em tempo real ──────────────────────
+(function() {
+  const BOT_ADDR   = "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679";
+  const CONTRACT   = "0xf49841DF7726691D04D311BC4A0821C0AB9211f5";
+  const RPC        = "https://polygon-bor-rpc.publicnode.com";
+  const RPC2       = "https://polygon-rpc.com";
+  const TICKER_ABI = [
+    "function totalSignals() view returns (uint256)",
+    "function getSignal(uint256) view returns (tuple(uint256 id,address provider,string pair,uint8 direction,uint256 entryPrice,uint256 targetPrice,uint256 stopPrice,uint256 providerStake,uint256 followersStake,uint256 createdAt,uint256 resolvedAt,uint8 status,uint256 rsi,uint256 totalPoolAtResolution,address priceFeed))",
+  ];
+
+  let knownTotal  = 0;
+  let botSigsList = []; // array dos sinais do bot (mais recente primeiro)
+
+  const fmt = n => {
+    const v = Number(n) / 1e8;
+    return v >= 1000
+      ? "$" + v.toLocaleString("en-US", {maximumFractionDigits: 0})
+      : "$" + v.toLocaleString("en-US", {maximumFractionDigits: 2});
+  };
+  const statusColor = st => ['var(--cyan)','#00c853','var(--red)','var(--muted)'][st] || 'var(--cyan)';
+  const statusLabel = st => ['ATIVO','WIN ✓','LOSS ✗','EXP'][st] || '';
+
+  function buildTicker(isNew) {
+    if (!botSigsList.length) return;
+    const inner = document.getElementById("bot-ticker-inner");
+    if (!inner) return;
+
+    const items = botSigsList.map((s, i) => {
+      const dir  = s.direction === 0 ? "▲ LONG" : "▼ SHORT";
+      const cls  = s.direction === 0 ? "ti-long" : "ti-short";
+      const stLbl = statusLabel(s.status);
+      const stClr = statusColor(s.status);
+      const isNewBadge = isNew && i === 0 ? `<span style="background:#00c853;color:#000;font-size:9px;font-weight:900;padding:1px 5px;border-radius:4px;margin-left:4px">NOVO</span>` : "";
+      return `<span class="bot-ticker-item">
+        <span class="ti-pair">${s.pair}</span>
+        <span class="${cls}">${dir}</span>
+        <span class="ti-price">${fmt(s.entryPrice)}</span>
+        <span style="font-size:9px;color:${stClr};font-weight:700">${stLbl}</span>
+        ${isNewBadge}
+      </span><span class="bot-ticker-sep">|</span>`;
+    }).join("");
+
+    // Duplica para loop contínuo
+    inner.innerHTML = items + items;
+
+    // Velocidade proporcional ao conteúdo
+    const totalW = botSigsList.length * 160;
+    inner.style.animationDuration = Math.max(18, Math.round(totalW / 55)) + "s";
+
+    // Flash verde na borda quando chega sinal novo
+    if (isNew) {
+      const wrap = document.getElementById("bot-ticker-wrap");
+      if (wrap) {
+        wrap.style.transition = "border-color .3s, box-shadow .3s";
+        wrap.style.borderColor = "#00c853";
+        wrap.style.boxShadow   = "0 0 18px rgba(0,200,83,.4)";
+        setTimeout(() => {
+          wrap.style.borderColor = "";
+          wrap.style.boxShadow   = "";
+        }, 2500);
+      }
+    }
+  }
+
+  async function fetchBotSignals() {
+    let prov;
+    try { prov = new ethers.providers.JsonRpcProvider(RPC); }
+    catch { prov = new ethers.providers.JsonRpcProvider(RPC2); }
+
+    const ct    = new ethers.Contract(CONTRACT, TICKER_ABI, prov);
+    const total = (await ct.totalSignals()).toNumber();
+    if (total === 0) return;
+
+    const isFirst = knownTotal === 0;
+    const hasNew  = total > knownTotal && !isFirst;
+    knownTotal    = total;
+
+    // Busca os últimos 30 sinais
+    const from = Math.max(1, total - 29);
+    const results = await Promise.all(
+      Array.from({length: total - from + 1}, (_, i) => ct.getSignal(total - i).catch(() => null))
+    );
+
+    botSigsList = results
+      .filter(s => s && s.provider.toLowerCase() === BOT_ADDR.toLowerCase())
+      .slice(0, 10);
+
+    buildTicker(hasNew);
+  }
+
+  // Primeira carga após 2s (espera ethers estar pronto)
+  setTimeout(async () => {
+    try { await fetchBotSignals(); } catch {}
+    // Poll a cada 20s para detectar sinais novos do bot em tempo real
+    setInterval(async () => { try { await fetchBotSignals(); } catch {} }, 20000);
+  }, 2000);
+})();
 </script>
 
 <!-- ── I18N — TRANSLATIONS ── -->
