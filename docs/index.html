@@ -2439,8 +2439,29 @@
     }
     #wr-trade-modal {
       background:var(--card); border:1px solid #ffffff18; border-radius:18px;
-      padding:20px; width:min(420px,100%); max-height:92vh; overflow-y:auto;
-      box-shadow:0 24px 80px #000000a0;
+      padding:0; width:min(980px,98vw); max-height:92vh; overflow:hidden;
+      box-shadow:0 24px 80px #000000a0; display:flex; flex-direction:row;
+    }
+    #wrtm-chart-col {
+      flex:1; min-width:0; background:#050608; border-radius:18px 0 0 18px;
+      display:flex; flex-direction:column; min-height:460px;
+    }
+    #wrtm-chart-header {
+      display:flex; align-items:center; gap:8px; padding:10px 14px;
+      border-bottom:1px solid #ffffff0e; flex-shrink:0;
+    }
+    #wrtm-chart-sym { font-family:'JetBrains Mono',monospace; font-weight:800; font-size:14px; color:var(--text); }
+    #wrtm-chart-tfs { display:flex; gap:4px; margin-left:auto; }
+    #wrtm-chart-container { flex:1; min-height:0; }
+    #wrtm-form-col {
+      width:360px; min-width:300px; padding:20px; overflow-y:auto; max-height:92vh;
+      border-left:1px solid #ffffff10;
+    }
+    @media(max-width:720px){
+      #wr-trade-modal { flex-direction:column; width:min(420px,100%); max-height:92vh; overflow-y:auto; }
+      #wrtm-chart-col { min-height:220px; border-radius:18px 18px 0 0; flex-shrink:0; }
+      #wrtm-chart-container { height:220px; }
+      #wrtm-form-col { width:100%; min-width:0; border-left:none; border-top:1px solid #ffffff10; max-height:none; }
     }
     .wrtm-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
     .wrtm-title  { font-size:14px; font-weight:800; font-family:'JetBrains Mono',monospace; color:var(--text); }
@@ -2465,6 +2486,10 @@
     .wrtm-submit { width:100%; padding:12px; border-radius:12px; background:var(--primary); color:#000; font-weight:800; font-size:13px; font-family:'JetBrains Mono',monospace; cursor:pointer; border:none; margin-top:14px; transition:opacity .15s; }
     .wrtm-submit:hover { opacity:.85; }
     .wrtm-submit.loading { opacity:.5; pointer-events:none; }
+    .wrtm-timer { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+    .wrtm-timer-bar-wrap { flex:1; height:4px; background:#ffffff10; border-radius:2px; overflow:hidden; }
+    .wrtm-timer-bar { height:100%; border-radius:2px; transition:width .95s linear, background .95s; }
+    .wrtm-timer-txt { font-size:11px; font-family:'JetBrains Mono',monospace; font-weight:700; min-width:36px; text-align:right; transition:color .95s; }
     @keyframes glow-pulse {
       0%,100% { box-shadow:0 0 4px #ff3d8a30; } 50% { box-shadow:0 0 12px #ff3d8a90; }
     }
@@ -4521,53 +4546,77 @@
 <!-- ── WHALE RADAR QUICK-TRADE MODAL ── -->
 <div id="wr-trade-overlay" style="display:none" onclick="if(event.target===this)closeWrTrade()">
   <div id="wr-trade-modal">
-    <div class="wrtm-header">
-      <span class="wrtm-title" id="wrtm-title">⚡ Operar BTC/USDT</span>
-      <button class="wrtm-close" onclick="closeWrTrade()">✕</button>
-    </div>
-    <div class="wrtm-oracle">
-      <div>
-        <div class="wrtm-oracle-lbl" data-i18n="wrtm.oracle">Preço Oracle</div>
-        <div class="wrtm-oracle-px" id="wrtm-oracle-px">—</div>
+
+    <!-- COLUNA ESQUERDA: gráfico TradingView -->
+    <div id="wrtm-chart-col">
+      <div id="wrtm-chart-header">
+        <span class="chart-live-dot"></span>
+        <span id="wrtm-chart-sym">BTC/USDT</span>
+        <div id="wrtm-chart-tfs">
+          <button class="chart-tf active" onclick="switchWrtmTF(this,'5')">5m</button>
+          <button class="chart-tf" onclick="switchWrtmTF(this,'15')">15m</button>
+          <button class="chart-tf" onclick="switchWrtmTF(this,'60')">1h</button>
+          <button class="chart-tf" onclick="switchWrtmTF(this,'240')">4h</button>
+        </div>
       </div>
-      <button class="btn-use-price" onclick="wrtmFillEntry()" style="font-size:10px;padding:4px 10px" data-i18n="wrtm.use_price">← Usar como Entrada</button>
+      <div id="wrtm-chart-container"></div>
     </div>
-    <div style="margin-bottom:12px">
-      <div id="wrtm-dir-badge" style="text-align:center;padding:9px;border-radius:10px;font-weight:800;font-size:13px;font-family:'JetBrains Mono',monospace;background:#00ffaa15;color:var(--green);border:2px solid #00ffaa40;cursor:default;user-select:none">↑ LONG</div>
-    </div>
-    <div class="wrtm-row">
-      <div class="wrtm-label" data-i18n="wrtm.entry_label">Preço de Entrada (USD)</div>
-      <input class="wrtm-input" type="number" id="wrtm-entry" placeholder="65000" step="0.01" oninput="wrtmCalcTPSL(parseFloat(this.value)||0,wrtmDir)" />
-    </div>
-    <div class="wrtm-row">
-      <div class="wrtm-label" data-i18n="wrtm.tp_label">Take Profit (USD)</div>
-      <input class="wrtm-input" type="number" id="wrtm-tp" placeholder="68000" step="0.01" />
-      <div class="wrtm-pct-row">
-        <button class="wrtm-pct tp" onclick="wrtmSetTP(3)">+3%</button>
-        <button class="wrtm-pct tp" onclick="wrtmSetTP(5)">+5%</button>
-        <button class="wrtm-pct tp" onclick="wrtmSetTP(10)">+10%</button>
+
+    <!-- COLUNA DIREITA: formulário -->
+    <div id="wrtm-form-col">
+      <div class="wrtm-header">
+        <span class="wrtm-title" id="wrtm-title">⚡ Operar BTC/USDT</span>
+        <button class="wrtm-close" onclick="closeWrTrade()">✕</button>
       </div>
-    </div>
-    <div class="wrtm-row">
-      <div class="wrtm-label" data-i18n="wrtm.sl_label">Stop Loss (USD)</div>
-      <input class="wrtm-input" type="number" id="wrtm-sl" placeholder="62000" step="0.01" />
-      <div class="wrtm-pct-row">
-        <button class="wrtm-pct sl" onclick="wrtmSetSL(2)">-2%</button>
-        <button class="wrtm-pct sl" onclick="wrtmSetSL(3)">-3%</button>
-        <button class="wrtm-pct sl" onclick="wrtmSetSL(5)">-5%</button>
+      <div class="wrtm-timer">
+        <div class="wrtm-timer-bar-wrap"><div class="wrtm-timer-bar" id="wrtm-timer-bar" style="width:100%;background:#00ffaa"></div></div>
+        <div class="wrtm-timer-txt" id="wrtm-timer-txt" style="color:var(--green)">5:00</div>
       </div>
-    </div>
-    <div class="wrtm-row">
-      <div class="wrtm-label" data-i18n="wrtm.stake_label">Stake (ETH)</div>
-      <input class="wrtm-input" type="number" id="wrtm-stake" placeholder="0.01" step="0.001" min="0.005" oninput="localStorage.setItem('wrtm_stake',this.value)" />
-      <div class="wrtm-pct-row" style="margin-top:5px">
-        <button class="wrtm-pct" onclick="wrtmSetStake(0.01)">0.01</button>
-        <button class="wrtm-pct" onclick="wrtmSetStake(0.05)">0.05</button>
-        <button class="wrtm-pct" onclick="wrtmSetStake(0.1)">0.1</button>
-        <button class="wrtm-pct" onclick="wrtmSetStake(0.5)">0.5</button>
+      <div class="wrtm-oracle">
+        <div>
+          <div class="wrtm-oracle-lbl" data-i18n="wrtm.oracle">Preço Oracle</div>
+          <div class="wrtm-oracle-px" id="wrtm-oracle-px">—</div>
+        </div>
+        <button class="btn-use-price" onclick="wrtmFillEntry()" style="font-size:10px;padding:4px 10px" data-i18n="wrtm.use_price">← Usar como Entrada</button>
       </div>
-    </div>
-    <button class="wrtm-submit" id="wrtm-submit-btn" onclick="wrtmSubmit()" data-i18n="wrtm.submit">🚀 Publicar Sinal</button>
+      <div style="margin-bottom:12px">
+        <div id="wrtm-dir-badge" style="text-align:center;padding:9px;border-radius:10px;font-weight:800;font-size:13px;font-family:'JetBrains Mono',monospace;background:#00ffaa15;color:var(--green);border:2px solid #00ffaa40;cursor:default;user-select:none">↑ LONG</div>
+      </div>
+      <div class="wrtm-row">
+        <div class="wrtm-label" data-i18n="wrtm.entry_label">Preço de Entrada (USD)</div>
+        <input class="wrtm-input" type="number" id="wrtm-entry" placeholder="65000" step="0.01" oninput="wrtmCalcTPSL(parseFloat(this.value)||0,wrtmDir)" />
+      </div>
+      <div class="wrtm-row">
+        <div class="wrtm-label" data-i18n="wrtm.tp_label">Take Profit (USD)</div>
+        <input class="wrtm-input" type="number" id="wrtm-tp" placeholder="68000" step="0.01" />
+        <div class="wrtm-pct-row">
+          <button class="wrtm-pct tp" onclick="wrtmSetTP(3)">+3%</button>
+          <button class="wrtm-pct tp" onclick="wrtmSetTP(5)">+5%</button>
+          <button class="wrtm-pct tp" onclick="wrtmSetTP(10)">+10%</button>
+        </div>
+      </div>
+      <div class="wrtm-row">
+        <div class="wrtm-label" data-i18n="wrtm.sl_label">Stop Loss (USD)</div>
+        <input class="wrtm-input" type="number" id="wrtm-sl" placeholder="62000" step="0.01" />
+        <div class="wrtm-pct-row">
+          <button class="wrtm-pct sl" onclick="wrtmSetSL(2)">-2%</button>
+          <button class="wrtm-pct sl" onclick="wrtmSetSL(3)">-3%</button>
+          <button class="wrtm-pct sl" onclick="wrtmSetSL(5)">-5%</button>
+        </div>
+      </div>
+      <div class="wrtm-row">
+        <div class="wrtm-label" data-i18n="wrtm.stake_label">Stake (ETH)</div>
+        <input class="wrtm-input" type="number" id="wrtm-stake" placeholder="0.01" step="0.001" min="0.005" oninput="localStorage.setItem('wrtm_stake',this.value)" />
+        <div class="wrtm-pct-row" style="margin-top:5px">
+          <button class="wrtm-pct" onclick="wrtmSetStake(0.01)">0.01</button>
+          <button class="wrtm-pct" onclick="wrtmSetStake(0.05)">0.05</button>
+          <button class="wrtm-pct" onclick="wrtmSetStake(0.1)">0.1</button>
+          <button class="wrtm-pct" onclick="wrtmSetStake(0.5)">0.5</button>
+        </div>
+      </div>
+      <button class="wrtm-submit" id="wrtm-submit-btn" onclick="wrtmSubmit()" data-i18n="wrtm.submit">🚀 Publicar Sinal</button>
+    </div><!-- /wrtm-form-col -->
+
   </div>
 </div>
 
@@ -9768,6 +9817,62 @@ function wrUpdateTicker(sym, price, chg, tick) {
 
 let wrtmSym = 'btcusdt', wrtmDir = 'LONG';
 let _wrtmLiveInterval = null;
+let _wrtmCountdownInterval = null, _wrtmSecsLeft = 300;
+const WRTM_COUNTDOWN_SECS = 300;
+let _wrtmChartTF = '5';
+
+function _loadWrtmChart(sym, tf) {
+  const container = document.getElementById('wrtm-chart-container');
+  if (!container) return;
+  container.innerHTML = '';
+  const h = Math.max(container.offsetHeight || 420, 300);
+  const div = document.createElement('div');
+  div.id = 'wrtm_tv_widget';
+  div.style.cssText = `width:100%;height:${h}px;`;
+  container.appendChild(div);
+  const tvSym = (typeof TV_SYMBOLS !== 'undefined' && TV_SYMBOLS[sym.toUpperCase()])
+    || ('BINANCE:' + sym.toUpperCase() + 'USDT');
+  function _create() {
+    if (!document.getElementById('wrtm_tv_widget')) return;
+    new TradingView.widget({
+      width:'100%', height:h,
+      symbol: tvSym, interval: tf,
+      timezone:'America/Sao_Paulo', theme:'dark', style:'1',
+      locale:'pt_BR', toolbar_bg:'#050608',
+      backgroundColor:'rgba(5,6,8,1)', gridColor:'rgba(26,29,46,0.6)',
+      enable_publishing:false, allow_symbol_change:false,
+      hide_top_toolbar:false, hide_legend:false, save_image:false,
+      withdateranges:true,
+      studies:['RSI@tv-basicstudies','MASimple@tv-basicstudies'],
+      container_id:'wrtm_tv_widget',
+    });
+  }
+  if (window.TradingView) { _create(); }
+  else {
+    const s = document.createElement('script');
+    s.src = 'https://s3.tradingview.com/tv.js'; s.async = true; s.onload = _create;
+    document.head.appendChild(s);
+  }
+}
+
+function switchWrtmTF(btn, tf) {
+  _wrtmChartTF = tf;
+  document.querySelectorAll('#wrtm-chart-tfs .chart-tf').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const base = (typeof WRTM_PAIR_MAP !== 'undefined' && WRTM_PAIR_MAP[wrtmSym])
+    ? WRTM_PAIR_MAP[wrtmSym].replace('/USDT','') : 'BTC';
+  _loadWrtmChart(base, tf);
+}
+
+function wrtmTickTimer() {
+  const pct = (_wrtmSecsLeft / WRTM_COUNTDOWN_SECS) * 100;
+  const m = Math.floor(_wrtmSecsLeft / 60), s = _wrtmSecsLeft % 60;
+  const bar = document.getElementById('wrtm-timer-bar');
+  const txt = document.getElementById('wrtm-timer-txt');
+  const col = pct > 50 ? 'var(--green)' : pct > 20 ? '#f0a500' : 'var(--red)';
+  if (txt) { txt.textContent = `${m}:${String(s).padStart(2,'0')}`; txt.style.color = col; }
+  if (bar) { bar.style.width = pct+'%'; bar.style.background = pct > 50 ? '#00ffaa' : pct > 20 ? '#f0a500' : '#ff3d57'; }
+}
 
 const WRTM_PAIR_MAP = {
   btcusdt:'BTC/USDT', ethusdt:'ETH/USDT', solusdt:'SOL/USDT',
@@ -9812,12 +9917,33 @@ function wrOpenTrade(sym, dir, livePrice) {
     if (el && live) el.textContent = wrFmtPx(live, wrtmSym);
   }, 1000);
 
+  // Countdown 5 minutos para entrar na posição
+  _wrtmSecsLeft = WRTM_COUNTDOWN_SECS;
+  if (_wrtmCountdownInterval) clearInterval(_wrtmCountdownInterval);
+  wrtmTickTimer();
+  _wrtmCountdownInterval = setInterval(() => {
+    _wrtmSecsLeft--;
+    wrtmTickTimer();
+    if (_wrtmSecsLeft <= 0) { closeWrTrade(); showToast("⏱ Tempo esgotado — modal fechado", "warning"); }
+  }, 1000);
+
   const overlay = document.getElementById('wr-trade-overlay');
   if (overlay) overlay.style.display = 'flex';
+
+  // Gráfico TradingView em tempo real
+  const base = (WRTM_PAIR_MAP[sym] || 'BTC/USDT').replace('/USDT','');
+  const symEl = document.getElementById('wrtm-chart-sym');
+  if (symEl) symEl.textContent = base + '/USDT';
+  _wrtmChartTF = '5';
+  document.querySelectorAll('#wrtm-chart-tfs .chart-tf').forEach((b,i) => b.classList.toggle('active', i===0));
+  setTimeout(() => _loadWrtmChart(base, _wrtmChartTF), 120);
 }
 
 function closeWrTrade() {
   if (_wrtmLiveInterval) { clearInterval(_wrtmLiveInterval); _wrtmLiveInterval = null; }
+  if (_wrtmCountdownInterval) { clearInterval(_wrtmCountdownInterval); _wrtmCountdownInterval = null; }
+  const container = document.getElementById('wrtm-chart-container');
+  if (container) container.innerHTML = '';
   const overlay = document.getElementById('wr-trade-overlay');
   if (overlay) overlay.style.display = 'none';
 }
