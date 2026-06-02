@@ -2868,8 +2868,8 @@
       <span style="width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);display:inline-block;animation:pulse 1.5s infinite"></span>
       👥 <span id="hero-visitors-count">—</span> visitantes online
     </div>
-    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,83,.07);border:1px solid rgba(0,200,83,.3);border-radius:20px;padding:7px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#00c853">
-      ✅ 169 testes passando
+    <div id="bot-score-badge" style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,83,.07);border:1px solid rgba(0,200,83,.3);border-radius:20px;padding:7px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#00c853">
+      🤖 Bot: <span id="bot-score-text">carregando…</span>
     </div>
     <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,193,7,.07);border:1px solid rgba(255,193,7,.3);border-radius:20px;padding:7px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#ffc107">
       🔐 Auditado · Open Source
@@ -10179,7 +10179,7 @@ setTimeout(async () => {
   } catch {}
 }, 1500);
 
-// ── BOT TICKER — sinais em tempo real ──────────────────────
+// ── BOT TICKER — sinais em tempo real + score + toast + CTA ─
 (function() {
   const BOT_ADDR   = "0x391dd5b84ef7B5FCf845C3dD1D5d388945d5F679";
   const CONTRACT   = "0xf49841DF7726691D04D311BC4A0821C0AB9211f5";
@@ -10191,7 +10191,7 @@ setTimeout(async () => {
   ];
 
   let knownTotal  = 0;
-  let botSigsList = []; // array dos sinais do bot (mais recente primeiro)
+  let botSigsList = [];
 
   const fmt = n => {
     const v = Number(n) / 1e8;
@@ -10202,47 +10202,103 @@ setTimeout(async () => {
   const statusColor = st => ['var(--cyan)','#00c853','var(--red)','var(--muted)'][st] || 'var(--cyan)';
   const statusLabel = st => ['ATIVO','WIN ✓','LOSS ✗','EXP'][st] || '';
 
+  // ① Score badge
+  function updateScore(sigs) {
+    const resolved = sigs.filter(s => s.status === 1 || s.status === 2);
+    const wins     = sigs.filter(s => s.status === 1).length;
+    const total    = sigs.length;
+    const el = document.getElementById("bot-score-text");
+    if (!el) return;
+    if (resolved.length === 0) {
+      el.textContent = total + " sinais abertos";
+    } else {
+      const pct = Math.round((wins / resolved.length) * 100);
+      const color = pct >= 60 ? "#00c853" : pct >= 40 ? "#ffc107" : "var(--red)";
+      el.innerHTML = `<span style="color:${color}">${wins}/${resolved.length} acertos (${pct}%)</span> · ${total} sinais`;
+    }
+  }
+
+  // ② Ticker com botão ⚡ Seguir
   function buildTicker(isNew) {
     if (!botSigsList.length) return;
     const inner = document.getElementById("bot-ticker-inner");
     if (!inner) return;
 
     const items = botSigsList.map((s, i) => {
-      const dir  = s.direction === 0 ? "▲ LONG" : "▼ SHORT";
-      const cls  = s.direction === 0 ? "ti-long" : "ti-short";
-      const stLbl = statusLabel(s.status);
-      const stClr = statusColor(s.status);
-      const isNewBadge = isNew && i === 0 ? `<span style="background:#00c853;color:#000;font-size:9px;font-weight:900;padding:1px 5px;border-radius:4px;margin-left:4px">NOVO</span>` : "";
+      const dir    = s.direction === 0 ? "▲ LONG" : "▼ SHORT";
+      const cls    = s.direction === 0 ? "ti-long" : "ti-short";
+      const stLbl  = statusLabel(s.status);
+      const stClr  = statusColor(s.status);
+      const newBdg = isNew && i === 0
+        ? `<span style="background:#00c853;color:#000;font-size:9px;font-weight:900;padding:1px 6px;border-radius:4px">NOVO</span>` : "";
+      const sigId  = s.id ? s.id.toString() : "";
+      const cta    = s.status === 0 && sigId
+        ? `<span onclick="botFollowSignal('${sigId}')" style="background:linear-gradient(90deg,#7c6dff,#00e5ff);color:#000;font-size:10px;font-weight:900;padding:2px 10px;border-radius:6px;cursor:pointer;margin-left:6px;white-space:nowrap">⚡ Seguir</span>` : "";
       return `<span class="bot-ticker-item">
+        ${newBdg}
         <span class="ti-pair">${s.pair}</span>
         <span class="${cls}">${dir}</span>
         <span class="ti-price">${fmt(s.entryPrice)}</span>
         <span style="font-size:9px;color:${stClr};font-weight:700">${stLbl}</span>
-        ${isNewBadge}
+        ${cta}
       </span><span class="bot-ticker-sep">|</span>`;
     }).join("");
 
-    // Duplica para loop contínuo
     inner.innerHTML = items + items;
+    const totalW = botSigsList.length * 200;
+    inner.style.animationDuration = Math.max(20, Math.round(totalW / 55)) + "s";
 
-    // Velocidade proporcional ao conteúdo
-    const totalW = botSigsList.length * 160;
-    inner.style.animationDuration = Math.max(18, Math.round(totalW / 55)) + "s";
-
-    // Flash verde na borda quando chega sinal novo
     if (isNew) {
       const wrap = document.getElementById("bot-ticker-wrap");
       if (wrap) {
-        wrap.style.transition = "border-color .3s, box-shadow .3s";
+        wrap.style.transition = "border-color .3s,box-shadow .3s";
         wrap.style.borderColor = "#00c853";
-        wrap.style.boxShadow   = "0 0 18px rgba(0,200,83,.4)";
-        setTimeout(() => {
-          wrap.style.borderColor = "";
-          wrap.style.boxShadow   = "";
-        }, 2500);
+        wrap.style.boxShadow   = "0 0 22px rgba(0,200,83,.45)";
+        setTimeout(() => { wrap.style.borderColor=""; wrap.style.boxShadow=""; }, 3000);
       }
     }
   }
+
+  // ③ Toast — sinal novo do bot
+  function showBotToast(sig) {
+    const dir  = sig.direction === 0 ? "LONG ▲" : "SHORT ▼";
+    const cls  = sig.direction === 0 ? "success" : "warning";
+    const sigId = sig.id ? sig.id.toString() : "";
+    const msg  = `🤖 Bot abriu ${sig.pair} <b style="color:${sig.direction===0?'#00c853':'var(--red)'}">${dir}</b> a ${fmt(sig.entryPrice)}`;
+    if (typeof showToast === "function") showToast(msg, cls, 8000);
+
+    // Toast com botão Seguir customizado
+    setTimeout(() => {
+      const existing = document.querySelector(".toast-bot-cta");
+      if (existing) return;
+      const t = document.createElement("div");
+      t.className = "toast-bot-cta";
+      t.style.cssText = "position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#0d0e17,#12131f);border:1px solid rgba(124,109,255,.6);border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 40px rgba(0,0,0,.6);animation:slide-up .3s ease;max-width:340px;width:calc(100% - 40px)";
+      t.innerHTML = `
+        <div style="font-size:28px">🤖</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">Bot abriu ${sig.pair} ${dir}</div>
+          <div style="font-size:11px;color:var(--muted)">Entrada: ${fmt(sig.entryPrice)} · TP +5% · SL -3%</div>
+        </div>
+        ${sigId ? `<button onclick="botFollowSignal('${sigId}');this.closest('.toast-bot-cta').remove();" style="background:linear-gradient(90deg,#7c6dff,#00e5ff);color:#000;font-weight:900;font-size:12px;padding:8px 16px;border:none;border-radius:8px;cursor:pointer;white-space:nowrap">⚡ Seguir</button>` : ""}
+        <button onclick="this.closest('.toast-bot-cta').remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 4px">✕</button>
+      `;
+      document.body.appendChild(t);
+      setTimeout(() => { if (t.parentNode) t.remove(); }, 12000);
+    }, 400);
+  }
+
+  // Abre app na aba sinais e faz scroll até o sinal específico
+  window.botFollowSignal = function(sigId) {
+    if (typeof openApp === "function") openApp();
+    setTimeout(() => {
+      if (typeof switchTab === "function") switchTab("sinais");
+      setTimeout(() => {
+        const el = document.getElementById("sig-" + sigId) || document.querySelector(`[data-sig-id="${sigId}"]`);
+        if (el) { el.scrollIntoView({behavior:"smooth",block:"center"}); el.style.outline = "2px solid var(--primary)"; setTimeout(() => el.style.outline="", 2000); }
+      }, 600);
+    }, 300);
+  };
 
   async function fetchBotSignals() {
     let prov;
@@ -10255,25 +10311,29 @@ setTimeout(async () => {
 
     const isFirst = knownTotal === 0;
     const hasNew  = total > knownTotal && !isFirst;
-    knownTotal    = total;
+    const prevTotal = knownTotal;
+    knownTotal = total;
 
-    // Busca os últimos 30 sinais
-    const from = Math.max(1, total - 29);
+    const from = Math.max(1, total - 49);
     const results = await Promise.all(
       Array.from({length: total - from + 1}, (_, i) => ct.getSignal(total - i).catch(() => null))
     );
 
-    botSigsList = results
-      .filter(s => s && s.provider.toLowerCase() === BOT_ADDR.toLowerCase())
-      .slice(0, 10);
+    const allBotSigs = results.filter(s => s && s.provider.toLowerCase() === BOT_ADDR.toLowerCase());
+    botSigsList = allBotSigs.slice(0, 10);
 
-    buildTicker(hasNew);
+    updateScore(allBotSigs);  // ① score com todos os sinais do bot
+    buildTicker(hasNew);      // ② ticker
+
+    // ③ toast só quando aparece sinal realmente novo e aberto
+    if (hasNew) {
+      const newOpen = allBotSigs.filter(s => s.id && s.id.toNumber() > prevTotal && s.status === 0);
+      if (newOpen.length) showBotToast(newOpen[0]);
+    }
   }
 
-  // Primeira carga após 2s (espera ethers estar pronto)
   setTimeout(async () => {
     try { await fetchBotSignals(); } catch {}
-    // Poll a cada 20s para detectar sinais novos do bot em tempo real
     setInterval(async () => { try { await fetchBotSignals(); } catch {} }, 20000);
   }, 2000);
 })();
